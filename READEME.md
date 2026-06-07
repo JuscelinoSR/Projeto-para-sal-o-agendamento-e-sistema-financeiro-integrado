@@ -426,7 +426,7 @@ Sugerir produtos.
 
 ## D+14
 
-Lembrete manutenção.
+Lembrete de manutenção.
 
 ## D+30
 
