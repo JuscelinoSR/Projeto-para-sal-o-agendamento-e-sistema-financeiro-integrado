@@ -24,3 +24,13 @@ Inclui:
 - base para evoluir depois para Next.js e Supabase.
 
 Veja o planejamento completo em [ROADMAP.md](ROADMAP.md).
+
+## Publicação
+
+O site está configurado para publicação pelo GitHub Pages usando GitHub Actions.
+
+URL prevista após o deploy:
+
+https://juscelinosr.github.io/Projeto-para-sal-o-agendamento-e-sistema-financeiro-integrado/
+
+Se o primeiro deploy pedir habilitação no GitHub, abra o repositório em Settings > Pages e selecione GitHub Actions como fonte de publicação.
