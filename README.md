@@ -44,4 +44,4 @@ Se o primeiro deploy pedir habilitação no GitHub, abra o repositório em Setti
 - Resumo automático do agendamento.
 - Geração de mensagem pronta para WhatsApp.
 
-Para usar em produção, troque o número placeholder do WhatsApp em `script.js` pela linha oficial do salão.
+WhatsApp configurado para o MVP: `5564999625616`.

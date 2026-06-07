@@ -41,7 +41,7 @@ const professionals = [
   },
 ];
 
-const whatsappPhone = '5511999999999';
+const whatsappPhone = '5564999625616';
 const serviceOptions = document.querySelector('[data-service-options]');
 const professionalOptions = document.querySelector('[data-professional-options]');
 const bookingForm = document.querySelector('[data-booking-form]');
