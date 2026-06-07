@@ -13,6 +13,7 @@ Funcionalidades do MVP:
 - Cadastro básico de profissionais.
 - Fluxo simples de solicitação de agendamento.
 - Botão de contato pelo WhatsApp.
+- Fluxo interativo para selecionar serviço, profissional e período.
 - Estrutura inicial para painel administrativo.
 - Design responsivo para celular e desktop.
 

@@ -34,3 +34,14 @@ URL prevista após o deploy:
 https://juscelinosr.github.io/Projeto-para-sal-o-agendamento-e-sistema-financeiro-integrado/
 
 Se o primeiro deploy pedir habilitação no GitHub, abra o repositório em Settings > Pages e selecione GitHub Actions como fonte de publicação.
+## Funções implementadas no MVP
+
+- Seleção de serviço.
+- Seleção de profissional.
+- Seleção de período preferido.
+- Campo para nome do cliente.
+- Campo de observação.
+- Resumo automático do agendamento.
+- Geração de mensagem pronta para WhatsApp.
+
+Para usar em produção, troque o número placeholder do WhatsApp em `script.js` pela linha oficial do salão.

@@ -19,11 +19,12 @@
     <nav class="desktop-nav" aria-label="Navegação principal">
       <a href="#produto">Produto</a>
       <a href="#mvp">MVP</a>
+      <a href="#agendamento">Agendar</a>
       <a href="#modulos">Módulos</a>
       <a href="#operacao">Operação</a>
       <a href="#planos">Planos</a>
     </nav>
-    <a class="header-action" href="#contato">Começar</a>
+    <a class="header-action" href="#agendamento">Agendar</a>
     <button class="menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu-button>
       <span></span>
       <span></span>
@@ -34,10 +35,10 @@
   <nav class="mobile-nav" aria-label="Menu mobile" data-mobile-nav>
     <a href="#produto">Produto</a>
     <a href="#mvp">MVP</a>
+    <a href="#agendamento">Agendar</a>
     <a href="#modulos">Módulos</a>
     <a href="#operacao">Operação</a>
     <a href="#planos">Planos</a>
-    <a href="#contato">Começar</a>
   </nav>
 
   <main id="top">
@@ -47,7 +48,7 @@
         <h1>BeautyJSR</h1>
         <p class="hero-lede">Uma plataforma white label para salões, barbearias, clínicas estéticas e profissionais organizarem agenda, clientes, WhatsApp, financeiro e fidelidade em um único painel.</p>
         <div class="hero-actions" aria-label="Ações principais">
-          <a class="button primary" href="#contato">Criar primeira versão</a>
+          <a class="button primary" href="#agendamento">Testar agendamento</a>
           <a class="button secondary" href="#modulos">Ver módulos</a>
         </div>
         <dl class="hero-metrics" aria-label="Indicadores do produto">
@@ -138,6 +139,51 @@
         <p><strong>Inclui:</strong> landing page, lista de serviços, lista de profissionais, botão de WhatsApp e prévia do painel.</p>
         <p><strong>Fica para depois:</strong> pagamento online, estoque completo, comissões automáticas e billing SaaS.</p>
         <p><strong>Próximo passo:</strong> transformar esta base em um app Next.js com Supabase e autenticação.</p>
+      </div>
+    </section>
+    <section class="scheduler-section" id="agendamento">
+      <div class="section-heading">
+        <p class="eyebrow">Agendamento MVP</p>
+        <h2>Escolha o serviço e gere uma mensagem pronta</h2>
+        <p>Este fluxo simula a primeira função do BeautyJSR Agenda: o cliente escolhe serviço, profissional e período preferido, e o sistema monta a mensagem para iniciar o atendimento pelo WhatsApp.</p>
+      </div>
+
+      <div class="scheduler-layout" data-scheduler>
+        <form class="booking-form" data-booking-form>
+          <fieldset>
+            <legend>Serviço</legend>
+            <div class="option-grid" data-service-options></div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Profissional</legend>
+            <div class="option-grid" data-professional-options></div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Período</legend>
+            <div class="period-grid" data-period-options>
+              <label><input type="radio" name="period" value="Manhã" checked> Manhã</label>
+              <label><input type="radio" name="period" value="Tarde"> Tarde</label>
+              <label><input type="radio" name="period" value="Noite"> Noite</label>
+            </div>
+          </fieldset>
+
+          <label class="field-label" for="client-name">Seu nome</label>
+          <input id="client-name" name="clientName" type="text" autocomplete="name" placeholder="Ex.: Maria Silva" data-client-name>
+
+          <label class="field-label" for="client-notes">Observação</label>
+          <textarea id="client-notes" name="notes" rows="4" placeholder="Ex.: prefiro sábado ou horário após 14h" data-client-notes></textarea>
+
+          <button class="button primary booking-submit" type="submit">Abrir WhatsApp</button>
+        </form>
+
+        <aside class="booking-summary" aria-live="polite">
+          <p class="eyebrow">Resumo</p>
+          <h3 data-summary-title>Agendamento em construção</h3>
+          <p data-summary-copy>Selecione as opções para ver a mensagem que será enviada.</p>
+          <div class="summary-box" data-message-preview></div>
+        </aside>
       </div>
     </section>
     <section class="section" id="modulos">
@@ -232,19 +278,19 @@
           <h3>Essencial</h3>
           <p>Para validar agenda, clientes e serviços.</p>
           <strong>MVP</strong>
-          <a href="#contato">Escolher</a>
+          <a href="#agendamento">Escolher</a>
         </article>
         <article class="plan-card featured">
           <h3>Profissional</h3>
           <p>Para operar com WhatsApp, fidelidade e financeiro.</p>
           <strong>Crescimento</strong>
-          <a href="#contato">Escolher</a>
+          <a href="#agendamento">Escolher</a>
         </article>
         <article class="plan-card">
           <h3>Rede</h3>
           <p>Para multiunidades, white label e faturamento SaaS.</p>
           <strong>Escala</strong>
-          <a href="#contato">Escolher</a>
+          <a href="#agendamento">Escolher</a>
         </article>
       </div>
     </section>
@@ -255,7 +301,7 @@
         <h2>Construa o BeautyJSR por etapas, com base sólida.</h2>
         <p>O próximo passo é transformar esta presença inicial em um app Next.js com dashboard, autenticação, Supabase e telas operacionais.</p>
       </div>
-      <a class="button primary" href="mailto:contato@beautyjsr.com?subject=Quero%20criar%20o%20BeautyJSR">Falar sobre o projeto</a>
+      <a class="button primary" href="#agendamento">Testar o MVP</a>
     </section>
   </main>
 
