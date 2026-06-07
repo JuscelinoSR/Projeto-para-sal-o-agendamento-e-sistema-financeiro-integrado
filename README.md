@@ -1,2 +1,26 @@
 # Projeto para salão: agendamento e sistema financeiro integrado
-SaaS de agendamento para salões femininos via WhatsApp. Site elegante + assistente virtual "Ana" com fluxo de 3 cliques, sem digitar. Painel administrativo com dashboard e QR Code para conectar o WhatsApp. Stack: Next.js, TypeScript, Tailwind, Supabase. Design acolhedor e mobile-first.
+
+SaaS de agendamento para salões femininos via WhatsApp. Site elegante + assistente virtual "Ana" com fluxo de 3 cliques, sem digitar. Painel administrativo com dashboard e QR Code para conectar o WhatsApp. Stack planejada: Next.js, TypeScript, Tailwind, Supabase. Design acolhedor e mobile-first.
+
+## Divisão do projeto
+
+O BeautyJSR será construído em 3 etapas:
+
+1. MVP de agendamento: site, serviços, profissionais e contato pelo WhatsApp.
+2. Operação do salão: agenda, clientes, histórico, serviços e financeiro inicial.
+3. Plataforma SaaS: multiempresa, white label, CRM, fidelidade, estoque, comissões, LGPD e billing.
+
+## Primeira opção de MVP
+
+A primeira opção recomendada é o **BeautyJSR Agenda**, um MVP simples para validar o produto com salões reais.
+
+Inclui:
+
+- landing page profissional;
+- lista de serviços;
+- lista de profissionais;
+- chamada para agendamento pelo WhatsApp;
+- prévia visual do painel;
+- base para evoluir depois para Next.js e Supabase.
+
+Veja o planejamento completo em [ROADMAP.md](ROADMAP.md).
