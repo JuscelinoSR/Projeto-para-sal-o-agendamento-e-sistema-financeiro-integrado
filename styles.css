@@ -1,16 +1,16 @@
 :root {
   color-scheme: light;
-  --ink: #17211d;
-  --muted: #5d6b63;
-  --line: #dce5df;
-  --paper: #fbfaf6;
-  --surface: #ffffff;
-  --mint: #0c8f7a;
-  --mint-dark: #066151;
-  --coral: #e8745b;
-  --gold: #c69a38;
-  --blue: #365b8c;
-  --shadow: 0 24px 70px rgba(23, 33, 29, 0.13);
+  --ink: #2f2520;
+  --muted: #7b6a60;
+  --line: #ded4cb;
+  --paper: #f7f1ea;
+  --surface: #fffaf5;
+  --mint: #9b7655;
+  --mint-dark: #6f523b;
+  --coral: #d6a48f;
+  --gold: #b9884f;
+  --blue: #8f9a94;
+  --shadow: 0 24px 70px rgba(47, 37, 32, 0.13);
 }
 
 * {
@@ -47,7 +47,7 @@ a {
   align-items: center;
   gap: 24px;
   padding: 18px clamp(18px, 5vw, 72px);
-  background: rgba(251, 250, 246, 0.88);
+  background: rgba(247, 241, 234, 0.9);
   backdrop-filter: blur(18px);
   border-bottom: 1px solid transparent;
   transition: border-color 180ms ease, box-shadow 180ms ease;
@@ -55,7 +55,7 @@ a {
 
 .site-header.is-elevated {
   border-color: var(--line);
-  box-shadow: 0 12px 34px rgba(23, 33, 29, 0.08);
+  box-shadow: 0 12px 34px rgba(47, 37, 32, 0.08);
 }
 
 .brand {
@@ -233,9 +233,9 @@ h3 {
   display: grid;
   grid-template-columns: 76px 1fr;
   overflow: hidden;
-  border: 1px solid #cbd8d1;
+  border: 1px solid #d7c9bd;
   border-radius: 8px;
-  background: #edf3ef;
+  background: #e8e3dc;
   box-shadow: var(--shadow);
 }
 
@@ -265,7 +265,7 @@ h3 {
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 18px;
-  border-bottom: 1px solid #d6e1da;
+  border-bottom: 1px solid #ded4cb;
 }
 
 .preview-topbar small,
@@ -326,7 +326,7 @@ h3 {
   padding: 16px;
   border-radius: 8px;
   background: #fff;
-  border: 1px solid #d9e4de;
+  border: 1px solid #ded4cb;
 }
 
 .preview-panels strong {
@@ -402,7 +402,7 @@ h3 {
   height: 42px;
   margin-bottom: 30px;
   border-radius: 8px;
-  background: #e2f3ee;
+  background: #efe3d8;
   color: var(--mint-dark);
   font-weight: 800;
 }
@@ -419,7 +419,7 @@ h3 {
 
 .scheduler-section {
   padding: clamp(64px, 9vw, 120px) clamp(18px, 5vw, 72px);
-  background: #f3f7f4;
+  background: #f1e8df;
   border-block: 1px solid var(--line);
 }
 
@@ -435,7 +435,7 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
-  box-shadow: 0 14px 44px rgba(23, 33, 29, 0.08);
+  box-shadow: 0 14px 44px rgba(47, 37, 32, 0.08);
 }
 
 .booking-form {
@@ -479,7 +479,7 @@ h3 {
 
 .choice-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(23, 33, 29, 0.09);
+  box-shadow: 0 12px 26px rgba(47, 37, 32, 0.09);
 }
 
 .choice-card input {
@@ -504,7 +504,7 @@ h3 {
 
 .choice-card:has(input:checked) {
   border-color: var(--mint);
-  box-shadow: inset 0 0 0 2px rgba(12, 143, 122, 0.18);
+  box-shadow: inset 0 0 0 2px rgba(155, 118, 85, 0.2);
 }
 
 .period-grid {
@@ -553,7 +553,7 @@ h3 {
 .booking-form textarea:focus,
 .choice-card:focus-within,
 .period-grid label:focus-within {
-  outline: 3px solid rgba(12, 143, 122, 0.22);
+  outline: 3px solid rgba(155, 118, 85, 0.24);
   border-color: var(--mint);
 }
 
@@ -577,19 +577,19 @@ h3 {
   margin-top: 18px;
   padding: 18px;
   border-radius: 8px;
-  background: #17211d;
+  background: #2f2520;
   color: #fff;
   line-height: 1.65;
   white-space: pre-line;
 }
 .operation-section {
-  background: #17211d;
+  background: #2f2520;
   color: #fff;
 }
 
 .operation-section .eyebrow,
 .operation-section p {
-  color: #b8dacf;
+  color: #ead8c8;
 }
 
 .flow {
@@ -661,8 +661,8 @@ h3 {
 }
 
 .plan-card.featured {
-  background: #eaf6f2;
-  border-color: #9bcbbd;
+  background: #f3e6dc;
+  border-color: #c99a73;
 }
 
 .contact-section {
@@ -671,7 +671,7 @@ h3 {
   justify-content: space-between;
   gap: 28px;
   background: var(--coral);
-  color: #2b1813;
+  color: #2f2520;
 }
 
 .contact-section > div {
@@ -680,7 +680,7 @@ h3 {
 
 .contact-section .eyebrow,
 .contact-section p {
-  color: #52281e;
+  color: #5f3f32;
 }
 
 .site-footer {
@@ -715,7 +715,7 @@ h3 {
     padding: 18px;
     background: var(--paper);
     border-bottom: 1px solid var(--line);
-    box-shadow: 0 18px 34px rgba(23, 33, 29, 0.14);
+    box-shadow: 0 18px 34px rgba(47, 37, 32, 0.14);
   }
 
   .mobile-nav.is-open {

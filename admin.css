@@ -1,16 +1,16 @@
 :root {
   color-scheme: light;
-  --ink: #17211d;
-  --muted: #5d6b63;
-  --line: #dce5df;
-  --paper: #fbfaf6;
-  --surface: #ffffff;
-  --mint: #0c8f7a;
-  --mint-dark: #066151;
-  --coral: #e8745b;
-  --danger: #b44432;
-  --gold: #c69a38;
-  --shadow: 0 22px 60px rgba(23, 33, 29, 0.12);
+  --ink: #2f2520;
+  --muted: #7b6a60;
+  --line: #ded4cb;
+  --paper: #f7f1ea;
+  --surface: #fffaf5;
+  --mint: #9b7655;
+  --mint-dark: #6f523b;
+  --coral: #d6a48f;
+  --danger: #9e4f3f;
+  --gold: #b9884f;
+  --shadow: 0 22px 60px rgba(47, 37, 32, 0.12);
 }
 
 * { box-sizing: border-box; }
@@ -42,7 +42,7 @@ textarea { font: inherit; }
   gap: 20px;
   padding: 18px clamp(16px, 5vw, 64px);
   border-bottom: 1px solid var(--line);
-  background: rgba(251, 250, 246, 0.92);
+  background: rgba(247, 241, 234, 0.92);
   backdrop-filter: blur(18px);
 }
 
@@ -185,7 +185,7 @@ h3 { margin: 0; }
 .admin-section {
   margin-top: 18px;
   padding: clamp(18px, 3vw, 28px);
-  box-shadow: 0 14px 44px rgba(23, 33, 29, 0.06);
+  box-shadow: 0 14px 44px rgba(47, 37, 32, 0.06);
 }
 
 .admin-grid {
@@ -226,7 +226,7 @@ textarea { min-height: 92px; padding: 12px; resize: vertical; }
 select:focus,
 input:focus,
 textarea:focus {
-  outline: 3px solid rgba(12, 143, 122, 0.22);
+  outline: 3px solid rgba(155, 118, 85, 0.24);
   border-color: var(--mint);
 }
 
@@ -260,17 +260,17 @@ textarea:focus {
   min-height: 32px;
   padding: 0 10px;
   border-radius: 999px;
-  background: #e2f3ee;
+  background: #efe3d8;
   color: var(--mint-dark);
   font-weight: 800;
   font-size: 0.82rem;
   white-space: nowrap;
 }
 
-.status-pill.cancelado { background: #f8e1db; color: var(--danger); }
-.status-pill.concluido { background: #ecf0f7; color: #365b8c; }
-.status-pill.confirmado { background: #fff1d0; color: #7a5814; }
-.status-pill.em_atendimento { background: #e6f5f2; color: var(--mint-dark); }
+.status-pill.cancelado { background: #f4ded6; color: var(--danger); }
+.status-pill.concluido { background: #e4e6e0; color: #59645e; }
+.status-pill.confirmado { background: #f3e2c9; color: #7c5730; }
+.status-pill.em_atendimento { background: #efe3d8; color: var(--mint-dark); }
 
 .demand-controls {
   display: grid;

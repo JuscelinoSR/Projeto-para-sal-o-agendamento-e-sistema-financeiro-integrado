@@ -59,3 +59,6 @@ Funções do admin:
 - exportar os dados locais em JSON.
 
 Nesta versão MVP, os dados ficam salvos no `localStorage` do navegador. A próxima etapa é migrar essas informações para Supabase.
+## Paleta visual
+
+A identidade visual do MVP foi ajustada a partir da referência do salão: off-white iluminado, blush quente, taupe/sálvia, cobre e marrom profundo.
