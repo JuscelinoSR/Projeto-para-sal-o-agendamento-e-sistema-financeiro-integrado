@@ -83,12 +83,12 @@
       <div class="scheduler-layout chat-scheduler" data-scheduler>
         <form class="booking-form chatbox" data-booking-form>
           <ol class="booking-progress" aria-label="Etapas do agendamento">
-            <li class="is-active" data-progress-step="type">Tipo</li>
-            <li data-progress-step="details">Serviço</li>
+            <li data-progress-step="type">Tipo</li>
+            <li class="is-active" data-progress-step="details">Serviço</li>
             <li data-progress-step="schedule">Agenda</li>
             <li data-progress-step="contact">Contato</li>
           </ol>
-          <div class="booking-screen is-active" data-booking-screen="type">
+          <div class="booking-screen" data-booking-screen="type">
             <div class="chat-thread" aria-live="polite">
               <div class="chat-message bot">
                 <span>1</span>
@@ -111,13 +111,17 @@
             </fieldset>
           </div>
 
-          <div class="booking-screen" data-booking-screen="details">
+          <div class="booking-screen is-active" data-booking-screen="details">
             <div class="screen-header">
               <button class="button secondary small" type="button" data-prev-screen="type">Voltar</button>
               <div>
-                <p class="eyebrow">Escolha</p>
+                <p class="eyebrow">Serviços</p>
                 <h3 data-screen-title>Escolha um combo ou personalize</h3>
               </div>
+            </div>
+            <div class="service-mode-switch" aria-label="Escolha o modo dos serviços">
+              <button class="is-active" type="button" data-booking-mode="combo">Combo pronto</button>
+              <button type="button" data-booking-mode="custom">Personalizado</button>
             </div>
 
             <fieldset class="booking-panel is-active" data-booking-panel="combo" role="tabpanel">

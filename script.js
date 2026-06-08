@@ -203,6 +203,7 @@ const serviceOptions = document.querySelector('[data-service-options]');
 const comboOptions = document.querySelector('[data-combo-options]');
 const customServiceOptions = document.querySelector('[data-custom-service-options]');
 const bookingPanels = document.querySelectorAll('[data-booking-panel]');
+const bookingModeButtons = document.querySelectorAll('[data-booking-mode]');
 const bookingScreens = document.querySelectorAll('[data-booking-screen]');
 const screenTitle = document.querySelector('[data-screen-title]');
 const progressSteps = document.querySelectorAll('[data-progress-step]');
@@ -539,6 +540,10 @@ function updateBookingPanels() {
     panel.classList.toggle('is-active', panel.dataset.bookingPanel === bookingType);
   });
 
+  bookingModeButtons.forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.bookingMode === bookingType);
+  });
+
   if (screenTitle) {
     screenTitle.textContent = {
       combo: 'Combos prontos',
@@ -659,6 +664,7 @@ function openWhatsApp() {
 ensureSeedData();
 renderOptions();
 renderCalendar();
+showBookingScreen('details');
 updateSummary();
 
 bookingForm?.addEventListener('input', updateSummary);
@@ -672,6 +678,7 @@ bookingForm?.addEventListener('change', (event) => {
 
 scheduler?.addEventListener('click', (event) => {
   const typeTab = event.target.closest('.booking-tab');
+  const modeButton = event.target.closest('[data-booking-mode]');
   const nextButton = event.target.closest('[data-next-screen]');
   const prevButton = event.target.closest('[data-prev-screen]');
   const calendarDateButton = event.target.closest('[data-calendar-date]');
@@ -687,6 +694,13 @@ scheduler?.addEventListener('click', (event) => {
     }
   }
 
+  if (modeButton) {
+    const input = bookingForm?.querySelector(`input[name="bookingType"][value="${modeButton.dataset.bookingMode}"]`);
+    if (input) {
+      input.checked = true;
+      updateSummary();
+    }
+  }
   if (calendarDateButton) {
     selectedAppointmentDate = calendarDateButton.dataset.calendarDate;
     renderCalendar();
