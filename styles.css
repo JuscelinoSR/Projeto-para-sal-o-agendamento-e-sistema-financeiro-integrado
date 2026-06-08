@@ -1029,3 +1029,85 @@ h3 {
     min-width: 0;
   }
 }
+
+/* Chatbox booking flow */
+.chat-scheduler {
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+}
+
+.chatbox {
+  gap: 18px;
+}
+
+.chat-thread {
+  display: grid;
+  gap: 12px;
+}
+
+.chat-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.chat-message span {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #fff;
+  font-weight: 800;
+}
+
+.chat-message p {
+  max-width: 620px;
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.chat-message.slim p {
+  background: #fbf5f1;
+}
+
+.service-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.choice-card.compact {
+  min-height: 108px;
+}
+
+.booking-panel {
+  display: none;
+}
+
+.booking-panel.is-active {
+  display: block;
+}
+
+.field-help {
+  margin: -2px 0 14px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.choice-card input[type="checkbox"] {
+  accent-color: var(--mint);
+}
+
+@media (max-width: 980px) {
+  .chat-scheduler,
+  .service-type-grid {
+    grid-template-columns: 1fr;
+  }
+}

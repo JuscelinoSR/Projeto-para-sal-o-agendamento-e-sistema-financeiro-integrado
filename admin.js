@@ -105,6 +105,23 @@ function updateMetrics() {
   document.querySelector('[data-metric-completed]').textContent = demands.filter((item) => item.status === 'concluido').length;
 }
 
+function getBookingTypeLabel(type) {
+  const labels = {
+    individual: 'Serviço individual',
+    combo: 'Combo pronto',
+    custom: 'Combo personalizado',
+  };
+
+  return labels[type] ?? labels.individual;
+}
+
+function renderDemandItems(demand) {
+  if (!Array.isArray(demand.serviceItems) || !demand.serviceItems.length) {
+    return '';
+  }
+
+  return `<p><strong>Itens:</strong> ${escapeHtml(demand.serviceItems.join(' + '))}</p>`;
+}
 function renderDemands() {
   const selectedStatus = statusFilter?.value ?? 'todos';
   const demands = getDemands()
@@ -129,7 +146,9 @@ function renderDemands() {
         </div>
         <span class="status-pill ${escapeHtml(demand.status)}">${statusLabels[demand.status] ?? demand.status}</span>
       </div>
+      <p><strong>Tipo:</strong> ${escapeHtml(getBookingTypeLabel(demand.bookingType))}</p>
       <p><strong>Serviço:</strong> ${escapeHtml(demand.serviceName)} • ${escapeHtml(demand.servicePrice)} • ${escapeHtml(demand.serviceDuration)}</p>
+      ${renderDemandItems(demand)}
       <p><strong>Profissional:</strong> ${escapeHtml(demand.professionalName)}</p>
       <p><strong>Período:</strong> ${escapeHtml(demand.period)}</p>
       <p><strong>Observação:</strong> ${escapeHtml(demand.notes || 'Sem observação')}</p>

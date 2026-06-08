@@ -86,16 +86,57 @@
     <section class="scheduler-section" id="agendamento">
       <div class="section-heading">
         <p class="eyebrow">Agendamento MVP</p>
-        <h2>Escolha o serviço e gere uma mensagem pronta</h2>
-        <p>Este fluxo simula a primeira função do BeautyJSR Agenda: o cliente escolhe serviço, profissional e período preferido, e o sistema monta a mensagem para iniciar o atendimento pelo WhatsApp.</p>
+        <h2>Monte seu atendimento pelo chat</h2>
+        <p>Escolha um serviço individual, um combo pronto ou personalize seu próprio combo. No final, o chat monta a mensagem para iniciar o atendimento no WhatsApp.</p>
       </div>
 
-      <div class="scheduler-layout" data-scheduler>
-        <form class="booking-form" data-booking-form>
+      <div class="scheduler-layout chat-scheduler" data-scheduler>
+        <form class="booking-form chatbox" data-booking-form>
+          <div class="chat-thread" aria-live="polite">
+            <div class="chat-message bot">
+              <span>1</span>
+              <p>Olá! Como você quer montar seu agendamento hoje?</p>
+            </div>
+          </div>
+
           <fieldset>
-            <legend>Serviço</legend>
+            <legend>Tipo de atendimento</legend>
+            <div class="service-type-grid" data-service-type-options>
+              <label class="choice-card compact">
+                <input type="radio" name="bookingType" value="individual" checked>
+                <span><strong>Serviço individual</strong><small>Escolha um serviço do salão.</small></span>
+              </label>
+              <label class="choice-card compact">
+                <input type="radio" name="bookingType" value="combo">
+                <span><strong>Combo pronto</strong><small>Pacotes sugeridos pelo salão.</small></span>
+              </label>
+              <label class="choice-card compact">
+                <input type="radio" name="bookingType" value="custom">
+                <span><strong>Combo personalizado</strong><small>Monte com os serviços que desejar.</small></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="booking-panel is-active" data-booking-panel="individual">
+            <legend>Serviços disponíveis</legend>
             <div class="option-grid" data-service-options></div>
           </fieldset>
+
+          <fieldset class="booking-panel" data-booking-panel="combo">
+            <legend>Combos prontos</legend>
+            <div class="option-grid" data-combo-options></div>
+          </fieldset>
+
+          <fieldset class="booking-panel" data-booking-panel="custom">
+            <legend>Monte seu combo</legend>
+            <p class="field-help">Selecione dois ou mais serviços para criar um atendimento personalizado.</p>
+            <div class="option-grid" data-custom-service-options></div>
+          </fieldset>
+
+          <div class="chat-message bot slim">
+            <span>2</span>
+            <p>Agora escolha com quem deseja ser atendida e o melhor período.</p>
+          </div>
 
           <fieldset>
             <legend>Profissional</legend>
@@ -111,6 +152,11 @@
             </div>
           </fieldset>
 
+          <div class="chat-message bot slim">
+            <span>3</span>
+            <p>Para finalizar, informe seu nome e alguma preferência de horário.</p>
+          </div>
+
           <label class="field-label" for="client-name">Seu nome</label>
           <input id="client-name" name="clientName" type="text" autocomplete="name" placeholder="Ex.: Maria Silva" data-client-name>
 
@@ -121,7 +167,7 @@
         </form>
 
         <aside class="booking-summary" aria-live="polite">
-          <p class="eyebrow">Resumo</p>
+          <p class="eyebrow">Resumo do chat</p>
           <h3 data-summary-title>Agendamento em construção</h3>
           <p data-summary-copy>Selecione as opções para ver a mensagem que será enviada.</p>
           <div class="summary-box" data-message-preview></div>
