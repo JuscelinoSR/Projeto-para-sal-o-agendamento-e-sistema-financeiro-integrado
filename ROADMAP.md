@@ -14,6 +14,7 @@ Funcionalidades do MVP:
 - Fluxo simples de solicitação de agendamento.
 - Botão de contato pelo WhatsApp.
 - Fluxo interativo para selecionar serviço, profissional e período.
+- Admin Macro MVP para editar serviços, profissionais e demandas.
 - Estrutura inicial para painel administrativo.
 - Design responsivo para celular e desktop.
 
@@ -86,4 +87,5 @@ Prioridade atual:
 2. Criar a seção de serviços reais.
 3. Criar a seção de profissionais.
 4. Criar botão de WhatsApp com mensagem pronta.
-5. Preparar a próxima migração para app Next.js.
+5. Migrar demandas, serviços e profissionais do `localStorage` para Supabase.
+6. Preparar a próxima migração para app Next.js.

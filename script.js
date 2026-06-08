@@ -2,7 +2,13 @@ const menuButton = document.querySelector('[data-menu-button]');
 const mobileNav = document.querySelector('[data-mobile-nav]');
 const header = document.querySelector('[data-elevate]');
 
-const services = [
+const storageKeys = {
+  services: 'beautyjsr.services',
+  professionals: 'beautyjsr.professionals',
+  demands: 'beautyjsr.demands',
+};
+
+const defaultServices = [
   {
     id: 'corte-escova',
     name: 'Corte + escova',
@@ -23,7 +29,7 @@ const services = [
   },
 ];
 
-const professionals = [
+const defaultProfessionals = [
   {
     id: 'ana-souza',
     name: 'Ana Souza',
@@ -41,6 +47,9 @@ const professionals = [
   },
 ];
 
+let services = readCollection(storageKeys.services, defaultServices);
+let professionals = readCollection(storageKeys.professionals, defaultProfessionals);
+
 const whatsappPhone = '5564999625616';
 const serviceOptions = document.querySelector('[data-service-options]');
 const professionalOptions = document.querySelector('[data-professional-options]');
@@ -50,6 +59,34 @@ const summaryCopy = document.querySelector('[data-summary-copy]');
 const messagePreview = document.querySelector('[data-message-preview]');
 const clientNameInput = document.querySelector('[data-client-name]');
 const clientNotesInput = document.querySelector('[data-client-notes]');
+
+function readCollection(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) ?? 'null');
+    return Array.isArray(value) ? value : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeCollection(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function ensureSeedData() {
+  if (!localStorage.getItem(storageKeys.services)) {
+    writeCollection(storageKeys.services, defaultServices);
+  }
+
+  if (!localStorage.getItem(storageKeys.professionals)) {
+    writeCollection(storageKeys.professionals, defaultProfessionals);
+  }
+}
+
+function refreshEditableData() {
+  services = readCollection(storageKeys.services, defaultServices);
+  professionals = readCollection(storageKeys.professionals, defaultProfessionals);
+}
 
 function closeMenu() {
   document.body.classList.remove('menu-open');
@@ -72,6 +109,8 @@ function updateHeader() {
 }
 
 function renderOptions() {
+  refreshEditableData();
+
   if (serviceOptions) {
     serviceOptions.innerHTML = services
       .map((service, index) => `
@@ -106,8 +145,9 @@ function getSelectedValue(name) {
 }
 
 function getBookingState() {
-  const selectedService = services.find((service) => service.id === getSelectedValue('service')) ?? services[0];
-  const selectedProfessional = professionals.find((professional) => professional.id === getSelectedValue('professional')) ?? professionals[0];
+  refreshEditableData();
+  const selectedService = services.find((service) => service.id === getSelectedValue('service')) ?? services[0] ?? defaultServices[0];
+  const selectedProfessional = professionals.find((professional) => professional.id === getSelectedValue('professional')) ?? professionals[0] ?? defaultProfessionals[0];
   const period = getSelectedValue('period') ?? 'Manhã';
   const clientName = clientNameInput?.value.trim() || 'Cliente';
   const notes = clientNotesInput?.value.trim();
@@ -148,12 +188,38 @@ function updateSummary() {
   messagePreview.textContent = buildMessage();
 }
 
+function saveDemand() {
+  const { selectedService, selectedProfessional, period, clientName, notes } = getBookingState();
+  const demands = readCollection(storageKeys.demands, []);
+  const now = new Date().toISOString();
+
+  demands.push({
+    id: `demand-${Date.now()}`,
+    clientName,
+    serviceId: selectedService.id,
+    serviceName: selectedService.name,
+    serviceDuration: selectedService.duration,
+    servicePrice: selectedService.price,
+    professionalId: selectedProfessional.id,
+    professionalName: selectedProfessional.name,
+    period,
+    notes,
+    status: 'novo',
+    adminNote: '',
+    createdAt: now,
+    updatedAt: now,
+  });
+
+  writeCollection(storageKeys.demands, demands);
+}
+
 function openWhatsApp() {
   const message = encodeURIComponent(buildMessage());
   const url = `https://wa.me/${whatsappPhone}?text=${message}`;
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
+ensureSeedData();
 renderOptions();
 updateSummary();
 
@@ -162,7 +228,13 @@ bookingForm?.addEventListener('change', updateSummary);
 bookingForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   updateSummary();
+  saveDemand();
   openWhatsApp();
+});
+
+window.addEventListener('storage', () => {
+  renderOptions();
+  updateSummary();
 });
 
 updateHeader();

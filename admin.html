@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Admin Macro MVP do BeautyJSR para editar serviços, profissionais e demandas de agendamento.">
+  <title>BeautyJSR | Admin Macro MVP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <a class="brand" href="index.html" aria-label="Voltar para o site BeautyJSR">
+      <span class="brand-mark">B</span>
+      <span>BeautyJSR Admin</span>
+    </a>
+    <nav aria-label="Navegação do admin">
+      <a href="#demandas">Demandas</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#profissionais">Profissionais</a>
+      <a href="index.html">Site</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="admin-hero">
+      <div>
+        <p class="eyebrow">Admin Macro MVP</p>
+        <h1>Painel para editar demandas do BeautyJSR</h1>
+        <p>Gerencie os primeiros agendamentos recebidos, ajuste serviços e mantenha a lista de profissionais atualizada enquanto o produto ainda está em MVP.</p>
+      </div>
+      <div class="hero-actions">
+        <button class="button secondary" type="button" data-export>Exportar JSON</button>
+        <button class="button danger" type="button" data-clear-demo>Limpar demandas</button>
+      </div>
+    </section>
+
+    <section class="metrics-grid" aria-label="Indicadores do painel">
+      <article>
+        <span>Total</span>
+        <strong data-metric-total>0</strong>
+      </article>
+      <article>
+        <span>Novas</span>
+        <strong data-metric-new>0</strong>
+      </article>
+      <article>
+        <span>Confirmadas</span>
+        <strong data-metric-confirmed>0</strong>
+      </article>
+      <article>
+        <span>Concluídas</span>
+        <strong data-metric-completed>0</strong>
+      </article>
+    </section>
+
+    <section class="admin-section" id="demandas">
+      <div class="section-heading">
+        <p class="eyebrow">Demandas</p>
+        <h2>Agendamentos recebidos</h2>
+        <p>As demandas são criadas quando um cliente usa o fluxo de agendamento do site neste mesmo navegador.</p>
+      </div>
+      <div class="filter-row">
+        <label for="status-filter">Filtrar status</label>
+        <select id="status-filter" data-status-filter>
+          <option value="todos">Todos</option>
+          <option value="novo">Novo</option>
+          <option value="em_atendimento">Em atendimento</option>
+          <option value="confirmado">Confirmado</option>
+          <option value="concluido">Concluído</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+      <div class="demand-list" data-demand-list></div>
+    </section>
+
+    <section class="admin-grid">
+      <section class="admin-section" id="servicos">
+        <div class="section-heading compact">
+          <p class="eyebrow">Catálogo</p>
+          <h2>Serviços</h2>
+        </div>
+        <form class="editor-form" data-service-form>
+          <input type="hidden" name="id">
+          <label>Nome <input name="name" type="text" required placeholder="Ex.: Corte + escova"></label>
+          <label>Duração <input name="duration" type="text" required placeholder="Ex.: 60 min"></label>
+          <label>Preço <input name="price" type="text" required placeholder="Ex.: R$ 120"></label>
+          <div class="form-actions">
+            <button class="button primary" type="submit">Salvar serviço</button>
+            <button class="button secondary" type="button" data-service-cancel>Cancelar</button>
+          </div>
+        </form>
+        <div class="admin-list" data-service-list></div>
+      </section>
+
+      <section class="admin-section" id="profissionais">
+        <div class="section-heading compact">
+          <p class="eyebrow">Equipe</p>
+          <h2>Profissionais</h2>
+        </div>
+        <form class="editor-form" data-professional-form>
+          <input type="hidden" name="id">
+          <label>Nome <input name="name" type="text" required placeholder="Ex.: Ana Souza"></label>
+          <label>Especialidade <input name="specialty" type="text" required placeholder="Ex.: Cabelos e finalização"></label>
+          <div class="form-actions">
+            <button class="button primary" type="submit">Salvar profissional</button>
+            <button class="button secondary" type="button" data-professional-cancel>Cancelar</button>
+          </div>
+        </form>
+        <div class="admin-list" data-professional-list></div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="admin-footer">
+    <span>BeautyJSR Admin Macro MVP</span>
+    <span>Dados locais no navegador</span>
+  </footer>
+
+  <script src="admin.js"></script>
+</body>
+</html>

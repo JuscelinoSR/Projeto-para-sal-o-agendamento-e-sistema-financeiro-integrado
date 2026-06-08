@@ -45,3 +45,17 @@ Se o primeiro deploy pedir habilitação no GitHub, abra o repositório em Setti
 - Geração de mensagem pronta para WhatsApp.
 
 WhatsApp configurado para o MVP: `5564999625616`.
+## Admin Macro MVP
+
+O projeto agora possui um painel administrativo inicial em [admin.html](admin.html).
+
+Funções do admin:
+
+- visualizar demandas de agendamento criadas no site;
+- alterar status da demanda: novo, em atendimento, confirmado, concluído ou cancelado;
+- adicionar nota interna da equipe;
+- cadastrar, editar e excluir serviços;
+- cadastrar, editar e excluir profissionais;
+- exportar os dados locais em JSON.
+
+Nesta versão MVP, os dados ficam salvos no `localStorage` do navegador. A próxima etapa é migrar essas informações para Supabase.
