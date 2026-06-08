@@ -1782,3 +1782,19 @@ body::before {
   color: var(--ink);
   text-transform: capitalize;
 }
+.inline-schedule-next {
+  justify-self: start;
+  min-height: 56px;
+  padding: 0 26px;
+  border-color: #050505;
+  background: #050505;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+@media (max-width: 680px) {
+  .inline-schedule-next {
+    width: 100%;
+  }
+}
