@@ -173,17 +173,17 @@ function mergeMissingItems(currentItems, defaults) {
 }
 function ensureSeedData() {
   const catalogVersion = '2026-06-salao-completo';
+  const storedServices = readCollection(storageKeys.services, []);
+  const storedProfessionals = readCollection(storageKeys.professionals, []);
+  const shouldRefreshServices = !storedServices.length || localStorage.getItem(storageKeys.serviceCatalogVersion) !== catalogVersion;
 
-  if (!localStorage.getItem(storageKeys.services)) {
-    writeCollection(storageKeys.services, defaultServices);
-    localStorage.setItem(storageKeys.serviceCatalogVersion, catalogVersion);
-  } else if (localStorage.getItem(storageKeys.serviceCatalogVersion) !== catalogVersion) {
-    const mergedServices = mergeMissingItems(readCollection(storageKeys.services, []), defaultServices);
-    writeCollection(storageKeys.services, mergedServices);
+  if (shouldRefreshServices) {
+    const mergedServices = mergeMissingItems(storedServices, defaultServices);
+    writeCollection(storageKeys.services, mergedServices.length ? mergedServices : defaultServices);
     localStorage.setItem(storageKeys.serviceCatalogVersion, catalogVersion);
   }
 
-  if (!localStorage.getItem(storageKeys.professionals)) {
+  if (!storedProfessionals.length) {
     writeCollection(storageKeys.professionals, defaultProfessionals);
   }
 }

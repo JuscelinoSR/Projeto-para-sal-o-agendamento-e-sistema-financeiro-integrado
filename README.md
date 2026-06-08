@@ -1,83 +1,66 @@
-# Projeto para salão: agendamento e sistema financeiro integrado
+# BeautyJSR / Salão Larissa MVP
 
-SaaS de agendamento para salões femininos via WhatsApp. Site elegante + assistente virtual "Ana" com fluxo de 3 cliques, sem digitar. Painel administrativo com dashboard e QR Code para conectar o WhatsApp. Stack planejada: Next.js, TypeScript, Tailwind, Supabase. Design acolhedor e mobile-first.
+Site e MVP de agendamento para salão feminino, com atendimento guiado, serviços editáveis, calendário de agendamento, resumo automático e envio para WhatsApp.
 
-## Divisão do projeto
+## Estado atual
 
-O BeautyJSR será construído em 3 etapas:
+O MVP publicado já possui:
 
-1. MVP de agendamento: site, serviços, profissionais e contato pelo WhatsApp.
-2. Operação do salão: agenda, clientes, histórico, serviços e financeiro inicial.
-3. Plataforma SaaS: multiempresa, white label, CRM, fidelidade, estoque, comissões, LGPD e billing.
-
-## Primeira opção de MVP
-
-A primeira opção recomendada é o **BeautyJSR Agenda**, um MVP simples para validar o produto com salões reais.
-
-Inclui:
-
-- landing page profissional;
-- lista de serviços;
-- lista de profissionais;
-- chamada para agendamento pelo WhatsApp;
-- prévia visual do painel;
-- base para evoluir depois para Next.js e Supabase.
-
-Veja o planejamento completo em [ROADMAP.md](ROADMAP.md).
+- página principal em abas, sem rolagem longa entre áreas principais;
+- visual do Salão Larissa com foto de fundo editável;
+- fluxo de agendamento direto na aba Serviços;
+- seleção entre Combo pronto e Personalizado;
+- seleção de vários procedimentos no modo personalizado, com soma automática do valor;
+- calendário visual para escolher a data do atendimento;
+- seleção de profissional e período;
+- resumo automático do agendamento;
+- mensagem pronta para WhatsApp;
+- Admin Macro MVP para demandas, serviços, profissionais e personalização visual;
+- modelo inicial de autenticação do admin com Supabase Auth;
+- base Supabase para notificação WhatsApp Admin de agendamentos pendentes.
 
 ## Publicação
 
-O site está configurado para publicação pelo GitHub Pages usando GitHub Actions.
-
-URL prevista após o deploy:
+Site publicado pelo GitHub Pages:
 
 https://juscelinosr.github.io/Projeto-para-sal-o-agendamento-e-sistema-financeiro-integrado/
 
-Se o primeiro deploy pedir habilitação no GitHub, abra o repositório em Settings > Pages e selecione GitHub Actions como fonte de publicação.
-## Funções implementadas no MVP
+A publicação usa GitHub Actions e o arquivo `.nojekyll` para servir os assets estáticos corretamente.
 
-- Seleção de serviço.
-- Seleção de profissional.
-- Seleção de período preferido.
-- Campo para nome do cliente.
-- Campo de observação.
-- Resumo automático do agendamento.
-- Geração de mensagem pronta para WhatsApp.
+## Fluxo de agendamento
+
+1. O cliente abre a aba Serviços.
+2. Escolhe Combo pronto ou Personalizado.
+3. No Personalizado, pode marcar mais de um procedimento.
+4. O resumo calcula e mostra o valor total.
+5. O cliente clica em Continuar para agendamento.
+6. Escolhe a data no calendário, profissional e período.
+7. Informa nome e observação.
+8. Envia a mensagem pronta para o WhatsApp.
 
 WhatsApp configurado para o MVP: `5564999625616`.
+
 ## Admin Macro MVP
 
-O projeto agora possui um painel administrativo inicial em [admin.html](admin.html).
+Painel administrativo inicial: `admin.html`.
 
-Funções do admin:
+Funções disponíveis:
 
-- visualizar demandas de agendamento criadas no site;
-- alterar status da demanda: novo, em atendimento, confirmado, concluído ou cancelado;
-- adicionar nota interna da equipe;
+- visualizar demandas criadas no site;
+- acompanhar data, período, profissional, serviço e observação;
+- alterar status da demanda;
+- adicionar nota interna;
 - cadastrar, editar e excluir serviços;
 - cadastrar, editar e excluir profissionais;
-- exportar os dados locais em JSON.
+- editar nome do salão, texto da página, CTA e foto de fundo;
+- enviar foto a partir do dispositivo do usuário;
+- exportar dados locais em JSON.
 
-Nesta versão MVP, os dados ficam salvos no `localStorage` do navegador. A próxima etapa é migrar essas informações para Supabase.
-## Paleta visual
+Nesta versão MVP, os dados ficam no `localStorage` do navegador. A próxima etapa é migrar demandas, serviços, profissionais e configurações visuais para Supabase.
 
-A identidade visual do MVP foi ajustada a partir da referência do salão: off-white iluminado, blush quente, taupe/sálvia, cobre e marrom profundo.
-## Notificação WhatsApp Admin
-
-Foi adicionada a base Supabase para notificar o admin do Salão Larissa a cada 5 minutos sobre agendamentos pendentes, com limite de 6 tentativas e parada automática quando o status muda.
-
-Documentação: [docs/whatsapp-admin-notifications.md](docs/whatsapp-admin-notifications.md)
-
-Arquivos principais:
-
-- `supabase/migrations/20260608120000_create_appointments_notifications.sql`
-- `supabase/functions/notify-pending-appointments/index.ts`
-- `supabase/sql/schedule_notify_pending_appointments.sql`
 ## Autenticação Admin
 
-Foi criado o modelo de autenticação do painel administrativo com Supabase Auth, e-mail e senha.
-
-Documentação: [docs/admin-auth-model.md](docs/admin-auth-model.md)
+Modelo criado com Supabase Auth, e-mail e senha.
 
 Arquivos principais:
 
@@ -85,3 +68,26 @@ Arquivos principais:
 - `auth.js`
 - `supabase-config.js`
 - `supabase/migrations/20260608130000_create_admin_auth_model.sql`
+- `docs/admin-auth-model.md`
+
+Observação: `supabase-config.js` ainda precisa receber a URL e a anon key reais do projeto Supabase para ativar a autenticação em produção.
+
+## Notificação WhatsApp Admin
+
+Base criada para notificar o admin do Salão Larissa a cada 5 minutos sobre agendamentos pendentes, com limite de 6 tentativas e parada automática quando o status muda.
+
+Documentação: `docs/whatsapp-admin-notifications.md`.
+
+Arquivos principais:
+
+- `supabase/migrations/20260608120000_create_appointments_notifications.sql`
+- `supabase/functions/notify-pending-appointments/index.ts`
+- `supabase/sql/schedule_notify_pending_appointments.sql`
+
+## Próximos passos
+
+- Conectar Supabase real no `supabase-config.js`.
+- Migrar dados do `localStorage` para tabelas Supabase.
+- Implementar agenda com horários reais por profissional.
+- Conectar envio de notificação WhatsApp Admin.
+- Transformar o MVP estático em app Next.js quando a validação visual estiver aprovada.
