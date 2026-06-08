@@ -69,18 +69,30 @@
     </section>
     <section class="scheduler-section" id="agendamento" data-page="agendamento">
       <div class="section-heading">
-        <p class="eyebrow">Agendamento MVP</p>
-        <h2>Monte seu atendimento pelo chat</h2>
-        <p>Escolha um serviço individual, um combo pronto ou personalize seu próprio combo. No final, o chat monta a mensagem para iniciar o atendimento no WhatsApp.</p>
+        <p class="eyebrow">Serviços</p>
+        <h2>Escolha o cuidado ideal para hoje</h2>
+        <p>Navegue por uma experiência simples: selecione o tipo de atendimento, escolha o serviço, defina profissional e período, e envie tudo pronto para o WhatsApp.</p>
+      </div>
+
+      <div class="service-highlights" aria-label="Destaques dos serviços">
+        <span>Atendimento feminino</span>
+        <span>Combos sob medida</span>
+        <span>Confirmação pelo WhatsApp</span>
       </div>
 
       <div class="scheduler-layout chat-scheduler" data-scheduler>
         <form class="booking-form chatbox" data-booking-form>
+          <ol class="booking-progress" aria-label="Etapas do agendamento">
+            <li class="is-active" data-progress-step="type">Tipo</li>
+            <li data-progress-step="details">Serviço</li>
+            <li data-progress-step="schedule">Agenda</li>
+            <li data-progress-step="contact">Contato</li>
+          </ol>
           <div class="booking-screen is-active" data-booking-screen="type">
             <div class="chat-thread" aria-live="polite">
               <div class="chat-message bot">
                 <span>1</span>
-                <p>Olá! Como você quer montar seu agendamento hoje?</p>
+                <p>Olá! Primeiro escolha como deseja montar seu atendimento.</p>
               </div>
             </div>
 
@@ -89,15 +101,15 @@
               <div class="booking-tabs" role="tablist" aria-label="Tipo de atendimento" data-service-type-options>
                 <label class="booking-tab">
                   <input type="radio" name="bookingType" value="individual" checked>
-                  <span>Individual</span>
+                  <span><strong>Individual</strong><small>Um cuidado específico</small></span>
                 </label>
                 <label class="booking-tab">
                   <input type="radio" name="bookingType" value="combo">
-                  <span>Combo pronto</span>
+                  <span><strong>Combo pronto</strong><small>Pacotes do salão</small></span>
                 </label>
                 <label class="booking-tab">
                   <input type="radio" name="bookingType" value="custom">
-                  <span>Personalizado</span>
+                  <span><strong>Personalizado</strong><small>Você combina</small></span>
                 </label>
               </div>
             </fieldset>
@@ -128,7 +140,7 @@
               <div class="option-grid" data-custom-service-options></div>
             </fieldset>
 
-            <button class="button primary booking-next" type="button" data-next-screen="schedule">Continuar</button>
+            <button class="button primary booking-next" type="button" data-next-screen="schedule">Continuar para agenda</button>
           </div>
 
           <div class="booking-screen" data-booking-screen="schedule">
@@ -154,7 +166,7 @@
               </div>
             </fieldset>
 
-            <button class="button primary booking-next" type="button" data-next-screen="contact">Continuar</button>
+            <button class="button primary booking-next" type="button" data-next-screen="contact">Continuar para contato</button>
           </div>
 
           <div class="booking-screen" data-booking-screen="contact">
@@ -172,14 +184,14 @@
             <label class="field-label" for="client-notes">Observação</label>
             <textarea id="client-notes" name="notes" rows="4" placeholder="Ex.: prefiro sábado ou horário após 14h" data-client-notes></textarea>
 
-            <button class="button primary booking-submit" type="submit">Abrir WhatsApp</button>
+            <button class="button primary booking-submit" type="submit">Enviar para WhatsApp</button>
           </div>
         </form>
 
         <aside class="booking-summary" aria-live="polite">
-          <p class="eyebrow">Resumo do chat</p>
+          <p class="eyebrow">Resumo</p>
           <h3 data-summary-title>Agendamento em construção</h3>
-          <p data-summary-copy>Selecione as opções para ver a mensagem que será enviada.</p>
+          <p data-summary-copy>Seu atendimento aparecerá aqui conforme você escolhe.</p>
           <div class="summary-box" data-message-preview></div>
         </aside>
       </div>

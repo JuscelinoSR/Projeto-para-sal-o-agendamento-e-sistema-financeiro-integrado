@@ -120,6 +120,7 @@ const customServiceOptions = document.querySelector('[data-custom-service-option
 const bookingPanels = document.querySelectorAll('[data-booking-panel]');
 const bookingScreens = document.querySelectorAll('[data-booking-screen]');
 const screenTitle = document.querySelector('[data-screen-title]');
+const progressSteps = document.querySelectorAll('[data-progress-step]');
 const bookingForm = document.querySelector('[data-booking-form]');
 const summaryTitle = document.querySelector('[data-summary-title]');
 const summaryCopy = document.querySelector('[data-summary-copy]');
@@ -372,6 +373,14 @@ function showBookingScreen(screenName) {
   bookingScreens.forEach((screen) => {
     screen.classList.toggle('is-active', screen.dataset.bookingScreen === screenName);
   });
+
+  const order = ['type', 'details', 'schedule', 'contact'];
+  const activeIndex = order.indexOf(screenName);
+  progressSteps.forEach((step) => {
+    const stepIndex = order.indexOf(step.dataset.progressStep);
+    step.classList.toggle('is-active', stepIndex === activeIndex);
+    step.classList.toggle('is-complete', stepIndex >= 0 && stepIndex < activeIndex);
+  });
 }
 
 function getBookingState() {
@@ -404,7 +413,7 @@ function getBookingTypeLabel(type) {
 function buildMessage() {
   const { selectedPackage, selectedProfessional, period, clientName, notes } = getBookingState();
   const lines = [
-    `Olá, sou ${clientName}. Quero agendar pelo BeautyJSR Agenda.`,
+    `Olá, sou ${clientName}. Quero agendar pelo site do Salão Larissa.`,
     `Tipo: ${getBookingTypeLabel(selectedPackage.bookingType)}.`,
     `Escolha: ${selectedPackage.name} (${selectedPackage.duration}, ${selectedPackage.price}).`,
     `Itens: ${selectedPackage.items.join(' + ')}.`,
