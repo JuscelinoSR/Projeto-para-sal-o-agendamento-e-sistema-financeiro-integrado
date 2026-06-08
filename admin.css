@@ -402,3 +402,68 @@ textarea:focus {
   cursor: not-allowed;
   opacity: 0.65;
 }
+/* Site customization editor */
+.site-editor-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.site-editor-form {
+  align-content: start;
+}
+
+.form-hint {
+  margin: -4px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.site-preview {
+  min-height: 520px;
+  display: grid;
+  align-items: center;
+  padding: clamp(24px, 4vw, 44px);
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(47, 37, 32, 0.58), rgba(47, 37, 32, 0.08)), url("assets/salao-cores.jpeg") center / cover no-repeat;
+  color: #fff;
+  overflow: hidden;
+}
+
+.site-preview > div {
+  max-width: 560px;
+}
+
+.site-preview span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.site-preview strong {
+  display: block;
+  margin-top: 32px;
+  font-size: clamp(2.4rem, 6vw, 5.2rem);
+  line-height: 1.02;
+  text-shadow: 0 3px 28px rgba(0, 0, 0, 0.48);
+}
+
+.site-preview p {
+  max-width: 520px;
+  color: #fff;
+  font-size: 1.18rem;
+  line-height: 1.5;
+  text-shadow: 0 3px 24px rgba(0, 0, 0, 0.48);
+}
+
+@media (max-width: 900px) {
+  .site-editor-grid {
+    grid-template-columns: 1fr;
+  }
+}

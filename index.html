@@ -12,7 +12,7 @@
 </head>
 <body>
   <header class="site-header" data-elevate>
-    <a class="brand" href="#top" aria-label="Salão Larissa início">Salão Larissa</a>
+    <a class="brand" href="#top" aria-label="Salão Larissa início" data-site-brand>Salão Larissa</a>
     <nav class="desktop-nav" aria-label="Navegação principal">
       <a href="#produto">Início</a>
       <a href="#agendamento">Serviços</a>
@@ -21,7 +21,7 @@
       <a href="#contato">Contato</a>
       <a href="admin.html">Admin</a>
     </nav>
-    <a class="header-action" href="#agendamento">Agendar com Ana</a>
+    <a class="header-action" href="#agendamento" data-site-cta>Agendar com Ana</a>
     <button class="menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" data-menu-button>
       <span></span>
       <span></span>
@@ -41,9 +41,9 @@
   <main id="top">
     <section class="hero salon-hero is-page-active" id="produto" data-page="produto">
       <div class="hero-copy">
-        <p class="hero-badge" aria-label="Categoria do salão"><span>✦</span> Salão feminino</p>
-        <h1>Seu momento de cuidado.</h1>
-        <p class="hero-lede">Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.</p>
+        <p class="hero-badge" aria-label="Categoria do salão"><span>✦</span> <span data-hero-badge>Salão feminino</span></p>
+        <h1 data-hero-title>Seu momento de cuidado.</h1>
+        <p class="hero-lede" data-hero-subtitle>Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.</p>
       </div>
     </section>
     <section class="trust-band" aria-label="Segmentos atendidos" data-page="apoio">
@@ -304,7 +304,7 @@
   </main>
 
   <footer class="site-footer">
-    <span>Salão Larissa</span>
+    <span data-site-brand-footer>Salão Larissa</span>
     <a href="admin.html">Painel admin</a>
   </footer>
 

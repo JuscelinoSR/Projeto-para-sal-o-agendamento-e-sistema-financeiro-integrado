@@ -8,8 +8,45 @@ const storageKeys = {
   services: 'beautyjsr.services',
   professionals: 'beautyjsr.professionals',
   demands: 'beautyjsr.demands',
+  siteSettings: 'beautyjsr.siteSettings',
 };
 
+const defaultSiteSettings = {
+  brandName: 'Salão Larissa',
+  heroBadge: 'Salão feminino',
+  heroTitle: 'Seu momento de cuidado.',
+  heroSubtitle: 'Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.',
+  ctaText: 'Agendar com Ana',
+  backgroundImage: 'assets/salao-cores.jpeg',
+};
+
+function readObject(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) ?? 'null');
+    return value && typeof value === 'object' && !Array.isArray(value) ? { ...fallback, ...value } : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function setText(selector, value) {
+  document.querySelectorAll(selector).forEach((element) => {
+    element.textContent = value;
+  });
+}
+
+function applySiteSettings() {
+  const settings = readObject(storageKeys.siteSettings, defaultSiteSettings);
+  setText('[data-site-brand]', settings.brandName);
+  setText('[data-site-brand-footer]', settings.brandName);
+  setText('[data-hero-badge]', settings.heroBadge);
+  setText('[data-hero-title]', settings.heroTitle);
+  setText('[data-hero-subtitle]', settings.heroSubtitle);
+  setText('[data-site-cta]', settings.ctaText);
+
+  document.querySelector('[data-site-brand]')?.setAttribute('aria-label', `${settings.brandName} início`);
+  document.documentElement.style.setProperty('--site-background-image', `url("${settings.backgroundImage}")`);
+}
 const defaultServices = [
   {
     id: 'corte-escova',
@@ -471,6 +508,7 @@ bookingForm?.addEventListener('submit', (event) => {
 });
 
 window.addEventListener('storage', () => {
+  applySiteSettings();
   renderOptions();
   updateSummary();
 });

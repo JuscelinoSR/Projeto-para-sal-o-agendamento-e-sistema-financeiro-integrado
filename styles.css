@@ -1490,3 +1490,34 @@ body::before {
       url("assets/salao-cores.jpeg") center / cover no-repeat !important;
   }
 }
+
+/* Editable site background source */
+:root {
+  --site-background-image: url("assets/salao-cores.jpeg");
+}
+
+body {
+  background: var(--site-background-image) center / cover fixed no-repeat !important;
+}
+
+body::before {
+  background: var(--site-background-image) center / cover no-repeat !important;
+}
+
+.salon-hero {
+  background:
+    linear-gradient(90deg, rgba(47, 37, 32, 0.58) 0%, rgba(47, 37, 32, 0.22) 48%, rgba(47, 37, 32, 0.02) 100%),
+    var(--site-background-image) center / cover no-repeat !important;
+}
+
+@media (max-width: 980px) {
+  body {
+    background: var(--site-background-image) center / cover scroll no-repeat !important;
+  }
+
+  .salon-hero {
+    background:
+      linear-gradient(180deg, rgba(47, 37, 32, 0.5) 0%, rgba(47, 37, 32, 0.12) 100%),
+      var(--site-background-image) center / cover no-repeat !important;
+  }
+}

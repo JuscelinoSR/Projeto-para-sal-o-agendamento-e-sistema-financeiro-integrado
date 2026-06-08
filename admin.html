@@ -20,7 +20,10 @@
       <a href="#demandas">Demandas</a>
       <a href="#servicos">Serviços</a>
       <a href="#profissionais">Profissionais</a>
+      <a href="#personalizar">Personalizar site</a>
       <a href="index.html">Site</a>
+      <span class="admin-user" data-admin-email>Admin</span>
+      <button class="nav-button" type="button" data-logout>Sair</button>
     </nav>
   </header>
 
@@ -112,6 +115,43 @@
         </form>
         <div class="admin-list" data-professional-list></div>
       </section>
+    </section>
+
+    <section class="admin-section site-editor-section" id="personalizar">
+      <div class="section-heading">
+        <p class="eyebrow">Personalização</p>
+        <h2>Editar tela inicial do site</h2>
+        <p>Altere textos e foto de fundo sem mexer no código. A imagem atual do salão permanece como modelo padrão e pode ser restaurada a qualquer momento.</p>
+      </div>
+
+      <div class="site-editor-grid">
+        <form class="editor-form site-editor-form" data-site-settings-form>
+          <label>Nome do salão <input name="brandName" type="text" required placeholder="Ex.: Salão Larissa"></label>
+          <label>Selo da tela inicial <input name="heroBadge" type="text" required placeholder="Ex.: Salão feminino"></label>
+          <label>Título principal <input name="heroTitle" type="text" required placeholder="Ex.: Seu momento de cuidado."></label>
+          <label>Texto de apoio <textarea name="heroSubtitle" rows="4" required placeholder="Texto que aparece abaixo do título"></textarea></label>
+          <label>Texto do botão de agenda <input name="ctaText" type="text" required placeholder="Ex.: Agendar com Ana"></label>
+
+          <label>Foto de fundo
+            <input name="backgroundImage" type="file" accept="image/*" data-site-image-input>
+          </label>
+          <p class="form-hint">Use uma foto horizontal do salão. No celular, este botão permite abrir galeria, câmera, arquivos ou apps de fotos disponíveis no dispositivo.</p>
+
+          <div class="form-actions">
+            <button class="button primary" type="submit">Salvar personalização</button>
+            <button class="button secondary" type="button" data-site-reset>Restaurar modelo</button>
+          </div>
+          <p class="auth-message" data-site-settings-message></p>
+        </form>
+
+        <aside class="site-preview" aria-label="Prévia da tela inicial" data-site-preview>
+          <div>
+            <span data-preview-badge>Salão feminino</span>
+            <strong data-preview-title>Seu momento de cuidado.</strong>
+            <p data-preview-subtitle>Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.</p>
+          </div>
+        </aside>
+      </div>
     </section>
   </main>
 

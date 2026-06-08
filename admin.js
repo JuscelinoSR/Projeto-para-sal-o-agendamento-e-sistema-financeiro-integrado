@@ -2,6 +2,7 @@ const storageKeys = {
   services: 'beautyjsr.services',
   professionals: 'beautyjsr.professionals',
   demands: 'beautyjsr.demands',
+  siteSettings: 'beautyjsr.siteSettings',
 };
 
 const defaultServices = [
@@ -32,6 +33,25 @@ const professionalForm = document.querySelector('[data-professional-form]');
 const statusFilter = document.querySelector('[data-status-filter]');
 const exportButton = document.querySelector('[data-export]');
 const clearButton = document.querySelector('[data-clear-demo]');
+const siteSettingsForm = document.querySelector('[data-site-settings-form]');
+const siteImageInput = document.querySelector('[data-site-image-input]');
+const siteResetButton = document.querySelector('[data-site-reset]');
+const siteSettingsMessage = document.querySelector('[data-site-settings-message]');
+const sitePreview = document.querySelector('[data-site-preview]');
+const previewBadge = document.querySelector('[data-preview-badge]');
+const previewTitle = document.querySelector('[data-preview-title]');
+const previewSubtitle = document.querySelector('[data-preview-subtitle]');
+
+const defaultSiteSettings = {
+  brandName: 'Salão Larissa',
+  heroBadge: 'Salão feminino',
+  heroTitle: 'Seu momento de cuidado.',
+  heroSubtitle: 'Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.',
+  ctaText: 'Agendar com Ana',
+  backgroundImage: 'assets/salao-cores.jpeg',
+};
+
+let pendingBackgroundImage = '';
 
 function readCollection(key, fallback) {
   try {
@@ -93,6 +113,87 @@ function getProfessionals() {
   return readCollection(storageKeys.professionals, defaultProfessionals);
 }
 
+
+function readObject(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) ?? 'null');
+    return value && typeof value === 'object' && !Array.isArray(value) ? { ...fallback, ...value } : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeObject(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function getSiteSettings() {
+  return readObject(storageKeys.siteSettings, defaultSiteSettings);
+}
+
+function setSiteMessage(message, type = 'success') {
+  if (!siteSettingsMessage) {
+    return;
+  }
+
+  siteSettingsMessage.textContent = message;
+  siteSettingsMessage.dataset.type = type;
+}
+
+function applyPreview(settings) {
+  if (siteSettingsForm) {
+    siteSettingsForm.elements.brandName.value = settings.brandName;
+    siteSettingsForm.elements.heroBadge.value = settings.heroBadge;
+    siteSettingsForm.elements.heroTitle.value = settings.heroTitle;
+    siteSettingsForm.elements.heroSubtitle.value = settings.heroSubtitle;
+    siteSettingsForm.elements.ctaText.value = settings.ctaText;
+  }
+
+  if (sitePreview) {
+    sitePreview.style.backgroundImage = `linear-gradient(90deg, rgba(47, 37, 32, 0.58), rgba(47, 37, 32, 0.08)), url("${settings.backgroundImage}")`;
+  }
+
+  if (previewBadge) previewBadge.textContent = settings.heroBadge;
+  if (previewTitle) previewTitle.textContent = settings.heroTitle;
+  if (previewSubtitle) previewSubtitle.textContent = settings.heroSubtitle;
+}
+
+function loadSiteSettingsEditor() {
+  const settings = getSiteSettings();
+  pendingBackgroundImage = settings.backgroundImage;
+  applyPreview(settings);
+}
+
+function readImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Não foi possível ler a imagem.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Não foi possível carregar a imagem.'));
+    image.src = src;
+  });
+}
+
+async function compressImage(file) {
+  const dataUrl = await readImageFile(file);
+  const image = await loadImage(dataUrl);
+  const maxSize = 1800;
+  const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(image.width * scale));
+  canvas.height = Math.max(1, Math.round(image.height * scale));
+  const context = canvas.getContext('2d');
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL('image/jpeg', 0.82);
+}
 function getDemands() {
   return readCollection(storageKeys.demands, []);
 }
@@ -207,6 +308,7 @@ function renderAll() {
   renderDemands();
   renderServices();
   renderProfessionals();
+  loadSiteSettingsEditor();
 }
 
 function upsertItem(key, item) {
@@ -263,6 +365,7 @@ professionalForm?.addEventListener('submit', (event) => {
 
   resetForm(professionalForm);
   renderProfessionals();
+  loadSiteSettingsEditor();
 });
 
 document.querySelector('[data-service-cancel]')?.addEventListener('click', () => resetForm(serviceForm));
@@ -318,6 +421,7 @@ document.addEventListener('click', (event) => {
   if (event.target.matches('[data-delete-professional]') && professionalItem) {
     deleteItem(storageKeys.professionals, professionalItem.dataset.itemId);
     renderProfessionals();
+  loadSiteSettingsEditor();
   }
 });
 
@@ -326,6 +430,7 @@ exportButton?.addEventListener('click', () => {
     services: getServices(),
     professionals: getProfessionals(),
     demands: getDemands(),
+    siteSettings: getSiteSettings(),
     exportedAt: new Date().toISOString(),
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -337,6 +442,67 @@ exportButton?.addEventListener('click', () => {
   URL.revokeObjectURL(url);
 });
 
+
+siteImageInput?.addEventListener('change', async () => {
+  const file = siteImageInput.files?.[0];
+  if (!file) {
+    return;
+  }
+
+  if (!file.type.startsWith('image/')) {
+    setSiteMessage('Selecione um arquivo de imagem válido.', 'error');
+    return;
+  }
+
+  setSiteMessage('Preparando prévia da imagem...');
+
+  try {
+    pendingBackgroundImage = await compressImage(file);
+    const settings = {
+      ...getSiteSettings(),
+      ...Object.fromEntries(new FormData(siteSettingsForm)),
+      backgroundImage: pendingBackgroundImage,
+    };
+    applyPreview(settings);
+    setSiteMessage('Prévia carregada. Clique em salvar para publicar no site.');
+  } catch (error) {
+    setSiteMessage(error.message, 'error');
+  }
+});
+
+siteSettingsForm?.addEventListener('input', () => {
+  const settings = {
+    ...getSiteSettings(),
+    ...Object.fromEntries(new FormData(siteSettingsForm)),
+    backgroundImage: pendingBackgroundImage || getSiteSettings().backgroundImage,
+  };
+  applyPreview(settings);
+});
+
+siteSettingsForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const data = Object.fromEntries(new FormData(siteSettingsForm));
+  const settings = {
+    ...defaultSiteSettings,
+    ...data,
+    backgroundImage: pendingBackgroundImage || defaultSiteSettings.backgroundImage,
+    updatedAt: new Date().toISOString(),
+  };
+
+  writeObject(storageKeys.siteSettings, settings);
+  applyPreview(settings);
+  setSiteMessage('Personalização salva. Abra o site para ver a atualização.');
+});
+
+siteResetButton?.addEventListener('click', () => {
+  pendingBackgroundImage = defaultSiteSettings.backgroundImage;
+  writeObject(storageKeys.siteSettings, defaultSiteSettings);
+  if (siteImageInput) {
+    siteImageInput.value = '';
+  }
+  applyPreview(defaultSiteSettings);
+  setSiteMessage('Modelo padrão restaurado.');
+});
 clearButton?.addEventListener('click', () => {
   if (confirm('Deseja limpar todas as demandas salvas neste navegador?')) {
     writeCollection(storageKeys.demands, []);
