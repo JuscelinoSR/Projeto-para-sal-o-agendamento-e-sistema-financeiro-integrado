@@ -320,7 +320,7 @@ function updateMetrics() {
 
 function getBookingTypeLabel(type) {
   const labels = {
-    individual: 'Serviço individual',
+    individual: 'Serviços avulsos',
     combo: 'Combo pronto',
     custom: 'Combo personalizado',
   };

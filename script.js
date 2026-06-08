@@ -337,7 +337,7 @@ function renderOptions() {
   if (serviceOptions) {
     serviceOptions.innerHTML = services
       .map((service, index) => renderChoice({
-        type: 'radio',
+        type: 'checkbox',
         name: 'service',
         value: service.id,
         checked: index === 0,
@@ -440,14 +440,18 @@ function getSelectedPackage() {
     };
   }
 
-  const selectedService = services.find((service) => service.id === getSelectedValue('service')) ?? services[0] ?? defaultServices[0];
+  const selectedIds = getSelectedValues('service');
+  const selectedServices = services.filter((service) => selectedIds.includes(service.id));
+  const safeServices = selectedServices.length ? selectedServices : services.slice(0, 1);
+  const total = safeServices.reduce((sum, service) => sum + parsePrice(service.price), 0);
+
   return {
     bookingType,
-    id: selectedService.id,
-    name: selectedService.name,
-    duration: selectedService.duration,
-    price: selectedService.price,
-    items: [selectedService.name],
+    id: safeServices.length === 1 ? safeServices[0].id : 'servicos-avulsos',
+    name: safeServices.length === 1 ? safeServices[0].name : 'Serviços avulsos',
+    duration: `${safeServices.length} procedimento${safeServices.length > 1 ? 's' : ''}`,
+    price: formatPrice(total),
+    items: safeServices.map((service) => service.name),
   };
 }
 
@@ -459,10 +463,10 @@ function updateBookingPanels() {
 
   if (screenTitle) {
     screenTitle.textContent = {
-      individual: 'Serviços disponíveis',
+      individual: 'Escolha um ou mais serviços',
       combo: 'Combos prontos',
       custom: 'Monte seu combo',
-    }[bookingType] ?? 'Serviços disponíveis';
+    }[bookingType] ?? 'Escolha um ou mais serviços';
   }
 }
 
@@ -499,7 +503,7 @@ function getBookingState() {
 
 function getBookingTypeLabel(type) {
   const labels = {
-    individual: 'Serviço individual',
+    individual: 'Serviços avulsos',
     combo: 'Combo pronto',
     custom: 'Combo personalizado',
   };
