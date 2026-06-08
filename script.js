@@ -79,6 +79,8 @@ const serviceOptions = document.querySelector('[data-service-options]');
 const comboOptions = document.querySelector('[data-combo-options]');
 const customServiceOptions = document.querySelector('[data-custom-service-options]');
 const bookingPanels = document.querySelectorAll('[data-booking-panel]');
+const bookingScreens = document.querySelectorAll('[data-booking-screen]');
+const screenTitle = document.querySelector('[data-screen-title]');
 const bookingForm = document.querySelector('[data-booking-form]');
 const summaryTitle = document.querySelector('[data-summary-title]');
 const summaryCopy = document.querySelector('[data-summary-copy]');
@@ -281,6 +283,20 @@ function updateBookingPanels() {
   bookingPanels.forEach((panel) => {
     panel.classList.toggle('is-active', panel.dataset.bookingPanel === bookingType);
   });
+
+  if (screenTitle) {
+    screenTitle.textContent = {
+      individual: 'Serviços disponíveis',
+      combo: 'Combos prontos',
+      custom: 'Monte seu combo',
+    }[bookingType] ?? 'Serviços disponíveis';
+  }
+}
+
+function showBookingScreen(screenName) {
+  bookingScreens.forEach((screen) => {
+    screen.classList.toggle('is-active', screen.dataset.bookingScreen === screenName);
+  });
 }
 
 function getBookingState() {
@@ -379,7 +395,36 @@ renderOptions();
 updateSummary();
 
 bookingForm?.addEventListener('input', updateSummary);
-bookingForm?.addEventListener('change', updateSummary);
+bookingForm?.addEventListener('change', (event) => {
+  updateSummary();
+
+  if (event.target.matches('input[name="bookingType"]')) {
+    showBookingScreen('details');
+  }
+});
+
+bookingForm?.addEventListener('click', (event) => {
+  const typeTab = event.target.closest('.booking-tab');
+  const nextButton = event.target.closest('[data-next-screen]');
+  const prevButton = event.target.closest('[data-prev-screen]');
+
+  if (typeTab) {
+    const input = typeTab.querySelector('input[name="bookingType"]');
+    if (input) {
+      input.checked = true;
+      updateSummary();
+      showBookingScreen('details');
+    }
+  }
+
+  if (nextButton) {
+    showBookingScreen(nextButton.dataset.nextScreen);
+  }
+
+  if (prevButton) {
+    showBookingScreen(prevButton.dataset.prevScreen);
+  }
+});
 bookingForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   updateSummary();

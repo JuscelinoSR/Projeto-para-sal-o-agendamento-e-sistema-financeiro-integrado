@@ -92,78 +92,104 @@
 
       <div class="scheduler-layout chat-scheduler" data-scheduler>
         <form class="booking-form chatbox" data-booking-form>
-          <div class="chat-thread" aria-live="polite">
-            <div class="chat-message bot">
-              <span>1</span>
-              <p>Olá! Como você quer montar seu agendamento hoje?</p>
+          <div class="booking-screen is-active" data-booking-screen="type">
+            <div class="chat-thread" aria-live="polite">
+              <div class="chat-message bot">
+                <span>1</span>
+                <p>Olá! Como você quer montar seu agendamento hoje?</p>
+              </div>
             </div>
+
+            <fieldset class="booking-tabs-group">
+              <legend>Tipo de atendimento</legend>
+              <div class="booking-tabs" role="tablist" aria-label="Tipo de atendimento" data-service-type-options>
+                <label class="booking-tab">
+                  <input type="radio" name="bookingType" value="individual" checked>
+                  <span>Individual</span>
+                </label>
+                <label class="booking-tab">
+                  <input type="radio" name="bookingType" value="combo">
+                  <span>Combo pronto</span>
+                </label>
+                <label class="booking-tab">
+                  <input type="radio" name="bookingType" value="custom">
+                  <span>Personalizado</span>
+                </label>
+              </div>
+            </fieldset>
           </div>
 
-          <fieldset class="booking-tabs-group">
-            <legend>Tipo de atendimento</legend>
-            <div class="booking-tabs" role="tablist" aria-label="Tipo de atendimento" data-service-type-options>
-              <label class="booking-tab">
-                <input type="radio" name="bookingType" value="individual" checked>
-                <span>Individual</span>
-              </label>
-              <label class="booking-tab">
-                <input type="radio" name="bookingType" value="combo">
-                <span>Combo pronto</span>
-              </label>
-              <label class="booking-tab">
-                <input type="radio" name="bookingType" value="custom">
-                <span>Personalizado</span>
-              </label>
+          <div class="booking-screen" data-booking-screen="details">
+            <div class="screen-header">
+              <button class="button secondary small" type="button" data-prev-screen="type">Voltar</button>
+              <div>
+                <p class="eyebrow">Escolha</p>
+                <h3 data-screen-title>Serviços disponíveis</h3>
+              </div>
             </div>
-          </fieldset>
 
-          <fieldset class="booking-panel is-active" data-booking-panel="individual" role="tabpanel">
-            <legend>Serviços disponíveis</legend>
-            <div class="option-grid" data-service-options></div>
-          </fieldset>
+            <fieldset class="booking-panel is-active" data-booking-panel="individual" role="tabpanel">
+              <legend>Serviços disponíveis</legend>
+              <div class="option-grid" data-service-options></div>
+            </fieldset>
 
-          <fieldset class="booking-panel" data-booking-panel="combo" role="tabpanel">
-            <legend>Combos prontos</legend>
-            <div class="option-grid" data-combo-options></div>
-          </fieldset>
+            <fieldset class="booking-panel" data-booking-panel="combo" role="tabpanel">
+              <legend>Combos prontos</legend>
+              <div class="option-grid" data-combo-options></div>
+            </fieldset>
 
-          <fieldset class="booking-panel" data-booking-panel="custom" role="tabpanel">
-            <legend>Monte seu combo</legend>
-            <p class="field-help">Selecione dois ou mais serviços para criar um atendimento personalizado.</p>
-            <div class="option-grid" data-custom-service-options></div>
-          </fieldset>
+            <fieldset class="booking-panel" data-booking-panel="custom" role="tabpanel">
+              <legend>Monte seu combo</legend>
+              <p class="field-help">Selecione dois ou mais serviços para criar um atendimento personalizado.</p>
+              <div class="option-grid" data-custom-service-options></div>
+            </fieldset>
 
-          <div class="chat-message bot slim">
-            <span>2</span>
-            <p>Agora escolha com quem deseja ser atendida e o melhor período.</p>
+            <button class="button primary booking-next" type="button" data-next-screen="schedule">Continuar</button>
           </div>
 
-          <fieldset>
-            <legend>Profissional</legend>
-            <div class="option-grid" data-professional-options></div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Período</legend>
-            <div class="period-grid" data-period-options>
-              <label><input type="radio" name="period" value="Manhã" checked> Manhã</label>
-              <label><input type="radio" name="period" value="Tarde"> Tarde</label>
-              <label><input type="radio" name="period" value="Noite"> Noite</label>
+          <div class="booking-screen" data-booking-screen="schedule">
+            <div class="screen-header">
+              <button class="button secondary small" type="button" data-prev-screen="details">Voltar</button>
+              <div>
+                <p class="eyebrow">Agenda</p>
+                <h3>Profissional e período</h3>
+              </div>
             </div>
-          </fieldset>
 
-          <div class="chat-message bot slim">
-            <span>3</span>
-            <p>Para finalizar, informe seu nome e alguma preferência de horário.</p>
+            <fieldset>
+              <legend>Profissional</legend>
+              <div class="option-grid" data-professional-options></div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Período</legend>
+              <div class="period-grid" data-period-options>
+                <label><input type="radio" name="period" value="Manhã" checked> Manhã</label>
+                <label><input type="radio" name="period" value="Tarde"> Tarde</label>
+                <label><input type="radio" name="period" value="Noite"> Noite</label>
+              </div>
+            </fieldset>
+
+            <button class="button primary booking-next" type="button" data-next-screen="contact">Continuar</button>
           </div>
 
-          <label class="field-label" for="client-name">Seu nome</label>
-          <input id="client-name" name="clientName" type="text" autocomplete="name" placeholder="Ex.: Maria Silva" data-client-name>
+          <div class="booking-screen" data-booking-screen="contact">
+            <div class="screen-header">
+              <button class="button secondary small" type="button" data-prev-screen="schedule">Voltar</button>
+              <div>
+                <p class="eyebrow">Finalizar</p>
+                <h3>Dados para contato</h3>
+              </div>
+            </div>
 
-          <label class="field-label" for="client-notes">Observação</label>
-          <textarea id="client-notes" name="notes" rows="4" placeholder="Ex.: prefiro sábado ou horário após 14h" data-client-notes></textarea>
+            <label class="field-label" for="client-name">Seu nome</label>
+            <input id="client-name" name="clientName" type="text" autocomplete="name" placeholder="Ex.: Maria Silva" data-client-name>
 
-          <button class="button primary booking-submit" type="submit">Abrir WhatsApp</button>
+            <label class="field-label" for="client-notes">Observação</label>
+            <textarea id="client-notes" name="notes" rows="4" placeholder="Ex.: prefiro sábado ou horário após 14h" data-client-notes></textarea>
+
+            <button class="button primary booking-submit" type="submit">Abrir WhatsApp</button>
+          </div>
         </form>
 
         <aside class="booking-summary" aria-live="polite">

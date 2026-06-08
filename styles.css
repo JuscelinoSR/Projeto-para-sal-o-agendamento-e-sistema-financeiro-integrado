@@ -1174,3 +1174,53 @@ h3 {
     font-size: 0.82rem;
   }
 }
+
+/* Screen-based booking flow */
+.booking-screen {
+  display: none;
+}
+
+.booking-screen.is-active {
+  min-height: 430px;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.screen-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 4px;
+}
+
+.screen-header h3 {
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+}
+
+.button.small {
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: 0.9rem;
+}
+
+.booking-next,
+.booking-submit {
+  justify-self: start;
+}
+
+@media (max-width: 680px) {
+  .booking-screen.is-active {
+    min-height: auto;
+  }
+
+  .screen-header {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-next,
+  .booking-submit {
+    width: 100%;
+  }
+}
