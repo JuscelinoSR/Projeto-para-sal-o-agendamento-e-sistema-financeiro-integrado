@@ -73,3 +73,15 @@ Arquivos principais:
 - `supabase/migrations/20260608120000_create_appointments_notifications.sql`
 - `supabase/functions/notify-pending-appointments/index.ts`
 - `supabase/sql/schedule_notify_pending_appointments.sql`
+## Autenticação Admin
+
+Foi criado o modelo de autenticação do painel administrativo com Supabase Auth, e-mail e senha.
+
+Documentação: [docs/admin-auth-model.md](docs/admin-auth-model.md)
+
+Arquivos principais:
+
+- `login.html`
+- `auth.js`
+- `supabase-config.js`
+- `supabase/migrations/20260608130000_create_admin_auth_model.sql`

@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css">
 </head>
-<body>
+<body data-auth-required>
   <header class="admin-header">
     <a class="brand" href="index.html" aria-label="Voltar para o site BeautyJSR">
       <span class="brand-mark">B</span>
@@ -24,6 +24,7 @@
     </nav>
   </header>
 
+  <div class="auth-guard" data-auth-guard hidden></div>
   <main>
     <section class="admin-hero">
       <div>
@@ -119,6 +120,9 @@
     <span>Dados locais no navegador</span>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>
