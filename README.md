@@ -62,3 +62,14 @@ Nesta versão MVP, os dados ficam salvos no `localStorage` do navegador. A próx
 ## Paleta visual
 
 A identidade visual do MVP foi ajustada a partir da referência do salão: off-white iluminado, blush quente, taupe/sálvia, cobre e marrom profundo.
+## Notificação WhatsApp Admin
+
+Foi adicionada a base Supabase para notificar o admin do Salão Larissa a cada 5 minutos sobre agendamentos pendentes, com limite de 6 tentativas e parada automática quando o status muda.
+
+Documentação: [docs/whatsapp-admin-notifications.md](docs/whatsapp-admin-notifications.md)
+
+Arquivos principais:
+
+- `supabase/migrations/20260608120000_create_appointments_notifications.sql`
+- `supabase/functions/notify-pending-appointments/index.ts`
+- `supabase/sql/schedule_notify_pending_appointments.sql`

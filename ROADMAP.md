@@ -15,6 +15,7 @@ Funcionalidades do MVP:
 - Botão de contato pelo WhatsApp.
 - Fluxo interativo para selecionar serviço, profissional e período.
 - Admin Macro MVP para editar serviços, profissionais e demandas.
+- Base Supabase para notificação WhatsApp Admin de agendamentos pendentes.
 - Estrutura inicial para painel administrativo.
 - Design responsivo para celular e desktop.
 
