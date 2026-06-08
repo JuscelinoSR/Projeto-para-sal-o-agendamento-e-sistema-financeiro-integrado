@@ -217,6 +217,16 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
+function formatAppointmentDate(value) {
+  if (!value) {
+    return 'Não informada';
+  }
+
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full' }).format(date);
+}
+
 function getServices() {
   return readCollection(storageKeys.services, defaultServices);
 }
@@ -320,12 +330,11 @@ function updateMetrics() {
 
 function getBookingTypeLabel(type) {
   const labels = {
-    individual: 'Serviços avulsos',
     combo: 'Combo pronto',
     custom: 'Combo personalizado',
   };
 
-  return labels[type] ?? labels.individual;
+  return labels[type] ?? labels.combo;
 }
 
 function renderDemandItems(demand) {
@@ -363,6 +372,7 @@ function renderDemands() {
       <p><strong>Serviço:</strong> ${escapeHtml(demand.serviceName)} • ${escapeHtml(demand.servicePrice)} • ${escapeHtml(demand.serviceDuration)}</p>
       ${renderDemandItems(demand)}
       <p><strong>Profissional:</strong> ${escapeHtml(demand.professionalName)}</p>
+      <p><strong>Data:</strong> ${escapeHtml(formatAppointmentDate(demand.appointmentDate))}</p>
       <p><strong>Período:</strong> ${escapeHtml(demand.period)}</p>
       <p><strong>Observação:</strong> ${escapeHtml(demand.notes || 'Sem observação')}</p>
       <div class="demand-controls">

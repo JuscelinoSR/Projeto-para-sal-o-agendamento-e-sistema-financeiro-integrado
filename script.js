@@ -213,8 +213,15 @@ const summaryCopy = document.querySelector('[data-summary-copy]');
 const messagePreview = document.querySelector('[data-message-preview]');
 const summaryNextButton = document.querySelector('[data-summary-next]');
 const professionalOptions = document.querySelector('[data-professional-options]');
+const bookingCalendar = document.querySelector('[data-booking-calendar]');
+const appointmentDateInput = document.querySelector('[data-appointment-date]');
 const clientNameInput = document.querySelector('[data-client-name]');
 const clientNotesInput = document.querySelector('[data-client-notes]');
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+let selectedAppointmentDate = toDateKey(today);
+let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
 function readCollection(key, fallback) {
   try {
@@ -406,6 +413,78 @@ function formatPrice(value) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+function toDateKey(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function parseDateKey(dateKey) {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function formatDisplayDate(dateKey) {
+  return new Intl.DateTimeFormat('pt-BR', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+  }).format(parseDateKey(dateKey));
+}
+
+function formatShortDate(dateKey) {
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(parseDateKey(dateKey));
+}
+
+function renderCalendar() {
+  if (!bookingCalendar) {
+    return;
+  }
+
+  const monthStart = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 1);
+  const firstWeekday = monthStart.getDay();
+  const daysInMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 0).getDate();
+  const monthLabel = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(monthStart);
+  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const canGoBack = monthStart > new Date(today.getFullYear(), today.getMonth(), 1);
+
+  const blanks = Array.from({ length: firstWeekday }, () => '<span class="calendar-empty" aria-hidden="true"></span>');
+  const days = Array.from({ length: daysInMonth }, (_, index) => {
+    const day = index + 1;
+    const date = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day);
+    const dateKey = toDateKey(date);
+    const isPast = date < today;
+    const isSelected = dateKey === selectedAppointmentDate;
+    const isToday = dateKey === toDateKey(today);
+
+    return `
+      <button class="calendar-day${isSelected ? ' is-selected' : ''}${isToday ? ' is-today' : ''}" type="button" data-calendar-date="${dateKey}" ${isPast ? 'disabled' : ''}>
+        <span>${day}</span>
+      </button>
+    `;
+  });
+
+  bookingCalendar.innerHTML = `
+    <div class="calendar-header">
+      <button class="calendar-nav" type="button" data-calendar-prev ${canGoBack ? '' : 'disabled'} aria-label="Mês anterior">‹</button>
+      <strong>${escapeHtml(monthLabel)}</strong>
+      <button class="calendar-nav" type="button" data-calendar-next aria-label="Próximo mês">›</button>
+    </div>
+    <div class="calendar-weekdays">
+      ${weekDays.map((day) => `<span>${day}</span>`).join('')}
+    </div>
+    <div class="calendar-grid">
+      ${[...blanks, ...days].join('')}
+    </div>
+    <p class="calendar-selected">Selecionado: <strong>${escapeHtml(formatDisplayDate(selectedAppointmentDate))}</strong></p>
+  `;
+
+  if (appointmentDateInput) {
+    appointmentDateInput.value = selectedAppointmentDate;
+  }
+}
 function getBookingType() {
   return getSelectedValue('bookingType') ?? 'combo';
 }
@@ -488,6 +567,7 @@ function getBookingState() {
   refreshEditableData();
   const selectedPackage = getSelectedPackage();
   const selectedProfessional = professionals.find((professional) => professional.id === getSelectedValue('professional')) ?? professionals[0] ?? defaultProfessionals[0];
+  const appointmentDate = appointmentDateInput?.value || selectedAppointmentDate;
   const period = getSelectedValue('period') ?? 'Manhã';
   const clientName = clientNameInput?.value.trim() || 'Cliente';
   const notes = clientNotesInput?.value.trim();
@@ -511,13 +591,14 @@ function getBookingTypeLabel(type) {
 }
 
 function buildMessage() {
-  const { selectedPackage, selectedProfessional, period, clientName, notes } = getBookingState();
+  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, notes } = getBookingState();
   const lines = [
     `Olá, sou ${clientName}. Quero agendar pelo site do Salão Larissa.`,
     `Tipo: ${getBookingTypeLabel(selectedPackage.bookingType)}.`,
     `Escolha: ${selectedPackage.name} (${selectedPackage.duration}, ${selectedPackage.price}).`,
     `Itens: ${selectedPackage.items.join(' + ')}.`,
     `Profissional: ${selectedProfessional.name}.`,
+    `Data preferida: ${formatShortDate(appointmentDate)}.`,
     `Período preferido: ${period}.`,
   ];
 
@@ -535,14 +616,14 @@ function updateSummary() {
     return;
   }
 
-  const { selectedPackage, selectedProfessional, period } = getBookingState();
+  const { selectedPackage, selectedProfessional, appointmentDate, period } = getBookingState();
   summaryTitle.textContent = `${selectedPackage.name} com ${selectedProfessional.name}`;
-  summaryCopy.textContent = `${getBookingTypeLabel(selectedPackage.bookingType)} • ${selectedPackage.price} • ${period}`;
+  summaryCopy.textContent = `${getBookingTypeLabel(selectedPackage.bookingType)} • ${selectedPackage.price} • ${formatShortDate(appointmentDate)} • ${period}`;
   messagePreview.textContent = buildMessage();
 }
 
 function saveDemand() {
-  const { selectedPackage, selectedProfessional, period, clientName, notes } = getBookingState();
+  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, notes } = getBookingState();
   const demands = readCollection(storageKeys.demands, []);
   const now = new Date().toISOString();
 
@@ -557,6 +638,7 @@ function saveDemand() {
     bookingType: selectedPackage.bookingType,
     professionalId: selectedProfessional.id,
     professionalName: selectedProfessional.name,
+    appointmentDate,
     period,
     notes,
     status: 'novo',
@@ -576,6 +658,7 @@ function openWhatsApp() {
 
 ensureSeedData();
 renderOptions();
+renderCalendar();
 updateSummary();
 
 bookingForm?.addEventListener('input', updateSummary);
@@ -591,6 +674,9 @@ scheduler?.addEventListener('click', (event) => {
   const typeTab = event.target.closest('.booking-tab');
   const nextButton = event.target.closest('[data-next-screen]');
   const prevButton = event.target.closest('[data-prev-screen]');
+  const calendarDateButton = event.target.closest('[data-calendar-date]');
+  const calendarPrevButton = event.target.closest('[data-calendar-prev]');
+  const calendarNextButton = event.target.closest('[data-calendar-next]');
 
   if (typeTab) {
     const input = typeTab.querySelector('input[name="bookingType"]');
@@ -599,6 +685,22 @@ scheduler?.addEventListener('click', (event) => {
       updateSummary();
       showBookingScreen('details');
     }
+  }
+
+  if (calendarDateButton) {
+    selectedAppointmentDate = calendarDateButton.dataset.calendarDate;
+    renderCalendar();
+    updateSummary();
+  }
+
+  if (calendarPrevButton && !calendarPrevButton.disabled) {
+    calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
+    renderCalendar();
+  }
+
+  if (calendarNextButton) {
+    calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
+    renderCalendar();
   }
 
   if (nextButton) {
