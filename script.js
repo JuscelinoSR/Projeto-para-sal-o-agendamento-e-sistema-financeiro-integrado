@@ -9,6 +9,7 @@ const storageKeys = {
   professionals: 'beautyjsr.professionals',
   demands: 'beautyjsr.demands',
   siteSettings: 'beautyjsr.siteSettings',
+  serviceCatalogVersion: 'beautyjsr.serviceCatalogVersion',
 };
 
 const defaultSiteSettings = {
@@ -49,22 +50,106 @@ function applySiteSettings() {
 }
 const defaultServices = [
   {
+    id: 'corte-feminino',
+    name: 'Corte feminino',
+    duration: '50 min',
+    price: 'R$ 90',
+  },
+  {
+    id: 'escova-modelada',
+    name: 'Escova modelada',
+    duration: '45 min',
+    price: 'R$ 75',
+  },
+  {
     id: 'corte-escova',
     name: 'Corte + escova',
+    duration: '80 min',
+    price: 'R$ 140',
+  },
+  {
+    id: 'hidratacao-capilar',
+    name: 'Hidratação capilar',
     duration: '60 min',
     price: 'R$ 120',
   },
   {
-    id: 'design-unhas',
-    name: 'Design de unhas',
+    id: 'reconstrucao-capilar',
+    name: 'Reconstrução capilar',
+    duration: '90 min',
+    price: 'R$ 180',
+  },
+  {
+    id: 'coloracao-raiz',
+    name: 'Coloração de raiz',
+    duration: '120 min',
+    price: 'R$ 190',
+  },
+  {
+    id: 'mechas-iluminadas',
+    name: 'Mechas iluminadas',
+    duration: '210 min',
+    price: 'R$ 420',
+  },
+  {
+    id: 'tonalizacao',
+    name: 'Tonalização',
+    duration: '75 min',
+    price: 'R$ 150',
+  },
+  {
+    id: 'penteado-evento',
+    name: 'Penteado para evento',
+    duration: '90 min',
+    price: 'R$ 180',
+  },
+  {
+    id: 'manicure',
+    name: 'Manicure',
+    duration: '45 min',
+    price: 'R$ 45',
+  },
+  {
+    id: 'pedicure',
+    name: 'Pedicure',
+    duration: '50 min',
+    price: 'R$ 55',
+  },
+  {
+    id: 'manicure-pedicure',
+    name: 'Manicure + pedicure',
     duration: '90 min',
     price: 'R$ 95',
   },
   {
-    id: 'hidratacao',
-    name: 'Hidratação capilar',
+    id: 'alongamento-unhas',
+    name: 'Alongamento de unhas',
+    duration: '150 min',
+    price: 'R$ 180',
+  },
+  {
+    id: 'design-sobrancelhas',
+    name: 'Design de sobrancelhas',
+    duration: '35 min',
+    price: 'R$ 55',
+  },
+  {
+    id: 'maquiagem-social',
+    name: 'Maquiagem social',
     duration: '75 min',
-    price: 'R$ 140',
+    price: 'R$ 160',
+  },
+  {
+    id: 'depilacao-facial',
+    name: 'Depilação facial',
+    duration: '30 min',
+    price: 'R$ 60',
+  },
+  {
+    id: 'limpeza-pele',
+    name: 'Limpeza de pele',
+    duration: '90 min',
+    price: 'R$ 170',
   },
 ];
 
@@ -142,9 +227,21 @@ function writeCollection(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
+function mergeMissingItems(currentItems, defaults) {
+  const existingIds = new Set(currentItems.map((item) => item.id));
+  const missing = defaults.filter((item) => !existingIds.has(item.id));
+  return [...currentItems, ...missing];
+}
 function ensureSeedData() {
+  const catalogVersion = '2026-06-salao-completo';
+
   if (!localStorage.getItem(storageKeys.services)) {
     writeCollection(storageKeys.services, defaultServices);
+    localStorage.setItem(storageKeys.serviceCatalogVersion, catalogVersion);
+  } else if (localStorage.getItem(storageKeys.serviceCatalogVersion) !== catalogVersion) {
+    const mergedServices = mergeMissingItems(readCollection(storageKeys.services, []), defaultServices);
+    writeCollection(storageKeys.services, mergedServices);
+    localStorage.setItem(storageKeys.serviceCatalogVersion, catalogVersion);
   }
 
   if (!localStorage.getItem(storageKeys.professionals)) {
