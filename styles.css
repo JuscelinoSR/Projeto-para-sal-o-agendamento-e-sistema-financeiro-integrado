@@ -1656,3 +1656,13 @@ body::before {
     min-height: 58px;
   }
 }
+/* Two-option booking tabs */
+.booking-tabs {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 680px) {
+  .booking-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

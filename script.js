@@ -405,7 +405,7 @@ function formatPrice(value) {
 }
 
 function getBookingType() {
-  return getSelectedValue('bookingType') ?? 'individual';
+  return getSelectedValue('bookingType') ?? 'combo';
 }
 
 function getSelectedPackage() {
@@ -440,18 +440,15 @@ function getSelectedPackage() {
     };
   }
 
-  const selectedIds = getSelectedValues('service');
-  const selectedServices = services.filter((service) => selectedIds.includes(service.id));
-  const safeServices = selectedServices.length ? selectedServices : services.slice(0, 1);
-  const total = safeServices.reduce((sum, service) => sum + parsePrice(service.price), 0);
+  const fallbackCombo = combos[0] ?? defaultCombos[0];
 
   return {
-    bookingType,
-    id: safeServices.length === 1 ? safeServices[0].id : 'servicos-avulsos',
-    name: safeServices.length === 1 ? safeServices[0].name : 'Serviços avulsos',
-    duration: `${safeServices.length} procedimento${safeServices.length > 1 ? 's' : ''}`,
-    price: formatPrice(total),
-    items: safeServices.map((service) => service.name),
+    bookingType: 'combo',
+    id: fallbackCombo.id,
+    name: fallbackCombo.name,
+    duration: fallbackCombo.duration,
+    price: fallbackCombo.price,
+    items: fallbackCombo.items,
   };
 }
 
@@ -463,10 +460,9 @@ function updateBookingPanels() {
 
   if (screenTitle) {
     screenTitle.textContent = {
-      individual: 'Escolha um ou mais serviços',
       combo: 'Combos prontos',
       custom: 'Monte seu combo',
-    }[bookingType] ?? 'Escolha um ou mais serviços';
+    }[bookingType] ?? 'Combos prontos';
   }
 }
 
@@ -503,12 +499,11 @@ function getBookingState() {
 
 function getBookingTypeLabel(type) {
   const labels = {
-    individual: 'Serviços avulsos',
     combo: 'Combo pronto',
     custom: 'Combo personalizado',
   };
 
-  return labels[type] ?? labels.individual;
+  return labels[type] ?? labels.combo;
 }
 
 function buildMessage() {
