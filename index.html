@@ -99,35 +99,35 @@
             </div>
           </div>
 
-          <fieldset>
+          <fieldset class="booking-tabs-group">
             <legend>Tipo de atendimento</legend>
-            <div class="service-type-grid" data-service-type-options>
-              <label class="choice-card compact">
+            <div class="booking-tabs" role="tablist" aria-label="Tipo de atendimento" data-service-type-options>
+              <label class="booking-tab">
                 <input type="radio" name="bookingType" value="individual" checked>
-                <span><strong>Serviço individual</strong><small>Escolha um serviço do salão.</small></span>
+                <span>Individual</span>
               </label>
-              <label class="choice-card compact">
+              <label class="booking-tab">
                 <input type="radio" name="bookingType" value="combo">
-                <span><strong>Combo pronto</strong><small>Pacotes sugeridos pelo salão.</small></span>
+                <span>Combo pronto</span>
               </label>
-              <label class="choice-card compact">
+              <label class="booking-tab">
                 <input type="radio" name="bookingType" value="custom">
-                <span><strong>Combo personalizado</strong><small>Monte com os serviços que desejar.</small></span>
+                <span>Personalizado</span>
               </label>
             </div>
           </fieldset>
 
-          <fieldset class="booking-panel is-active" data-booking-panel="individual">
+          <fieldset class="booking-panel is-active" data-booking-panel="individual" role="tabpanel">
             <legend>Serviços disponíveis</legend>
             <div class="option-grid" data-service-options></div>
           </fieldset>
 
-          <fieldset class="booking-panel" data-booking-panel="combo">
+          <fieldset class="booking-panel" data-booking-panel="combo" role="tabpanel">
             <legend>Combos prontos</legend>
             <div class="option-grid" data-combo-options></div>
           </fieldset>
 
-          <fieldset class="booking-panel" data-booking-panel="custom">
+          <fieldset class="booking-panel" data-booking-panel="custom" role="tabpanel">
             <legend>Monte seu combo</legend>
             <p class="field-help">Selecione dois ou mais serviços para criar um atendimento personalizado.</p>
             <div class="option-grid" data-custom-service-options></div>
