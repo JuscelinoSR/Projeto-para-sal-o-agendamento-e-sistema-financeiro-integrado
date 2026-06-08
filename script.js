@@ -207,9 +207,11 @@ const bookingScreens = document.querySelectorAll('[data-booking-screen]');
 const screenTitle = document.querySelector('[data-screen-title]');
 const progressSteps = document.querySelectorAll('[data-progress-step]');
 const bookingForm = document.querySelector('[data-booking-form]');
+const scheduler = document.querySelector('[data-scheduler]');
 const summaryTitle = document.querySelector('[data-summary-title]');
 const summaryCopy = document.querySelector('[data-summary-copy]');
 const messagePreview = document.querySelector('[data-message-preview]');
+const summaryNextButton = document.querySelector('[data-summary-next]');
 const professionalOptions = document.querySelector('[data-professional-options]');
 const clientNameInput = document.querySelector('[data-client-name]');
 const clientNotesInput = document.querySelector('[data-client-notes]');
@@ -478,6 +480,8 @@ function showBookingScreen(screenName) {
     step.classList.toggle('is-active', stepIndex === activeIndex);
     step.classList.toggle('is-complete', stepIndex >= 0 && stepIndex < activeIndex);
   });
+
+  summaryNextButton?.classList.toggle('is-visible', screenName === 'details');
 }
 
 function getBookingState() {
@@ -583,7 +587,7 @@ bookingForm?.addEventListener('change', (event) => {
   }
 });
 
-bookingForm?.addEventListener('click', (event) => {
+scheduler?.addEventListener('click', (event) => {
   const typeTab = event.target.closest('.booking-tab');
   const nextButton = event.target.closest('[data-next-screen]');
   const prevButton = event.target.closest('[data-prev-screen]');
