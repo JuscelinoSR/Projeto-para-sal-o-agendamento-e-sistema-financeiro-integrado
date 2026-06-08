@@ -1,6 +1,8 @@
 const menuButton = document.querySelector('[data-menu-button]');
 const mobileNav = document.querySelector('[data-mobile-nav]');
 const header = document.querySelector('[data-elevate]');
+const pageScreens = document.querySelectorAll('[data-page]');
+const pageLinks = document.querySelectorAll('a[href^="#"]');
 
 const storageKeys = {
   services: 'beautyjsr.services',
@@ -117,6 +119,30 @@ function refreshEditableData() {
   professionals = readCollection(storageKeys.professionals, defaultProfessionals);
 }
 
+function getPageFromHash(hash) {
+  const page = String(hash || '#produto').replace('#', '');
+  return document.querySelector(`[data-page="${page}"]`) ? page : 'produto';
+}
+
+function showMainPage(pageName, updateHash = true) {
+  const nextPage = getPageFromHash(`#${pageName}`);
+
+  pageScreens.forEach((screen) => {
+    screen.classList.toggle('is-page-active', screen.dataset.page === nextPage);
+  });
+
+  pageLinks.forEach((link) => {
+    const linkPage = getPageFromHash(link.getAttribute('href'));
+    link.classList.toggle('is-active', linkPage === nextPage);
+  });
+
+  if (updateHash) {
+    history.replaceState(null, '', `#${nextPage}`);
+  }
+
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  closeMenu();
+}
 function closeMenu() {
   document.body.classList.remove('menu-open');
   mobileNav?.classList.remove('is-open');
@@ -129,8 +155,20 @@ menuButton?.addEventListener('click', () => {
   menuButton.setAttribute('aria-expanded', String(Boolean(isOpen)));
 });
 
-mobileNav?.querySelectorAll('a').forEach((link) => {
-  link.addEventListener('click', closeMenu);
+pageLinks.forEach((link) => {
+  link.addEventListener('click', (event) => {
+    const href = link.getAttribute('href');
+    if (!href || !href.startsWith('#')) {
+      return;
+    }
+
+    event.preventDefault();
+    showMainPage(getPageFromHash(href));
+  });
+});
+
+window.addEventListener('hashchange', () => {
+  showMainPage(getPageFromHash(window.location.hash), false);
 });
 
 function updateHeader() {

@@ -1224,3 +1224,43 @@ h3 {
     width: 100%;
   }
 }
+
+/* Main page tab navigation */
+main {
+  min-height: calc(100vh - 78px);
+}
+
+[data-page] {
+  animation: pageFade 180ms ease;
+}
+
+[data-page]:not(.is-page-active) {
+  display: none !important;
+}
+
+.desktop-nav a.is-active,
+.mobile-nav a.is-active {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.desktop-nav a.is-active::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 7px;
+  border-radius: 999px;
+  background: var(--gold);
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
