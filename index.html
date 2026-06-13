@@ -16,8 +16,8 @@
     <nav class="desktop-nav" aria-label="Navegação principal">
       <a href="#produto">Início</a>
       <a href="#agendamento">Serviços</a>
-      <a href="#mvp">Profissionais</a>
-      <a href="#modulos">Trabalhos</a>
+      <a href="#profissionais">Profissionais</a>
+      <a href="#trabalhos">Trabalhos</a>
       <a href="#contato">Contato</a>
       <a href="admin.html">Admin</a>
     </nav>
@@ -32,11 +32,30 @@
   <nav class="mobile-nav" aria-label="Menu mobile" data-mobile-nav>
     <a href="#produto">Início</a>
     <a href="#agendamento">Serviços</a>
-    <a href="#mvp">Profissionais</a>
-    <a href="#modulos">Trabalhos</a>
+    <a href="#profissionais">Profissionais</a>
+    <a href="#trabalhos">Trabalhos</a>
     <a href="#contato">Contato</a>
     <a href="admin.html">Admin</a>
   </nav>
+
+  <section class="site-visual-tabs" aria-label="Abas principais do site">
+    <button class="site-visual-tab active" type="button" data-site-tab="produto">
+      <img src="assets/salao-cores.jpeg" alt="">
+      <span><strong>Início</strong><small>Apresentação do salão</small></span>
+    </button>
+    <button class="site-visual-tab" type="button" data-site-tab="agendamento">
+      <img src="assets/salao-cores.jpeg" alt="">
+      <span><strong>Serviços</strong><small>Escolha e agende</small></span>
+    </button>
+    <button class="site-visual-tab" type="button" data-site-tab="profissionais">
+      <img src="assets/salao-cores.jpeg" alt="">
+      <span><strong>Profissionais</strong><small>Equipe do salão</small></span>
+    </button>
+    <button class="site-visual-tab" type="button" data-site-tab="trabalhos">
+      <img src="assets/salao-cores.jpeg" alt="">
+      <span><strong>Trabalhos</strong><small>Fotos e resultados</small></span>
+    </button>
+  </section>
 
   <main id="top">
     <section class="hero salon-hero is-page-active" id="produto" data-page="produto">
@@ -46,32 +65,19 @@
         <p class="hero-lede" data-hero-subtitle>Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.</p>
       </div>
     </section>
-    <section class="trust-band" aria-label="Segmentos atendidos" data-page="apoio">
-      <span>Salões</span>
-      <span>Barbearias</span>
-      <span>Nail designers</span>
-      <span>Clínicas estéticas</span>
-      <span>SPAs</span>
-    </section>
-
-    <section class="section split-section" id="mvp" data-page="mvp">
+    <section class="section split-section" id="profissionais" data-page="profissionais">
       <div>
-        <p class="eyebrow">Primeira opção de MVP</p>
-        <h2>BeautyJSR Agenda</h2>
-        <p class="hero-lede">Uma primeira versão simples para validar o produto com salões reais: serviços, profissionais e agendamento pelo WhatsApp.</p>
+        <p class="eyebrow">Profissionais</p>
+        <h2>Equipe pronta para cuidar de você</h2>
+        <p class="hero-lede">Conheça quem realiza os atendimentos do salão. Esta lista é atualizada pelo painel administrativo.</p>
       </div>
-      <div class="technical-list">
-        <p><strong>Objetivo:</strong> permitir que o cliente escolha um serviço e inicie o agendamento em poucos cliques.</p>
-        <p><strong>Inclui:</strong> landing page, lista de serviços, lista de profissionais, botão de WhatsApp e prévia do painel.</p>
-        <p><strong>Fica para depois:</strong> pagamento online, estoque completo, comissões automáticas e billing SaaS.</p>
-        <p><strong>Próximo passo:</strong> transformar esta base em um app Next.js com Supabase e autenticação.</p>
-      </div>
+      <div class="professional-showcase" data-professional-showcase></div>
     </section>
     <section class="scheduler-section" id="agendamento" data-page="agendamento">
       <div class="section-heading">
         <p class="eyebrow">Serviços</p>
         <h2>Escolha o cuidado ideal para hoje</h2>
-        <p>Navegue por uma experiência simples: selecione o tipo de atendimento, escolha o serviço, defina profissional e período, e envie tudo pronto para o WhatsApp.</p>
+        <p>Navegue por uma experiência simples: escolha o serviço, veja os horários vagos, defina profissional e envie tudo pronto para o WhatsApp.</p>
       </div>
 
       <div class="service-highlights" aria-label="Destaques dos serviços">
@@ -83,55 +89,22 @@
       <div class="scheduler-layout chat-scheduler" data-scheduler>
         <form class="booking-form chatbox" data-booking-form>
           <ol class="booking-progress" aria-label="Etapas do agendamento">
-            <li data-progress-step="type">Tipo</li>
             <li class="is-active" data-progress-step="details">Serviço</li>
             <li data-progress-step="schedule">Agenda</li>
             <li data-progress-step="contact">Contato</li>
           </ol>
-          <div class="booking-screen" data-booking-screen="type">
-            <div class="chat-thread" aria-live="polite">
-              <div class="chat-message bot">
-                <span>1</span>
-                <p>Olá! Primeiro escolha como deseja montar seu atendimento.</p>
-              </div>
-            </div>
-
-            <fieldset class="booking-tabs-group">
-              <legend>Tipo de atendimento</legend>
-              <div class="booking-tabs" role="tablist" aria-label="Tipo de atendimento" data-service-type-options>
-                <label class="booking-tab">
-                  <input type="radio" name="bookingType" value="combo" checked>
-                  <span><strong>Combo pronto</strong><small>Pacotes do salão</small></span>
-                </label>
-                <label class="booking-tab">
-                  <input type="radio" name="bookingType" value="custom">
-                  <span><strong>Personalizado</strong><small>Você combina</small></span>
-                </label>
-              </div>
-            </fieldset>
-          </div>
 
           <div class="booking-screen is-active" data-booking-screen="details">
             <div class="screen-header">
-              <button class="button secondary small" type="button" data-prev-screen="type">Voltar</button>
               <div>
                 <p class="eyebrow">Serviços</p>
-                <h3 data-screen-title>Escolha um combo ou personalize</h3>
+                <h3 data-screen-title>Escolha seu atendimento</h3>
               </div>
             </div>
-            <div class="service-mode-switch" aria-label="Escolha o modo dos serviços">
-              <button class="is-active" type="button" data-booking-mode="combo">Combo pronto</button>
-              <button type="button" data-booking-mode="custom">Personalizado</button>
-            </div>
 
-            <fieldset class="booking-panel is-active" data-booking-panel="combo" role="tabpanel">
-              <legend>Combos prontos</legend>
-              <div class="option-grid" data-combo-options></div>
-            </fieldset>
-
-            <fieldset class="booking-panel" data-booking-panel="custom" role="tabpanel">
-              <legend>Monte seu combo</legend>
-              <p class="field-help">Selecione dois ou mais serviços para criar um atendimento personalizado.</p>
+            <fieldset class="booking-panel is-active" data-booking-panel="custom" role="tabpanel">
+              <legend>Serviços disponíveis</legend>
+              <p class="field-help">Selecione um ou mais serviços para o atendimento.</p>
               <div class="option-grid" data-custom-service-options></div>
             </fieldset>
 
@@ -144,7 +117,7 @@
               <button class="button secondary small" type="button" data-prev-screen="details">Voltar</button>
               <div>
                 <p class="eyebrow">Agenda</p>
-                <h3>Data, profissional e período</h3>
+                <h3>Data, profissional e horário</h3>
               </div>
             </div>
             <fieldset class="calendar-fieldset">
@@ -160,11 +133,14 @@
             </fieldset>
 
             <fieldset>
-              <legend>Período</legend>
-              <div class="period-grid" data-period-options>
-                <label><input type="radio" name="period" value="Manhã" checked> Manhã</label>
-                <label><input type="radio" name="period" value="Tarde"> Tarde</label>
-                <label><input type="radio" name="period" value="Noite"> Noite</label>
+              <legend>Horários vagos</legend>
+              <div class="period-grid schedule-slots" data-period-options>
+                <label><input type="radio" name="period" value="09:00" checked> 09:00</label>
+                <label><input type="radio" name="period" value="10:30"> 10:30</label>
+                <label><input type="radio" name="period" value="13:00"> 13:00</label>
+                <label><input type="radio" name="period" value="14:30"> 14:30</label>
+                <label><input type="radio" name="period" value="16:00"> 16:00</label>
+                <label><input type="radio" name="period" value="Encaixe"> Encaixe</label>
               </div>
             </fieldset>
 
@@ -199,128 +175,43 @@
         </aside>
       </div>
     </section>
-    <section class="section" id="modulos" data-page="modulos">
+    <section class="section" id="trabalhos" data-page="trabalhos">
       <div class="section-heading">
-        <p class="eyebrow">Módulos essenciais</p>
-        <h2>Operação completa para crescer sem perder controle</h2>
-        <p>O MVP nasce com a base certa: agenda, clientes, serviços, profissionais e isolamento por organização. Os módulos avançados entram sem quebrar a estrutura.</p>
+        <p class="eyebrow">Trabalhos</p>
+        <h2>Resultados do salão</h2>
+        <p>Veja fotos reais dos trabalhos e acompanhe mais novidades pelo Instagram.</p>
       </div>
-      <div class="feature-grid">
-        <article class="feature-card">
-          <span class="feature-icon">01</span>
-          <h3>Agenda inteligente</h3>
-          <p>Disponibilidade por profissional, serviço, unidade e fuso horário, com bloqueio de conflitos.</p>
-        </article>
-        <article class="feature-card">
-          <span class="feature-icon">02</span>
-          <h3>Clientes e histórico</h3>
-          <p>Cadastro completo, preferências, fidelidade, consentimentos LGPD e histórico de atendimentos.</p>
-        </article>
-        <article class="feature-card">
-          <span class="feature-icon">03</span>
-          <h3>CRM e WhatsApp</h3>
-          <p>Fluxos D+3, D+7, D+14 e D+30 para pós-atendimento, produtos e reagendamento.</p>
-        </article>
-        <article class="feature-card">
-          <span class="feature-icon">04</span>
-          <h3>Financeiro e comissões</h3>
-          <p>Pagamentos, despesas, margem, ticket médio e regras de comissão por profissional ou serviço.</p>
-        </article>
-        <article class="feature-card">
-          <span class="feature-icon">05</span>
-          <h3>Estoque conectado</h3>
-          <p>Produtos, movimentações, mínimo em estoque e baixa automática ao concluir atendimento.</p>
-        </article>
-        <article class="feature-card">
-          <span class="feature-icon">06</span>
-          <h3>SaaS white label</h3>
-          <p>Logo, cores, idioma, domínio, horários e canais configurados por cada organização.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="operation-section" id="operacao" data-page="apoio">
-      <div class="section-heading compact">
-        <p class="eyebrow">Fluxo do negócio</p>
-        <h2>Da reserva ao retorno do cliente</h2>
-      </div>
-      <div class="flow">
-        <article>
-          <span>1</span>
-          <h3>Agendar</h3>
-          <p>Cliente escolhe serviço, profissional e horário disponível.</p>
-        </article>
-        <article>
-          <span>2</span>
-          <h3>Atender</h3>
-          <p>Equipe registra presença, consumo, observações e pagamento.</p>
-        </article>
-        <article>
-          <span>3</span>
-          <h3>Fidelizar</h3>
-          <p>Automações enviam cuidados, ofertas, lembretes e cupons.</p>
-        </article>
-        <article>
-          <span>4</span>
-          <h3>Medir</h3>
-          <p>Gestor acompanha receita, agenda, retorno e desempenho.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section split-section" data-page="apoio">
-      <div>
-        <p class="eyebrow">Fundação técnica</p>
-        <h2>Preparado para multiempresa desde o primeiro commit</h2>
-      </div>
-      <div class="technical-list">
-        <p><strong>Isolamento:</strong> dados operacionais com organização, RLS e auditoria.</p>
-        <p><strong>Acessibilidade:</strong> navegação por teclado, contraste e HTML semântico.</p>
-        <p><strong>Internacionalização:</strong> textos prontos para português, inglês e espanhol.</p>
-        <p><strong>Escala:</strong> estrutura pensada para unidades, planos e assinaturas.</p>
-      </div>
-    </section>
-
-    <section class="plans-section" id="planos" data-page="apoio">
-      <div class="section-heading">
-        <p class="eyebrow">Planos iniciais</p>
-        <h2>Comece simples e evolua por módulo</h2>
-      </div>
-      <div class="plans-grid">
-        <article class="plan-card">
-          <h3>Essencial</h3>
-          <p>Para validar agenda, clientes e serviços.</p>
-          <strong>MVP</strong>
-          <a href="#agendamento">Escolher</a>
-        </article>
-        <article class="plan-card featured">
-          <h3>Profissional</h3>
-          <p>Para operar com WhatsApp, fidelidade e financeiro.</p>
-          <strong>Crescimento</strong>
-          <a href="#agendamento">Escolher</a>
-        </article>
-        <article class="plan-card">
-          <h3>Rede</h3>
-          <p>Para multiunidades, white label e faturamento SaaS.</p>
-          <strong>Escala</strong>
-          <a href="#agendamento">Escolher</a>
-        </article>
+      <div class="work-gallery" data-work-gallery></div>
+      <div class="instagram-callout">
+        <span>Mais trabalhos no Instagram</span>
+        <a data-instagram-profile href="https://www.instagram.com/liasouzaoliveira/" target="_blank" rel="noreferrer">@liasouzaoliveira</a>
       </div>
     </section>
 
     <section class="contact-section" id="contato" data-page="contato">
-      <div>
-        <p class="eyebrow">Primeira versão</p>
-        <h2>Construa o BeautyJSR por etapas, com base sólida.</h2>
-        <p>O próximo passo é transformar esta presença inicial em um app Next.js com dashboard, autenticação, Supabase e telas operacionais.</p>
+      <div class="contact-card-grid">
+        <article class="contact-card">
+          <span>Contato</span>
+          <strong>Fale com o salão</strong>
+          <p>Tire dúvidas e acompanhe os canais cadastrados no painel.</p>
+          <div class="social-links" data-social-links aria-label="Perfis sociais do salão"></div>
+        </article>
+        <article class="contact-card">
+          <span>Agenda</span>
+          <strong>Marque seu horário</strong>
+          <p>Escolha o atendimento e envie a mensagem pronta pelo WhatsApp.</p>
+          <a class="button primary" href="#agendamento">Agendar atendimento</a>
+        </article>
       </div>
-      <a class="button primary" href="#agendamento">Testar o MVP</a>
     </section>
   </main>
 
   <footer class="site-footer">
     <span data-site-brand-footer>Salão Larissa</span>
-    <a href="admin.html">Painel admin</a>
+    <div class="footer-links">
+      <a data-footer-instagram href="https://www.instagram.com/liasouzaoliveira/" target="_blank" rel="noreferrer">Instagram</a>
+      <a href="admin.html">Painel admin</a>
+    </div>
   </footer>
 
   <script src="script.js"></script>

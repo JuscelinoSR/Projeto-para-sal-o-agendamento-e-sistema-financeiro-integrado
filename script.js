@@ -3,6 +3,7 @@ const mobileNav = document.querySelector('[data-mobile-nav]');
 const header = document.querySelector('[data-elevate]');
 const pageScreens = document.querySelectorAll('[data-page]');
 const pageLinks = document.querySelectorAll('a[href^="#"]');
+const visualTabButtons = document.querySelectorAll('[data-site-tab]');
 
 const storageKeys = {
   services: 'beautyjsr.services',
@@ -18,6 +19,11 @@ const defaultSiteSettings = {
   heroTitle: 'Seu momento de cuidado.',
   heroSubtitle: 'Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.',
   ctaText: 'Agendar com Ana',
+  instagramUrl: 'https://www.instagram.com/liasouzaoliveira/',
+  facebookUrl: '',
+  tiktokUrl: '',
+  whatsappNumber: '5564999625616',
+  galleryImages: [],
   backgroundImage: 'assets/salao-cores.jpeg',
 };
 
@@ -36,6 +42,90 @@ function setText(selector, value) {
   });
 }
 
+function normalizeWhatsapp(value) {
+  return String(value || '').replace(/\D/g, '') || '5564999625616';
+}
+
+function renderSocialLinks(settings) {
+  const profiles = [
+    ['Instagram', settings.instagramUrl],
+    ['Facebook', settings.facebookUrl],
+    ['TikTok', settings.tiktokUrl],
+  ].filter(([, url]) => url);
+
+  const socialLinks = document.querySelector('[data-social-links]');
+  if (socialLinks) {
+    socialLinks.innerHTML = profiles
+      .map(([label, url]) => `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`)
+      .join('');
+  }
+
+  const footerInstagram = document.querySelector('[data-footer-instagram]');
+  if (footerInstagram) {
+    if (settings.instagramUrl) {
+      footerInstagram.href = settings.instagramUrl;
+      footerInstagram.hidden = false;
+    } else {
+      footerInstagram.hidden = true;
+    }
+  }
+
+  const instagramProfile = document.querySelector('[data-instagram-profile]');
+  if (instagramProfile && settings.instagramUrl) {
+    instagramProfile.href = settings.instagramUrl;
+    instagramProfile.textContent = settings.instagramUrl
+      .replace('https://www.instagram.com/', '@')
+      .replace(/\/$/, '');
+  }
+}
+
+function renderWorkGallery(settings) {
+  const gallery = document.querySelector('[data-work-gallery]');
+  if (!gallery) return;
+
+  const images = Array.isArray(settings.galleryImages) ? settings.galleryImages : [];
+
+  if (!images.length) {
+    gallery.innerHTML = '';
+    return;
+  }
+
+  gallery.innerHTML = images.slice(0, 6).map((src, index) => `
+    <article class="work-card">
+      <img src="${escapeHtml(src)}" alt="Trabalho do salão ${index + 1}">
+      <span>Trabalho ${index + 1}</span>
+    </article>
+  `).join('');
+}
+
+function getInitials(name) {
+  return String(name || 'Profissional')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase();
+}
+
+function renderProfessionalShowcase() {
+  const showcase = document.querySelector('[data-professional-showcase]');
+  if (!showcase) return;
+
+  refreshEditableData();
+
+  showcase.innerHTML = professionals.map((professional) => `
+    <article class="professional-card">
+      <span class="professional-avatar">${escapeHtml(getInitials(professional.name))}</span>
+      <div>
+        <h3>${escapeHtml(professional.name)}</h3>
+        <p>${escapeHtml(professional.specialty || 'Atendimento especializado')}</p>
+        ${professional.linkUrl ? `<a class="professional-link" href="${escapeHtml(professional.linkUrl)}" target="_blank" rel="noreferrer">Ver perfil</a>` : ''}
+      </div>
+    </article>
+  `).join('');
+}
+
 function applySiteSettings() {
   const settings = readObject(storageKeys.siteSettings, defaultSiteSettings);
   setText('[data-site-brand]', settings.brandName);
@@ -47,6 +137,9 @@ function applySiteSettings() {
 
   document.querySelector('[data-site-brand]')?.setAttribute('aria-label', `${settings.brandName} início`);
   document.documentElement.style.setProperty('--site-background-image', `url("${settings.backgroundImage}")`);
+  renderSocialLinks(settings);
+  renderWorkGallery(settings);
+  renderProfessionalShowcase();
 }
 const defaultServices = [
   {
@@ -158,16 +251,19 @@ const defaultProfessionals = [
     id: 'ana-souza',
     name: 'Ana Souza',
     specialty: 'Cabelos e finalização',
+    linkUrl: '',
   },
   {
     id: 'beatriz-lima',
     name: 'Beatriz Lima',
     specialty: 'Unhas e spa das mãos',
+    linkUrl: '',
   },
   {
     id: 'clara-mendes',
     name: 'Clara Mendes',
     specialty: 'Tratamentos capilares',
+    linkUrl: '',
   },
 ];
 
@@ -198,12 +294,11 @@ const defaultCombos = [
 let services = readCollection(storageKeys.services, defaultServices);
 let professionals = readCollection(storageKeys.professionals, defaultProfessionals);
 
-const whatsappPhone = '5564999625616';
+let whatsappPhone = normalizeWhatsapp(readObject(storageKeys.siteSettings, defaultSiteSettings).whatsappNumber);
 const serviceOptions = document.querySelector('[data-service-options]');
 const comboOptions = document.querySelector('[data-combo-options]');
 const customServiceOptions = document.querySelector('[data-custom-service-options]');
 const bookingPanels = document.querySelectorAll('[data-booking-panel]');
-const bookingModeButtons = document.querySelectorAll('[data-booking-mode]');
 const bookingScreens = document.querySelectorAll('[data-booking-screen]');
 const screenTitle = document.querySelector('[data-screen-title]');
 const progressSteps = document.querySelectorAll('[data-progress-step]');
@@ -281,6 +376,11 @@ function showMainPage(pageName, updateHash = true) {
     link.classList.toggle('is-active', linkPage === nextPage);
   });
 
+  visualTabButtons.forEach((button) => {
+    button.classList.toggle('active', button.dataset.siteTab === nextPage);
+    button.setAttribute('aria-selected', button.dataset.siteTab === nextPage ? 'true' : 'false');
+  });
+
   if (updateHash) {
     history.replaceState(null, '', `#${nextPage}`);
   }
@@ -309,6 +409,12 @@ pageLinks.forEach((link) => {
 
     event.preventDefault();
     showMainPage(getPageFromHash(href));
+  });
+});
+
+visualTabButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    showMainPage(button.dataset.siteTab);
   });
 });
 
@@ -487,7 +593,7 @@ function renderCalendar() {
   }
 }
 function getBookingType() {
-  return getSelectedValue('bookingType') ?? 'combo';
+  return 'custom';
 }
 
 function getSelectedPackage() {
@@ -540,15 +646,8 @@ function updateBookingPanels() {
     panel.classList.toggle('is-active', panel.dataset.bookingPanel === bookingType);
   });
 
-  bookingModeButtons.forEach((button) => {
-    button.classList.toggle('is-active', button.dataset.bookingMode === bookingType);
-  });
-
   if (screenTitle) {
-    screenTitle.textContent = {
-      combo: 'Combos prontos',
-      custom: 'Monte seu combo',
-    }[bookingType] ?? 'Combos prontos';
+    screenTitle.textContent = 'Escolha seu atendimento';
   }
 }
 
@@ -557,7 +656,7 @@ function showBookingScreen(screenName) {
     screen.classList.toggle('is-active', screen.dataset.bookingScreen === screenName);
   });
 
-  const order = ['type', 'details', 'schedule', 'contact'];
+  const order = ['details', 'schedule', 'contact'];
   const activeIndex = order.indexOf(screenName);
   progressSteps.forEach((step) => {
     const stepIndex = order.indexOf(step.dataset.progressStep);
@@ -573,13 +672,14 @@ function getBookingState() {
   const selectedPackage = getSelectedPackage();
   const selectedProfessional = professionals.find((professional) => professional.id === getSelectedValue('professional')) ?? professionals[0] ?? defaultProfessionals[0];
   const appointmentDate = appointmentDateInput?.value || selectedAppointmentDate;
-  const period = getSelectedValue('period') ?? 'Manhã';
+  const period = getSelectedValue('period') ?? '09:00';
   const clientName = clientNameInput?.value.trim() || 'Cliente';
   const notes = clientNotesInput?.value.trim();
 
   return {
     selectedPackage,
     selectedProfessional,
+    appointmentDate,
     period,
     clientName,
     notes,
@@ -597,14 +697,14 @@ function getBookingTypeLabel(type) {
 
 function buildMessage() {
   const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, notes } = getBookingState();
+  const settings = readObject(storageKeys.siteSettings, defaultSiteSettings);
   const lines = [
-    `Olá, sou ${clientName}. Quero agendar pelo site do Salão Larissa.`,
-    `Tipo: ${getBookingTypeLabel(selectedPackage.bookingType)}.`,
+    `Olá, sou ${clientName}. Quero agendar pelo site do ${settings.brandName}.`,
     `Escolha: ${selectedPackage.name} (${selectedPackage.duration}, ${selectedPackage.price}).`,
     `Itens: ${selectedPackage.items.join(' + ')}.`,
     `Profissional: ${selectedProfessional.name}.`,
     `Data preferida: ${formatShortDate(appointmentDate)}.`,
-    `Período preferido: ${period}.`,
+    `Horário preferido: ${period}.`,
   ];
 
   if (notes) {
@@ -623,7 +723,7 @@ function updateSummary() {
 
   const { selectedPackage, selectedProfessional, appointmentDate, period } = getBookingState();
   summaryTitle.textContent = `${selectedPackage.name} com ${selectedProfessional.name}`;
-  summaryCopy.textContent = `${getBookingTypeLabel(selectedPackage.bookingType)} • ${selectedPackage.price} • ${formatShortDate(appointmentDate)} • ${period}`;
+  summaryCopy.textContent = `${selectedPackage.price} • ${formatShortDate(appointmentDate)} • ${period}`;
   messagePreview.textContent = buildMessage();
 }
 
@@ -656,51 +756,32 @@ function saveDemand() {
 }
 
 function openWhatsApp() {
+  whatsappPhone = normalizeWhatsapp(readObject(storageKeys.siteSettings, defaultSiteSettings).whatsappNumber);
   const message = encodeURIComponent(buildMessage());
   const url = `https://wa.me/${whatsappPhone}?text=${message}`;
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 ensureSeedData();
+applySiteSettings();
 renderOptions();
 renderCalendar();
 showBookingScreen('details');
+showMainPage(getPageFromHash(window.location.hash), false);
 updateSummary();
 
 bookingForm?.addEventListener('input', updateSummary);
 bookingForm?.addEventListener('change', (event) => {
   updateSummary();
-
-  if (event.target.matches('input[name="bookingType"]')) {
-    showBookingScreen('details');
-  }
 });
 
 scheduler?.addEventListener('click', (event) => {
-  const typeTab = event.target.closest('.booking-tab');
-  const modeButton = event.target.closest('[data-booking-mode]');
   const nextButton = event.target.closest('[data-next-screen]');
   const prevButton = event.target.closest('[data-prev-screen]');
   const calendarDateButton = event.target.closest('[data-calendar-date]');
   const calendarPrevButton = event.target.closest('[data-calendar-prev]');
   const calendarNextButton = event.target.closest('[data-calendar-next]');
 
-  if (typeTab) {
-    const input = typeTab.querySelector('input[name="bookingType"]');
-    if (input) {
-      input.checked = true;
-      updateSummary();
-      showBookingScreen('details');
-    }
-  }
-
-  if (modeButton) {
-    const input = bookingForm?.querySelector(`input[name="bookingType"][value="${modeButton.dataset.bookingMode}"]`);
-    if (input) {
-      input.checked = true;
-      updateSummary();
-    }
-  }
   if (calendarDateButton) {
     selectedAppointmentDate = calendarDateButton.dataset.calendarDate;
     renderCalendar();
@@ -735,6 +816,7 @@ bookingForm?.addEventListener('submit', (event) => {
 window.addEventListener('storage', () => {
   applySiteSettings();
   renderOptions();
+  renderProfessionalShowcase();
   updateSummary();
 });
 

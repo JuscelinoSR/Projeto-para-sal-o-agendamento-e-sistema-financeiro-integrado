@@ -3,162 +3,397 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Admin Macro MVP do BeautyJSR para editar serviços, profissionais e demandas de agendamento.">
-  <title>BeautyJSR | Admin Macro MVP</title>
+  <meta name="description" content="Painel admin do BeautyJSR para agenda, serviços, profissionais, financeiro e personalização do site.">
+  <title>BeautyJSR | Painel Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css">
 </head>
 <body data-auth-required>
-  <header class="admin-header">
-    <a class="brand" href="index.html" aria-label="Voltar para o site BeautyJSR">
-      <span class="brand-mark">B</span>
-      <span>BeautyJSR Admin</span>
-    </a>
-    <nav aria-label="Navegação do admin">
-      <a href="#demandas">Demandas</a>
-      <a href="#servicos">Serviços</a>
-      <a href="#profissionais">Profissionais</a>
-      <a href="#personalizar">Personalizar site</a>
-      <a href="index.html">Site</a>
-      <span class="admin-user" data-admin-email>Admin</span>
-      <button class="nav-button" type="button" data-logout>Sair</button>
-    </nav>
-  </header>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <a class="brand" href="index.html" aria-label="Voltar para o site BeautyJSR">
+        <span class="brand-mark">B</span>
+        <span>
+          <strong>BeautyJSR</strong>
+          <small>Admin</small>
+        </span>
+      </a>
 
-  <div class="auth-guard" data-auth-guard hidden></div>
-  <main>
-    <section class="admin-hero">
-      <div>
-        <p class="eyebrow">Admin Macro MVP</p>
-        <h1>Painel para editar demandas do BeautyJSR</h1>
-        <p>Gerencie os primeiros agendamentos recebidos, ajuste serviços e mantenha a lista de profissionais atualizada enquanto o produto ainda está em MVP.</p>
-      </div>
-      <div class="hero-actions">
-        <button class="button secondary" type="button" data-export>Exportar JSON</button>
-        <button class="button danger" type="button" data-clear-demo>Limpar demandas</button>
-      </div>
-    </section>
+      <nav class="side-nav" aria-label="Navegação do admin">
+        <button class="active" type="button" data-admin-tab="dashboard">Dashboard</button>
+        <button type="button" data-admin-tab="agenda">Agenda</button>
+        <button type="button" data-admin-tab="catalogo">Catálogo</button>
+        <button type="button" data-admin-tab="financeiro">Financeiro</button>
+        <button type="button" data-admin-tab="personalizar">Personalizar</button>
+        <a href="index.html">Ver site</a>
+      </nav>
 
-    <section class="metrics-grid" aria-label="Indicadores do painel">
-      <article>
-        <span>Total</span>
-        <strong data-metric-total>0</strong>
-      </article>
-      <article>
-        <span>Novas</span>
-        <strong data-metric-new>0</strong>
-      </article>
-      <article>
-        <span>Confirmadas</span>
-        <strong data-metric-confirmed>0</strong>
-      </article>
-      <article>
-        <span>Concluídas</span>
-        <strong data-metric-completed>0</strong>
-      </article>
-    </section>
-
-    <section class="admin-section" id="demandas">
-      <div class="section-heading">
-        <p class="eyebrow">Demandas</p>
-        <h2>Agendamentos recebidos</h2>
-        <p>As demandas são criadas quando um cliente usa o fluxo de agendamento do site neste mesmo navegador.</p>
+      <div class="sidebar-footer">
+        <span data-admin-email>Admin</span>
+        <button class="nav-button" type="button" data-logout>Sair</button>
       </div>
-      <div class="filter-row">
-        <label for="status-filter">Filtrar status</label>
-        <select id="status-filter" data-status-filter>
-          <option value="todos">Todos</option>
-          <option value="novo">Novo</option>
-          <option value="em_atendimento">Em atendimento</option>
-          <option value="confirmado">Confirmado</option>
-          <option value="concluido">Concluído</option>
-          <option value="cancelado">Cancelado</option>
-        </select>
-      </div>
-      <div class="demand-list" data-demand-list></div>
-    </section>
+    </aside>
 
-    <section class="admin-grid">
-      <section class="admin-section" id="servicos">
-        <div class="section-heading compact">
-          <p class="eyebrow">Catálogo</p>
-          <h2>Serviços</h2>
+    <main class="admin-main">
+      <div class="auth-guard" data-auth-guard hidden></div>
+
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Painel administrativo</p>
+          <h1 data-tab-title>Dashboard do salão</h1>
         </div>
-        <form class="editor-form" data-service-form>
-          <input type="hidden" name="id">
-          <label>Nome <input name="name" type="text" required placeholder="Ex.: Corte + escova"></label>
-          <label>Duração <input name="duration" type="text" required placeholder="Ex.: 60 min"></label>
-          <label>Preço <input name="price" type="text" required placeholder="Ex.: R$ 120"></label>
-          <div class="form-actions">
-            <button class="button primary" type="submit">Salvar serviço</button>
-            <button class="button secondary" type="button" data-service-cancel>Cancelar</button>
-          </div>
-        </form>
-        <div class="admin-list" data-service-list></div>
+        <div class="topbar-actions">
+          <button class="button success" type="button" data-sync-site>Atualizar Site</button>
+          <button class="button secondary" type="button" data-export>Exportar JSON</button>
+          <button class="button primary" type="button" data-open-tab="agenda">Novo agendamento</button>
+        </div>
+      </header>
+      <p class="sync-message" data-sync-message aria-live="polite"></p>
+
+      <section class="visual-tabs" aria-label="Abas principais com imagem">
+        <button class="visual-tab active" type="button" data-admin-tab="dashboard">
+          <img src="assets/salao-cores.jpeg" alt="">
+          <span>
+            <strong>Dashboard</strong>
+            <small>Resumo da operação</small>
+          </span>
+        </button>
+        <button class="visual-tab" type="button" data-admin-tab="agenda">
+          <img src="assets/salao-cores.jpeg" alt="">
+          <span>
+            <strong>Agenda</strong>
+            <small>Atendimentos e confirmações</small>
+          </span>
+        </button>
+        <button class="visual-tab" type="button" data-admin-tab="catalogo">
+          <img src="assets/salao-cores.jpeg" alt="">
+          <span>
+            <strong>Catálogo</strong>
+            <small>Serviços, preços e equipe</small>
+          </span>
+        </button>
+        <button class="visual-tab" type="button" data-admin-tab="financeiro">
+          <img src="assets/salao-cores.jpeg" alt="">
+          <span>
+            <strong>Financeiro</strong>
+            <small>Entradas e saídas</small>
+          </span>
+        </button>
+        <button class="visual-tab" type="button" data-admin-tab="personalizar">
+          <img src="assets/salao-cores.jpeg" alt="">
+          <span>
+            <strong>Personalizar</strong>
+            <small>Imagem e textos do site</small>
+          </span>
+        </button>
       </section>
 
-      <section class="admin-section" id="profissionais">
-        <div class="section-heading compact">
-          <p class="eyebrow">Equipe</p>
-          <h2>Profissionais</h2>
-        </div>
-        <form class="editor-form" data-professional-form>
-          <input type="hidden" name="id">
-          <label>Nome <input name="name" type="text" required placeholder="Ex.: Ana Souza"></label>
-          <label>Especialidade <input name="specialty" type="text" required placeholder="Ex.: Cabelos e finalização"></label>
-          <div class="form-actions">
-            <button class="button primary" type="submit">Salvar profissional</button>
-            <button class="button secondary" type="button" data-professional-cancel>Cancelar</button>
-          </div>
-        </form>
-        <div class="admin-list" data-professional-list></div>
-      </section>
-    </section>
-
-    <section class="admin-section site-editor-section" id="personalizar">
-      <div class="section-heading">
-        <p class="eyebrow">Personalização</p>
-        <h2>Editar tela inicial do site</h2>
-        <p>Altere textos e foto de fundo sem mexer no código. A imagem atual do salão permanece como modelo padrão e pode ser restaurada a qualquer momento.</p>
-      </div>
-
-      <div class="site-editor-grid">
-        <form class="editor-form site-editor-form" data-site-settings-form>
-          <label>Nome do salão <input name="brandName" type="text" required placeholder="Ex.: Salão Larissa"></label>
-          <label>Selo da tela inicial <input name="heroBadge" type="text" required placeholder="Ex.: Salão feminino"></label>
-          <label>Título principal <input name="heroTitle" type="text" required placeholder="Ex.: Seu momento de cuidado."></label>
-          <label>Texto de apoio <textarea name="heroSubtitle" rows="4" required placeholder="Texto que aparece abaixo do título"></textarea></label>
-          <label>Texto do botão de agenda <input name="ctaText" type="text" required placeholder="Ex.: Agendar com Ana"></label>
-
-          <label>Foto de fundo
-            <input name="backgroundImage" type="file" accept="image/*" data-site-image-input>
-          </label>
-          <p class="form-hint">Use uma foto horizontal do salão. No celular, este botão permite abrir galeria, câmera, arquivos ou apps de fotos disponíveis no dispositivo.</p>
-
-          <div class="form-actions">
-            <button class="button primary" type="submit">Salvar personalização</button>
-            <button class="button secondary" type="button" data-site-reset>Restaurar modelo</button>
-          </div>
-          <p class="auth-message" data-site-settings-message></p>
-        </form>
-
-        <aside class="site-preview" aria-label="Prévia da tela inicial" data-site-preview>
+      <section class="tab-panel active" data-tab-panel="dashboard" aria-label="Dashboard">
+        <article class="tab-cover dashboard-cover">
+          <img src="assets/salao-cores.jpeg" alt="">
           <div>
-            <span data-preview-badge>Salão feminino</span>
-            <strong data-preview-title>Seu momento de cuidado.</strong>
-            <p data-preview-subtitle>Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.</p>
+            <p class="eyebrow">Visão geral</p>
+            <h2>Resumo rápido da operação</h2>
+            <p>Acompanhe agenda, confirmações e receita prevista antes de entrar nas áreas de trabalho.</p>
           </div>
-        </aside>
-      </div>
-    </section>
-  </main>
+        </article>
 
-  <footer class="admin-footer">
-    <span>BeautyJSR Admin Macro MVP</span>
-    <span>Dados locais no navegador</span>
-  </footer>
+        <section class="metrics-grid" aria-label="Indicadores do painel">
+          <article class="metric-card">
+            <span>Agendamentos</span>
+            <strong data-metric-total>0</strong>
+            <small>Total salvo neste navegador</small>
+          </article>
+          <article class="metric-card">
+            <span>Novos</span>
+            <strong data-metric-new>0</strong>
+            <small>Precisam de confirmação</small>
+          </article>
+          <article class="metric-card">
+            <span>Confirmados</span>
+            <strong data-metric-confirmed>0</strong>
+            <small>Agenda em andamento</small>
+          </article>
+          <article class="metric-card">
+            <span>Receita prevista</span>
+            <strong data-metric-revenue>R$ 0</strong>
+            <small>Confirmados e concluídos</small>
+          </article>
+        </section>
+
+        <section class="admin-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Resumo</p>
+              <h2>Operação do dia</h2>
+            </div>
+            <p>Acompanhe os indicadores principais e use as abas laterais para gerenciar agenda, catálogo, financeiro e visual do site.</p>
+          </div>
+          <div class="quick-grid">
+            <button class="quick-card" type="button" data-open-tab="agenda">
+              <strong>Ver agenda</strong>
+              <span>Confirmar ou cadastrar atendimentos.</span>
+            </button>
+            <button class="quick-card" type="button" data-open-tab="catalogo">
+              <strong>Editar catálogo</strong>
+              <span>Atualizar serviços, preços e profissionais.</span>
+            </button>
+            <button class="quick-card" type="button" data-open-tab="financeiro">
+              <strong>Controlar caixa</strong>
+              <span>Lançar entradas e saídas manuais.</span>
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="agenda" aria-label="Agenda">
+        <article class="tab-cover agenda-cover">
+          <img src="assets/salao-cores.jpeg" alt="">
+          <div>
+            <p class="eyebrow">Agenda</p>
+            <h2>Atendimentos e confirmações</h2>
+            <p>Veja os pedidos recebidos, filtre por profissional e cadastre horários manualmente.</p>
+          </div>
+        </article>
+
+        <section class="workspace-grid">
+          <section class="admin-section wide">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Agenda</p>
+                <h2>Agendamentos recebidos</h2>
+              </div>
+              <button class="button danger" type="button" data-clear-demo>Limpar demandas</button>
+            </div>
+
+            <div class="filter-panel">
+              <label>
+                Buscar
+                <input type="search" data-search-filter placeholder="Cliente, serviço ou profissional">
+              </label>
+              <label>
+                Status
+                <select data-status-filter>
+                  <option value="todos">Todos</option>
+                  <option value="novo">Novo</option>
+                  <option value="em_atendimento">Em atendimento</option>
+                  <option value="confirmado">Confirmado</option>
+                  <option value="concluido">Concluído</option>
+                  <option value="cancelado">Cancelado</option>
+                </select>
+              </label>
+              <label>
+                Profissional
+                <select data-professional-filter>
+                  <option value="todos">Todos</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="demand-list" data-demand-list></div>
+          </section>
+
+          <aside class="admin-section" id="manual-booking">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Atendimento</p>
+                <h2>Novo agendamento</h2>
+              </div>
+            </div>
+            <form class="editor-form" data-manual-booking-form>
+              <label>Cliente <input name="clientName" type="text" required placeholder="Nome da cliente"></label>
+              <label>Serviço <select name="serviceId" required data-manual-service></select></label>
+              <label>Profissional <select name="professionalId" required data-manual-professional></select></label>
+              <label>Data <input name="appointmentDate" type="date" required></label>
+              <label>Período
+                <select name="period" required>
+                  <option>Manhã</option>
+                  <option>Tarde</option>
+                  <option>Noite</option>
+                </select>
+              </label>
+              <label>Observação <textarea name="notes" rows="3" placeholder="Preferências, telefone ou observação interna"></textarea></label>
+              <button class="button primary full" type="submit">Salvar agendamento</button>
+            </form>
+          </aside>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="catalogo" aria-label="Catálogo">
+        <article class="tab-cover catalog-cover">
+          <img src="assets/salao-cores.jpeg" alt="">
+          <div>
+            <p class="eyebrow">Catálogo</p>
+            <h2>Serviços, preços e equipe</h2>
+            <p>Mantenha a vitrine do salão atualizada com procedimentos, valores e profissionais.</p>
+          </div>
+        </article>
+
+        <section class="workspace-grid">
+          <section class="admin-section">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Catálogo</p>
+                <h2>Serviços</h2>
+              </div>
+            </div>
+            <form class="editor-form" data-service-form>
+              <input type="hidden" name="id">
+              <label>Nome <input name="name" type="text" required placeholder="Ex.: Corte + escova"></label>
+              <label>Duração <input name="duration" type="text" required placeholder="Ex.: 60 min"></label>
+              <label>Preço <input name="price" type="text" required placeholder="Ex.: R$ 120"></label>
+              <div class="form-actions">
+                <button class="button primary" type="submit">Salvar serviço</button>
+                <button class="button secondary" type="button" data-service-cancel>Cancelar</button>
+              </div>
+            </form>
+            <div class="admin-list" data-service-list></div>
+          </section>
+
+          <section class="admin-section">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Equipe</p>
+                <h2>Profissionais</h2>
+              </div>
+            </div>
+            <form class="editor-form" data-professional-form>
+              <input type="hidden" name="id">
+              <label>Nome <input name="name" type="text" required placeholder="Ex.: Ana Souza"></label>
+              <label>Especialidade <input name="specialty" type="text" required placeholder="Ex.: Cabelos e finalização"></label>
+              <button class="button secondary full" type="button" data-add-professional-link>Adicionar link</button>
+              <label class="is-hidden" data-professional-link-field>Link do profissional <input name="linkUrl" type="url" placeholder="Instagram, WhatsApp ou portfólio"></label>
+              <div class="form-actions">
+                <button class="button primary" type="submit">Salvar profissional</button>
+                <button class="button secondary" type="button" data-professional-cancel>Cancelar</button>
+              </div>
+            </form>
+            <div class="admin-list" data-professional-list></div>
+          </section>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="financeiro" aria-label="Financeiro">
+        <article class="tab-cover finance-cover">
+          <img src="assets/salao-cores.jpeg" alt="">
+          <div>
+            <p class="eyebrow">Financeiro</p>
+            <h2>Entradas e saídas do salão</h2>
+            <p>Registre movimentações simples enquanto o controle financeiro completo evolui.</p>
+          </div>
+        </article>
+
+        <section class="workspace-grid">
+          <section class="admin-section wide">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Financeiro</p>
+                <h2>Controle de caixa</h2>
+              </div>
+            </div>
+            <div class="finance-summary">
+              <article>
+                <span>Entrada manual</span>
+                <strong data-finance-income>R$ 0</strong>
+              </article>
+              <article>
+                <span>Saídas</span>
+                <strong data-finance-expense>R$ 0</strong>
+              </article>
+              <article>
+                <span>Saldo manual</span>
+                <strong data-finance-balance>R$ 0</strong>
+              </article>
+            </div>
+            <div class="admin-list" data-transaction-list></div>
+          </section>
+
+          <aside class="admin-section">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">Lançamento</p>
+                <h2>Adicionar valor</h2>
+              </div>
+            </div>
+            <form class="editor-form" data-transaction-form>
+              <label>Tipo
+                <select name="type" required>
+                  <option value="income">Entrada</option>
+                  <option value="expense">Saída</option>
+                </select>
+              </label>
+              <label>Descrição <input name="description" type="text" required placeholder="Ex.: Produto, comissão, taxa"></label>
+              <label>Valor <input name="amount" type="number" required min="0" step="0.01" placeholder="0,00"></label>
+              <label>Data <input name="date" type="date" required></label>
+              <button class="button primary full" type="submit">Salvar lançamento</button>
+            </form>
+          </aside>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-tab-panel="personalizar" aria-label="Personalização">
+        <article class="tab-cover customize-cover">
+          <img src="assets/salao-cores.jpeg" alt="">
+          <div>
+            <p class="eyebrow">Visual do site</p>
+            <h2>Personalização da página pública</h2>
+            <p>Atualize textos, chamada principal e imagem de fundo do site publicado.</p>
+          </div>
+        </article>
+
+        <section class="admin-section site-editor-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Personalização</p>
+              <h2>Editar tela inicial do site</h2>
+            </div>
+            <p>Altere textos e foto de fundo sem mexer no código. Os dados ficam no navegador nesta versão MVP.</p>
+          </div>
+
+          <div class="site-editor-grid">
+            <form class="editor-form site-editor-form" data-site-settings-form>
+              <label>Nome do salão <input name="brandName" type="text" required placeholder="Ex.: Salão Larissa"></label>
+              <label>Selo da tela inicial <input name="heroBadge" type="text" required placeholder="Ex.: Salão feminino"></label>
+              <label>Título principal <input name="heroTitle" type="text" required placeholder="Ex.: Seu momento de cuidado."></label>
+              <label>Texto de apoio <textarea name="heroSubtitle" rows="4" required placeholder="Texto que aparece abaixo do título"></textarea></label>
+              <label>Texto do botão <input name="ctaText" type="text" required placeholder="Ex.: Agendar com Ana"></label>
+              <div class="form-divider">
+                <strong>Perfis e contatos</strong>
+                <span>Edite os links que aparecem no site.</span>
+              </div>
+              <label>Instagram <input name="instagramUrl" type="url" placeholder="https://www.instagram.com/seu_perfil/"></label>
+              <label>Facebook <input name="facebookUrl" type="url" placeholder="https://www.facebook.com/seu_perfil"></label>
+              <label>TikTok <input name="tiktokUrl" type="url" placeholder="https://www.tiktok.com/@seu_perfil"></label>
+              <label>WhatsApp <input name="whatsappNumber" type="tel" placeholder="5564999625616"></label>
+              <div class="form-divider">
+                <strong>Imagens dos trabalhos</strong>
+                <span>Envie fotos salvas do Instagram ou do celular para aparecerem na aba Trabalhos.</span>
+              </div>
+              <label>Fotos do salão <input name="galleryImages" type="file" accept="image/*" multiple data-gallery-input></label>
+              <div class="gallery-preview" data-gallery-preview></div>
+              <label>Foto de fundo <input name="backgroundImage" type="file" accept="image/*" data-site-image-input></label>
+              <p class="form-hint">Use uma foto horizontal do salão para ficar melhor em desktop e celular.</p>
+              <div class="form-actions">
+                <button class="button primary" type="submit">Salvar personalização</button>
+                <button class="button secondary" type="button" data-site-reset>Restaurar modelo</button>
+              </div>
+              <p class="auth-message" data-site-settings-message></p>
+            </form>
+
+            <aside class="site-preview" aria-label="Prévia da tela inicial" data-site-preview>
+              <div>
+                <span data-preview-badge>Salão feminino</span>
+                <strong data-preview-title>Seu momento de cuidado.</strong>
+                <p data-preview-subtitle>Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.</p>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>

@@ -1,6 +1,8 @@
 const authConfig = window.BEAUTYJSR_SUPABASE ?? {};
 const isConfigured = authConfig.url && authConfig.anonKey && !authConfig.url.includes('SEU-PROJETO') && !authConfig.anonKey.includes('SUA_SUPABASE');
 const supabaseClient = isConfigured ? window.supabase.createClient(authConfig.url, authConfig.anonKey) : null;
+const isLocalPreview = ['file:', 'http:'].includes(window.location.protocol)
+  && ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
 
 function setAuthMessage(message, type = 'info') {
   const element = document.querySelector('[data-auth-message]');
@@ -32,6 +34,16 @@ async function requireAdminSession() {
   const guard = document.querySelector('[data-auth-guard]');
 
   if (!isConfigured) {
+    if (isLocalPreview) {
+      if (guard) {
+        guard.innerHTML = 'Modo local ativo: Supabase Auth ainda não foi configurado. Em produção, configure <strong>supabase-config.js</strong> para proteger o admin.';
+        guard.hidden = false;
+      }
+      document.body.classList.remove('auth-loading');
+      document.querySelector('[data-admin-email]').textContent = 'Modo local';
+      return;
+    }
+
     if (guard) {
       guard.innerHTML = 'Supabase Auth ainda não foi configurado. Edite <strong>supabase-config.js</strong> com URL e anon key do projeto.';
       guard.hidden = false;
