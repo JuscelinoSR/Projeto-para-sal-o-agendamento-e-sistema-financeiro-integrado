@@ -64,12 +64,14 @@ function clearLocalAdminSession() {
 }
 
 function startVerifiedAdminSession(email) {
+  const expiresAt = Date.now() + localAdminSessionDuration;
   const payload = JSON.stringify({
     email,
-    expiresAt: Date.now() + localAdminSessionDuration,
+    expiresAt,
   });
   sessionStorage.setItem(verifiedAdminSessionKey, payload);
   localStorage.setItem(verifiedAdminSessionKey, payload);
+  return { email, expiresAt };
 }
 
 function getVerifiedAdminSession() {
@@ -93,6 +95,25 @@ function getVerifiedAdminSession() {
 function clearVerifiedAdminSession() {
   sessionStorage.removeItem(verifiedAdminSessionKey);
   localStorage.removeItem(verifiedAdminSessionKey);
+}
+
+function getVerifiedAdminSessionFromUrl() {
+  if (!isLocalPreview) return null;
+  const params = new URLSearchParams(window.location.search);
+  const email = params.get('verifiedAdminEmail');
+  const expiresAt = Number(params.get('verifiedUntil'));
+  if (!email || !Number.isFinite(expiresAt) || Date.now() > expiresAt) return null;
+  startVerifiedAdminSession(email);
+  return { email, expiresAt };
+}
+
+function getAdminRedirectUrl(email) {
+  const redirectUrl = authConfig.adminRedirect || 'admin.html';
+  if (!isLocalPreview) return redirectUrl;
+
+  const verifiedSession = startVerifiedAdminSession(email);
+  const separator = redirectUrl.includes('?') ? '&' : '?';
+  return `${redirectUrl}${separator}verifiedAdminEmail=${encodeURIComponent(verifiedSession.email)}&verifiedUntil=${verifiedSession.expiresAt}`;
 }
 
 async function requireAdminSession() {
@@ -124,7 +145,7 @@ async function requireAdminSession() {
 
   const session = await getSession();
   if (!session) {
-    const verifiedSession = isLocalPreview ? getVerifiedAdminSession() : null;
+    const verifiedSession = getVerifiedAdminSessionFromUrl() ?? getVerifiedAdminSession();
     if (verifiedSession) {
       document.body.classList.remove('auth-loading');
       document.querySelector('[data-admin-email]').textContent = verifiedSession.email;
@@ -187,7 +208,7 @@ async function setupLogin() {
 
   const session = await getSession();
   if (session && await isAdminUser(session.user.id)) {
-    window.location.href = authConfig.adminRedirect || 'admin.html';
+    window.location.href = getAdminRedirectUrl(session.user.email ?? 'Admin');
     return;
   }
 
@@ -215,11 +236,7 @@ async function setupLogin() {
       return;
     }
 
-    if (isLocalPreview) {
-      startVerifiedAdminSession(data.user.email ?? email);
-    }
-
-    window.location.href = authConfig.adminRedirect || 'admin.html';
+    window.location.href = getAdminRedirectUrl(data.user.email ?? email);
   });
 }
 
