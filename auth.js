@@ -64,28 +64,35 @@ function clearLocalAdminSession() {
 }
 
 function startVerifiedAdminSession(email) {
-  sessionStorage.setItem(verifiedAdminSessionKey, JSON.stringify({
+  const payload = JSON.stringify({
     email,
     expiresAt: Date.now() + localAdminSessionDuration,
-  }));
+  });
+  sessionStorage.setItem(verifiedAdminSessionKey, payload);
+  localStorage.setItem(verifiedAdminSessionKey, payload);
 }
 
 function getVerifiedAdminSession() {
   try {
-    const session = JSON.parse(sessionStorage.getItem(verifiedAdminSessionKey) ?? 'null');
+    const rawSession = sessionStorage.getItem(verifiedAdminSessionKey)
+      ?? localStorage.getItem(verifiedAdminSessionKey);
+    const session = JSON.parse(rawSession ?? 'null');
     if (!session?.email || Date.now() > session.expiresAt) {
       sessionStorage.removeItem(verifiedAdminSessionKey);
+      localStorage.removeItem(verifiedAdminSessionKey);
       return null;
     }
     return session;
   } catch {
     sessionStorage.removeItem(verifiedAdminSessionKey);
+    localStorage.removeItem(verifiedAdminSessionKey);
     return null;
   }
 }
 
 function clearVerifiedAdminSession() {
   sessionStorage.removeItem(verifiedAdminSessionKey);
+  localStorage.removeItem(verifiedAdminSessionKey);
 }
 
 async function requireAdminSession() {
@@ -196,7 +203,7 @@ async function setupLogin() {
 
     const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (error) {
-      setAuthMessage('E-mail ou senha invalidos.', 'error');
+      setAuthMessage(`Nao foi possivel entrar: ${error.message}`, 'error');
       button.disabled = false;
       return;
     }
