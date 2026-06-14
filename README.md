@@ -1,93 +1,135 @@
-# BeautyJSR / Salão Larissa MVP
+# BeautyJSR / Salao Larissa MVP
 
-Site e MVP de agendamento para salão feminino, com atendimento guiado, serviços editáveis, calendário de agendamento, resumo automático e envio para WhatsApp.
+MVP de site, agendamento e painel administrativo para salao de beleza. O objetivo e validar uma experiencia simples para clientes reais: ver o salao, escolher servicos, selecionar data, profissional e horario, e enviar o pedido pronto pelo WhatsApp.
 
 ## Estado atual
 
-O MVP publicado já possui:
+O projeto esta em modo MVP estatico, com dados salvos no navegador via `localStorage`. Isso permite testar rapido no computador antes da conexao final com Supabase.
 
-- página principal em abas, sem rolagem longa entre áreas principais;
-- visual do Salão Larissa com foto de fundo editável;
-- fluxo de agendamento direto na aba Serviços;
-- seleção entre Combo pronto e Personalizado;
-- seleção de vários procedimentos no modo personalizado, com soma automática do valor;
-- calendário visual para escolher a data do atendimento;
-- seleção de profissional e período;
-- resumo automático do agendamento;
-- mensagem pronta para WhatsApp;
-- Admin Macro MVP para demandas, serviços, profissionais e personalização visual;
-- modelo inicial de autenticação do admin com Supabase Auth;
-- base Supabase para notificação WhatsApp Admin de agendamentos pendentes.
+Ja existe uma base funcional com:
 
-## Publicação
+- site publico em abas, evitando rolagem longa entre as areas principais;
+- visual premium para salao de beleza, com imagens grandes, cards refinados e tons elegantes;
+- painel admin com cara de app, abas, cards, acoes rapidas e layout mais profissional;
+- tela de login local para acessar o admin;
+- cadastro e edicao de servicos;
+- cadastro e edicao de profissionais;
+- campo opcional de link por profissional;
+- personalizacao do nome do salao, textos, botao, WhatsApp, redes sociais e imagem de fundo;
+- upload de imagens para a galeria de trabalhos;
+- sincronizacao local entre admin e site pelo botao **Atualizar Site**;
+- fluxo de agendamento direto em servicos;
+- agenda com selecao de data, profissional, horarios vagos e opcao de encaixe;
+- resumo automatico do pedido;
+- envio da mensagem pronta para WhatsApp;
+- agenda administrativa com status, nota interna e cadastro manual de atendimento;
+- controle financeiro inicial com entradas e saidas;
+- exportacao dos dados locais em JSON;
+- base preparada para evoluir para Supabase Auth, banco de dados online e notificacoes.
+
+## Login local do admin
+
+Enquanto o Supabase nao estiver configurado, o painel usa login local de teste:
+
+```text
+Usuario: admin
+Senha: admin123
+```
+
+Esse login serve apenas para desenvolvimento local. Em producao, o correto e configurar Supabase Auth.
+
+## O que o MVP entrega para o cliente final
+
+O cliente que acessa o site consegue:
+
+- navegar pelas abas principais do salao;
+- ver uma apresentacao visual do salao;
+- consultar servicos disponiveis;
+- escolher um ou mais servicos para atendimento;
+- escolher uma data no calendario;
+- escolher o profissional;
+- ver horarios vagos sugeridos;
+- escolher a opcao de encaixe quando precisar;
+- preencher nome e observacao;
+- revisar o resumo do atendimento;
+- enviar tudo pronto para o WhatsApp do salao;
+- acessar links sociais cadastrados no painel;
+- ver fotos da galeria quando forem adicionadas pelo admin.
+
+## O que o MVP entrega para o administrador
+
+O administrador consegue:
+
+- entrar no painel com usuario e senha local;
+- acompanhar indicadores basicos do salao;
+- ver pedidos de agendamento recebidos;
+- filtrar agendamentos por status, profissional e busca;
+- confirmar, alterar status ou excluir pedidos;
+- adicionar nota interna ao atendimento;
+- criar agendamentos manualmente;
+- cadastrar, editar e excluir servicos;
+- cadastrar, editar e excluir profissionais;
+- adicionar link de perfil para cada profissional;
+- editar conteudo principal do site;
+- trocar imagem de fundo;
+- cadastrar Instagram, Facebook, TikTok e WhatsApp;
+- adicionar imagens na galeria de trabalhos;
+- atualizar o site com um botao de sincronizacao;
+- cadastrar entradas e saidas financeiras;
+- visualizar resumo financeiro inicial;
+- exportar os dados locais em JSON.
+
+## Fluxo de agendamento atual
+
+1. O cliente abre a aba **Servicos**.
+2. Escolhe os servicos desejados.
+3. Clica em continuar para agendamento.
+4. Escolhe data no calendario.
+5. Escolhe profissional.
+6. Escolhe horario vago ou **Encaixe**.
+7. Informa nome e observacao.
+8. Revisa o resumo.
+9. Envia a mensagem pronta para WhatsApp.
+
+WhatsApp configurado para o MVP: `5564999625616`.
+
+## Publicacao
 
 Site publicado pelo GitHub Pages:
 
 https://juscelinosr.github.io/Projeto-para-sal-o-agendamento-e-sistema-financeiro-integrado/
 
-A publicação usa GitHub Actions e o arquivo `.nojekyll` para servir os assets estáticos corretamente.
+A publicacao usa GitHub Actions e o arquivo `.nojekyll` para servir os assets estaticos corretamente.
 
-## Fluxo de agendamento
+## Historico do projeto
 
-1. O cliente abre a aba Serviços.
-2. Escolhe Combo pronto ou Personalizado.
-3. No Personalizado, pode marcar mais de um procedimento.
-4. O resumo calcula e mostra o valor total.
-5. O cliente clica em Continuar para agendamento.
-6. Escolhe a data no calendário, profissional e período.
-7. Informa nome e observação.
-8. Envia a mensagem pronta para o WhatsApp.
+Um resumo mais completo da evolucao do MVP esta em:
 
-WhatsApp configurado para o MVP: `5564999625616`.
+[docs/HISTORICO-MVP.md](docs/HISTORICO-MVP.md)
 
-## Admin Macro MVP
+## Supabase
 
-Painel administrativo inicial: `admin.html`.
+O Supabase ainda nao esta configurado com credenciais reais. O arquivo `supabase-config.js` precisa receber:
 
-Funções disponíveis:
+```js
+url: "https://SEU-PROJETO.supabase.co",
+anonKey: "SUA_SUPABASE_ANON_KEY"
+```
 
-- visualizar demandas criadas no site;
-- acompanhar data, período, profissional, serviço e observação;
-- alterar status da demanda;
-- adicionar nota interna;
-- cadastrar, editar e excluir serviços;
-- cadastrar, editar e excluir profissionais;
-- editar nome do salão, texto da página, CTA e foto de fundo;
-- enviar foto a partir do dispositivo do usuário;
-- exportar dados locais em JSON.
+Quando isso for configurado, o projeto podera evoluir para:
 
-Nesta versão MVP, os dados ficam no `localStorage` do navegador. A próxima etapa é migrar demandas, serviços, profissionais e configurações visuais para Supabase.
+- login real com email e senha;
+- banco de dados online;
+- agenda compartilhada entre dispositivos;
+- dados persistidos fora do navegador;
+- regras de seguranca;
+- notificacoes e automacoes.
 
-## Autenticação Admin
+## Proximos passos recomendados
 
-Modelo criado com Supabase Auth, e-mail e senha.
-
-Arquivos principais:
-
-- `login.html`
-- `auth.js`
-- `supabase-config.js`
-- `supabase/migrations/20260608130000_create_admin_auth_model.sql`
-- `docs/admin-auth-model.md`
-
-Observação: `supabase-config.js` ainda precisa receber a URL e a anon key reais do projeto Supabase para ativar a autenticação em produção.
-
-## Notificação WhatsApp Admin
-
-Base criada para notificar o admin do Salão Larissa a cada 5 minutos sobre agendamentos pendentes, com limite de 6 tentativas e parada automática quando o status muda.
-
-Documentação: `docs/whatsapp-admin-notifications.md`.
-
-Arquivos principais:
-
-- `supabase/migrations/20260608120000_create_appointments_notifications.sql`
-- `supabase/functions/notify-pending-appointments/index.ts`
-- `supabase/sql/schedule_notify_pending_appointments.sql`
-
-## Próximos passos
-
-- Conectar Supabase real no `supabase-config.js`.
-- Migrar dados do `localStorage` para tabelas Supabase.
-- Implementar agenda com horários reais por profissional.
-- Conectar envio de notificação WhatsApp Admin.
-- Transformar o MVP estático em app Next.js quando a validação visual estiver aprovada.
+1. Configurar Supabase real.
+2. Criar tabelas online para servicos, profissionais, agendamentos, financeiro e configuracoes.
+3. Migrar `localStorage` para Supabase.
+4. Publicar uma versao final em GitHub Pages ou Vercel.
+5. Testar o fluxo completo em celular.
+6. Refinar horarios reais por profissional.

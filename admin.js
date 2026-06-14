@@ -178,6 +178,37 @@ function slugify(value) {
     .replace(/(^-|-$)/g, '') || `item-${Date.now()}`;
 }
 
+function createUniqueId(value, items) {
+  const baseId = slugify(value);
+  const existingIds = new Set(items.map((item) => item.id));
+  if (!existingIds.has(baseId)) return baseId;
+
+  let index = 2;
+  let nextId = `${baseId}-${index}`;
+  while (existingIds.has(nextId)) {
+    index += 1;
+    nextId = `${baseId}-${index}`;
+  }
+  return nextId;
+}
+
+function normalizeProfessionalLink(value) {
+  const link = String(value ?? '').trim();
+  if (!link) return '';
+
+  if (link.startsWith('@')) {
+    return `https://www.instagram.com/${link.slice(1).replace(/^\/+|\/+$/g, '')}/`;
+  }
+
+  const phone = link.replace(/\D/g, '');
+  if (phone.length >= 10 && phone.length <= 14 && !/[a-z]/i.test(link)) {
+    return `https://wa.me/${phone}`;
+  }
+
+  if (/^(https?:\/\/|mailto:|tel:)/i.test(link)) return link;
+  return `https://${link.replace(/^\/+/, '')}`;
+}
+
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -473,11 +504,12 @@ function saveCatalogDrafts() {
     const data = new FormData(professionalForm);
     const name = data.get('name')?.trim();
     const specialty = data.get('specialty')?.trim();
-    const linkUrl = data.get('linkUrl')?.trim();
+    const linkUrl = normalizeProfessionalLink(data.get('linkUrl'));
 
     if (name && specialty) {
+      const professionals = getProfessionals();
       upsertItem(storageKeys.professionals, {
-        id: data.get('id') || slugify(name),
+        id: data.get('id') || createUniqueId(name, professionals),
         name,
         specialty,
         linkUrl,
@@ -595,12 +627,13 @@ professionalForm?.addEventListener('submit', (event) => {
   event.preventDefault();
   const data = new FormData(professionalForm);
   const name = data.get('name').trim();
-  const id = data.get('id') || slugify(name);
+  const professionals = getProfessionals();
+  const id = data.get('id') || createUniqueId(name, professionals);
   upsertItem(storageKeys.professionals, {
     id,
     name,
     specialty: data.get('specialty').trim(),
-    linkUrl: data.get('linkUrl').trim(),
+    linkUrl: normalizeProfessionalLink(data.get('linkUrl')),
   });
   resetForm(professionalForm);
   renderAll();

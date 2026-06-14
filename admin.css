@@ -27,6 +27,50 @@ a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; }
 h1, h2, h3, p { margin-top: 0; overflow-wrap: anywhere; }
 
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    linear-gradient(rgba(247, 241, 234, 0.82), rgba(247, 241, 234, 0.82)),
+    url("assets/salao-cores.jpeg") center / cover;
+}
+
+.auth-shell {
+  width: min(460px, 100%);
+}
+
+.auth-card {
+  display: grid;
+  gap: 28px;
+  padding: clamp(24px, 5vw, 36px);
+  border: 1px solid rgba(95, 63, 50, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 250, 245, 0.94);
+  box-shadow: var(--shadow);
+}
+
+.auth-card h1 {
+  margin-bottom: 12px;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  line-height: 1;
+}
+
+.auth-card p {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.auth-form {
+  display: grid;
+  gap: 12px;
+}
+
+.auth-form label {
+  font-weight: 800;
+}
+
 .admin-shell {
   min-height: 100vh;
   display: grid;
@@ -655,7 +699,7 @@ textarea:focus {
   display: none;
 }
 
-.auth-loading .admin-main {
+.auth-loading .admin-shell {
   opacity: 0;
 }
 
@@ -729,5 +773,265 @@ textarea:focus {
 
   .tab-cover {
     min-height: 240px;
+  }
+}
+
+/* Premium app admin layout */
+:root {
+  --ink: #241c18;
+  --muted: #6d625d;
+  --line: rgba(56, 42, 35, 0.16);
+  --paper: #f2ebe4;
+  --surface: #fffdf9;
+  --accent: #8f725f;
+  --accent-dark: #4f655d;
+  --soft: rgba(197, 154, 47, 0.13);
+  --danger: #9e4f3f;
+  --success: #4f655d;
+  --shadow: 0 24px 64px rgba(36, 28, 24, 0.16);
+}
+
+body {
+  background:
+    linear-gradient(180deg, #f8f2ed 0%, #eee3da 48%, #f6efe8 100%);
+}
+
+.admin-shell {
+  grid-template-columns: 292px minmax(0, 1fr);
+}
+
+.sidebar {
+  margin: 14px 0 14px 14px;
+  height: calc(100vh - 28px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(36, 28, 24, 0.96), rgba(55, 43, 36, 0.94)),
+    url("assets/salao-cores.jpeg") center / cover;
+  background-blend-mode: multiply;
+  color: #fff;
+  box-shadow: 0 24px 54px rgba(36, 28, 24, 0.24);
+}
+
+.sidebar .brand,
+.sidebar-footer,
+.side-nav a,
+.side-nav button,
+.nav-button {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.sidebar .brand strong {
+  color: #fff;
+}
+
+.sidebar .brand small {
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.brand-mark {
+  background: linear-gradient(135deg, #c59a2f, #4f655d);
+}
+
+.side-nav {
+  gap: 10px;
+}
+
+.side-nav a,
+.side-nav button {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+}
+
+.side-nav a:hover,
+.side-nav button:hover,
+.side-nav a.active,
+.side-nav button.active {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-button {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.admin-main {
+  padding: 18px clamp(18px, 3vw, 38px) 58px;
+}
+
+.topbar {
+  position: sticky;
+  top: 14px;
+  z-index: 8;
+  min-height: 86px;
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid rgba(56, 42, 35, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 253, 249, 0.88);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 42px rgba(36, 28, 24, 0.09);
+}
+
+.topbar h1 {
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  line-height: 1;
+}
+
+.button {
+  border-radius: 8px;
+  border-color: rgba(56, 42, 35, 0.16);
+}
+
+.button.primary,
+.button.success {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(135deg, #c59a2f, #8f725f);
+  box-shadow: 0 12px 28px rgba(127, 91, 55, 0.18);
+}
+
+.button.secondary {
+  background: rgba(255, 253, 249, 0.76);
+}
+
+.visual-tabs {
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.visual-tab {
+  min-height: 150px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 18px 40px rgba(36, 28, 24, 0.14);
+}
+
+.visual-tab::after,
+.tab-cover::after {
+  background: linear-gradient(0deg, rgba(26, 21, 18, 0.88), rgba(26, 21, 18, 0.16));
+}
+
+.visual-tab.active {
+  box-shadow: 0 0 0 3px rgba(197, 154, 47, 0.28), 0 20px 48px rgba(36, 28, 24, 0.18);
+}
+
+.tab-cover {
+  min-height: 320px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  box-shadow: var(--shadow);
+}
+
+.tab-cover h2 {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  max-width: 920px;
+}
+
+.workspace-grid {
+  gap: 18px;
+}
+
+.admin-section,
+.metric-card,
+.quick-card,
+.admin-item,
+.demand-card,
+.site-preview,
+.auth-card {
+  border: 1px solid rgba(56, 42, 35, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 253, 249, 0.88);
+  box-shadow: 0 18px 44px rgba(36, 28, 24, 0.09);
+}
+
+.admin-section {
+  padding: clamp(18px, 3vw, 26px);
+}
+
+.metric-card {
+  min-height: 132px;
+  align-content: space-between;
+}
+
+.metric-card strong {
+  color: var(--ink);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+}
+
+.quick-card,
+.admin-item,
+.demand-card {
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.quick-card:hover,
+.admin-item:hover,
+.demand-card:hover,
+.visual-tab:hover {
+  transform: translateY(-2px);
+  border-color: rgba(197, 154, 47, 0.34);
+}
+
+input,
+select,
+textarea {
+  border-color: rgba(56, 42, 35, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 253, 249, 0.84);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid rgba(197, 154, 47, 0.34);
+  border-color: rgba(197, 154, 47, 0.62);
+}
+
+.sync-message:not(:empty),
+.auth-guard {
+  border-radius: 8px;
+  background: rgba(255, 253, 249, 0.88);
+  box-shadow: 0 12px 28px rgba(36, 28, 24, 0.08);
+}
+
+.auth-page {
+  background:
+    linear-gradient(90deg, rgba(36, 28, 24, 0.7), rgba(36, 28, 24, 0.18)),
+    url("assets/salao-cores.jpeg") center / cover;
+}
+
+.auth-card {
+  background: rgba(255, 253, 249, 0.92);
+  backdrop-filter: blur(18px);
+}
+
+@media (max-width: 1100px) {
+  .sidebar {
+    margin: 10px;
+    height: auto;
+  }
+
+  .topbar {
+    top: 10px;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-main {
+    padding: 10px 10px 48px;
+  }
+
+  .topbar {
+    position: static;
+  }
+
+  .visual-tab,
+  .tab-cover {
+    min-height: 230px;
   }
 }

@@ -2151,3 +2151,229 @@ body::before {
     grid-template-columns: 1fr;
   }
 }
+
+/* Premium salon app layout */
+:root {
+  --ink: #241c18;
+  --muted: #6d625d;
+  --line: rgba(56, 42, 35, 0.16);
+  --paper: #f6efe9;
+  --surface: #fffdf9;
+  --mint: #8f725f;
+  --mint-dark: #4f655d;
+  --coral: #c98d7b;
+  --gold: #c59a2f;
+  --blue: #5f7470;
+  --shadow: 0 24px 64px rgba(36, 28, 24, 0.16);
+}
+
+body {
+  background:
+    linear-gradient(180deg, #f8f2ed 0%, #efe5dc 48%, #f7f1eb 100%);
+}
+
+.site-header {
+  width: min(1180px, calc(100% - 28px));
+  top: 12px;
+  margin-bottom: 14px;
+  margin-inline: auto;
+  border: 1px solid rgba(56, 42, 35, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 253, 249, 0.88);
+  box-shadow: 0 18px 48px rgba(36, 28, 24, 0.1);
+}
+
+.brand {
+  font-size: 1.06rem;
+}
+
+.brand-mark,
+.preview-logo {
+  border-radius: 8px;
+  background: linear-gradient(135deg, #241c18, #4f655d);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+.desktop-nav {
+  gap: 8px;
+}
+
+.desktop-nav a {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  border-radius: 8px;
+}
+
+.desktop-nav a.is-active,
+.desktop-nav a:hover {
+  color: var(--ink);
+  background: rgba(197, 154, 47, 0.14);
+}
+
+.header-action,
+.button.primary {
+  border: 0;
+  background: linear-gradient(135deg, var(--gold), #8f725f);
+  box-shadow: 0 12px 28px rgba(127, 91, 55, 0.2);
+}
+
+.site-visual-tabs {
+  width: min(1180px, calc(100% - 28px));
+  margin: 28px auto 18px;
+  gap: 14px;
+}
+
+.site-visual-tab {
+  min-height: 158px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  box-shadow: 0 18px 40px rgba(36, 28, 24, 0.16);
+}
+
+.site-visual-tab::after {
+  background: linear-gradient(0deg, rgba(26, 21, 18, 0.9), rgba(26, 21, 18, 0.12));
+}
+
+.site-visual-tab strong {
+  font-size: 1.18rem;
+}
+
+.site-visual-tab.active {
+  box-shadow: 0 0 0 3px rgba(197, 154, 47, 0.28), 0 20px 48px rgba(36, 28, 24, 0.2);
+}
+
+.hero,
+.scheduler-section,
+.section,
+.contact-section {
+  width: min(1180px, calc(100% - 28px));
+  margin: 18px auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  min-height: min(720px, calc(100vh - 126px));
+  align-items: end;
+  padding: clamp(42px, 8vw, 86px);
+}
+
+.hero::after,
+.salon-hero::after {
+  background:
+    linear-gradient(90deg, rgba(36, 28, 24, 0.72), rgba(36, 28, 24, 0.28) 48%, rgba(36, 28, 24, 0.1)),
+    linear-gradient(0deg, rgba(36, 28, 24, 0.44), transparent 40%);
+}
+
+.hero-copy {
+  max-width: 720px;
+  color: #fff;
+}
+
+.hero-badge {
+  background: rgba(255, 253, 249, 0.18);
+  border: 1px solid rgba(255, 253, 249, 0.28);
+  color: #fff;
+  backdrop-filter: blur(12px);
+}
+
+.hero h1,
+.hero-lede {
+  color: #fff;
+  text-shadow: 0 6px 30px rgba(0, 0, 0, 0.34);
+}
+
+.section,
+.scheduler-section,
+.contact-section {
+  background: rgba(255, 253, 249, 0.88);
+  border: 1px solid rgba(56, 42, 35, 0.12);
+}
+
+.section-heading {
+  align-items: end;
+}
+
+.section-heading h2 {
+  max-width: 720px;
+}
+
+.scheduler-layout,
+.workspace-grid,
+.contact-card-grid,
+.work-gallery,
+.professional-showcase {
+  gap: 18px;
+}
+
+.chatbox,
+.summary-card,
+.contact-card,
+.professional-card,
+.work-card,
+.instagram-callout {
+  border: 1px solid rgba(56, 42, 35, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 253, 249, 0.82);
+  box-shadow: 0 18px 44px rgba(36, 28, 24, 0.1);
+}
+
+.booking-progress li {
+  border-radius: 8px;
+  background: rgba(255, 253, 249, 0.72);
+}
+
+.booking-progress li.is-active {
+  background: linear-gradient(135deg, var(--gold), #8f725f);
+  color: #fff;
+}
+
+.option-card,
+.booking-tab,
+.period-grid label,
+.professional-card,
+.contact-card {
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.option-card:hover,
+.period-grid label:hover,
+.professional-card:hover,
+.contact-card:hover,
+.site-visual-tab:hover {
+  transform: translateY(-2px);
+}
+
+.option-card:has(input:checked),
+.period-grid label:has(input:checked) {
+  border-color: rgba(197, 154, 47, 0.72);
+  background: rgba(197, 154, 47, 0.13);
+  box-shadow: inset 0 0 0 1px rgba(197, 154, 47, 0.28);
+}
+
+.professional-avatar {
+  background: linear-gradient(135deg, #4f655d, var(--gold));
+}
+
+@media (max-width: 760px) {
+  .site-header {
+    width: calc(100% - 20px);
+    top: 10px;
+    grid-template-columns: auto auto;
+  }
+
+  .hero,
+  .scheduler-section,
+  .section,
+  .contact-section,
+  .site-visual-tabs {
+    width: calc(100% - 20px);
+  }
+
+  .hero {
+    min-height: 620px;
+    padding: 34px 22px;
+  }
+}
