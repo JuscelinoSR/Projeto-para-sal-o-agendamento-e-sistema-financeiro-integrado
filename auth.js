@@ -9,6 +9,7 @@ const localAdminCredentials = {
   password: 'admin123',
 };
 const localAdminSessionKey = 'beautyjsr.localAdminSession';
+const verifiedAdminSessionKey = 'beautyjsr.verifiedAdminSession';
 const localAdminSessionDuration = 1000 * 60 * 30;
 
 function setAuthMessage(message, type = 'info') {
@@ -62,6 +63,31 @@ function clearLocalAdminSession() {
   sessionStorage.removeItem(localAdminSessionKey);
 }
 
+function startVerifiedAdminSession(email) {
+  sessionStorage.setItem(verifiedAdminSessionKey, JSON.stringify({
+    email,
+    expiresAt: Date.now() + localAdminSessionDuration,
+  }));
+}
+
+function getVerifiedAdminSession() {
+  try {
+    const session = JSON.parse(sessionStorage.getItem(verifiedAdminSessionKey) ?? 'null');
+    if (!session?.email || Date.now() > session.expiresAt) {
+      sessionStorage.removeItem(verifiedAdminSessionKey);
+      return null;
+    }
+    return session;
+  } catch {
+    sessionStorage.removeItem(verifiedAdminSessionKey);
+    return null;
+  }
+}
+
+function clearVerifiedAdminSession() {
+  sessionStorage.removeItem(verifiedAdminSessionKey);
+}
+
 async function requireAdminSession() {
   const guard = document.querySelector('[data-auth-guard]');
 
@@ -91,6 +117,13 @@ async function requireAdminSession() {
 
   const session = await getSession();
   if (!session) {
+    const verifiedSession = isLocalPreview ? getVerifiedAdminSession() : null;
+    if (verifiedSession) {
+      document.body.classList.remove('auth-loading');
+      document.querySelector('[data-admin-email]').textContent = verifiedSession.email;
+      return;
+    }
+
     window.location.href = authConfig.loginRedirect || 'login.html';
     return;
   }
@@ -175,6 +208,10 @@ async function setupLogin() {
       return;
     }
 
+    if (isLocalPreview) {
+      startVerifiedAdminSession(data.user.email ?? email);
+    }
+
     window.location.href = authConfig.adminRedirect || 'admin.html';
   });
 }
@@ -182,6 +219,7 @@ async function setupLogin() {
 async function setupLogout() {
   document.querySelector('[data-logout]')?.addEventListener('click', async () => {
     clearLocalAdminSession();
+    clearVerifiedAdminSession();
     if (supabaseClient) {
       await supabaseClient.auth.signOut();
     }
