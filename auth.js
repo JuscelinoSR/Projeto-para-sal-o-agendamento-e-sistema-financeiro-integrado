@@ -28,6 +28,10 @@ async function getSession() {
 
 async function isAdminUser(userId) {
   if (!supabaseClient || !userId) return false;
+
+  const { data: rpcAllowed, error: rpcError } = await supabaseClient.rpc('is_current_admin');
+  if (!rpcError) return Boolean(rpcAllowed);
+
   const { data, error } = await supabaseClient
     .from('admin_profiles')
     .select('id, active')
