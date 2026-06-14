@@ -26,6 +26,7 @@ Ja existe uma base funcional com:
 - controle financeiro inicial com entradas e saidas;
 - exportacao dos dados locais em JSON;
 - base preparada para evoluir para Supabase Auth, banco de dados online e notificacoes.
+- migrations Supabase para servicos, profissionais, galeria, financeiro, configuracoes do site e notificacoes.
 
 ## Login local do admin
 
@@ -128,7 +129,7 @@ Quando isso for configurado, o projeto podera evoluir para:
 ## Proximos passos recomendados
 
 1. Configurar Supabase real.
-2. Criar tabelas online para servicos, profissionais, agendamentos, financeiro e configuracoes.
+2. Rodar as migrations Supabase ja criadas no repositorio.
 3. Migrar `localStorage` para Supabase.
 4. Publicar uma versao final em GitHub Pages ou Vercel.
 5. Testar o fluxo completo em celular.

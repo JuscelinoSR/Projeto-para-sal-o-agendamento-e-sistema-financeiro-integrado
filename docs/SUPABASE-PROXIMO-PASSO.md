@@ -27,6 +27,7 @@ Voce precisa criar ou abrir um projeto no Supabase e pegar:
 2. Rodar as migrations no SQL Editor:
    - `supabase/migrations/20260608130000_create_admin_auth_model.sql`
    - `supabase/migrations/20260608140000_create_site_settings.sql`
+   - `supabase/migrations/20260614100000_create_mvp_core_tables.sql`
    - `supabase/migrations/20260608120000_create_appointments_notifications.sql`
 3. Criar usuario em Authentication > Users.
 4. Liberar esse usuario em `admin_profiles`.
