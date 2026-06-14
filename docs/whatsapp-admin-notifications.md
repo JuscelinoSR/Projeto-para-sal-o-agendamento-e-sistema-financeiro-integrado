@@ -1,30 +1,43 @@
-# Notificação WhatsApp Admin - Salão Larissa
+# Notificacao WhatsApp Admin - Salao Larissa
 
-Objetivo: notificar o admin via WhatsApp a cada 5 minutos sobre agendamentos com status `pendente`, no máximo 6 tentativas. As notificações param automaticamente quando o status muda para qualquer outro valor.
+Objetivo: notificar o admin via WhatsApp a cada 5 minutos sobre agendamentos com status `pendente`, no maximo 6 tentativas. As notificacoes param automaticamente quando o status muda para qualquer outro valor.
+
+## Status atual
+
+Esta parte esta pronta no codigo, mas so roda depois que o projeto Supabase real estiver configurado.
+
+Para ficar ativa, ainda e necessario:
+
+- aplicar a migration no banco Supabase;
+- configurar os secrets da Edge Function;
+- publicar a Edge Function;
+- configurar o cron de 5 minutos;
+- criar pelo menos um agendamento `pendente` na tabela `appointments`.
 
 ## Arquivos criados
 
 - `supabase/migrations/20260608120000_create_appointments_notifications.sql`
 - `supabase/functions/notify-pending-appointments/index.ts`
 - `supabase/sql/schedule_notify_pending_appointments.sql`
+- `supabase/sql/test_pending_appointment_seed.sql`
 
 ## 1. Aplicar banco de dados
 
 No SQL Editor do Supabase, rode:
 
 ```sql
--- Conteúdo de supabase/migrations/20260608120000_create_appointments_notifications.sql
+-- Conteudo de supabase/migrations/20260608120000_create_appointments_notifications.sql
 ```
 
 Isso cria:
 
 - tipo `appointment_status`;
 - tabela `appointments`;
-- campos de notificação;
+- campos de notificacao;
 - tabela `whatsapp_notification_logs`;
-- índices;
-- função `get_pending_admin_notifications`;
-- função `register_admin_notification_attempt`.
+- indices;
+- funcao `get_pending_admin_notifications`;
+- funcao `register_admin_notification_attempt`.
 
 ## 2. Configurar secrets da Edge Function
 
@@ -70,6 +83,8 @@ Teste manual:
 supabase functions invoke notify-pending-appointments
 ```
 
+Se estiver testando pelo dashboard do Supabase, abra a Edge Function publicada e use a opcao de invoke/teste.
+
 ## 4. Agendar cron a cada 5 minutos
 
 No SQL Editor, configure a URL do projeto e service role key:
@@ -82,17 +97,57 @@ ALTER DATABASE postgres SET app.settings.service_role_key = 'SUA_SERVICE_ROLE_KE
 Depois rode:
 
 ```sql
--- Conteúdo de supabase/sql/schedule_notify_pending_appointments.sql
+-- Conteudo de supabase/sql/schedule_notify_pending_appointments.sql
 ```
 
-## 5. Critérios de aceite
+## 5. Criar um agendamento pendente de teste
 
-- Agendamento `pendente` recebe notificação.
-- Nova tentativa só acontece após 5 minutos.
-- `notification_count` não passa de 6.
+No SQL Editor, rode:
+
+```sql
+-- Conteudo de supabase/sql/test_pending_appointment_seed.sql
+```
+
+Depois invoque a funcao `notify-pending-appointments`.
+
+Para conferir o resultado:
+
+```sql
+select
+  id,
+  client_name,
+  status,
+  notification_count,
+  last_notification_sent_at,
+  admin_notified_at
+from appointments
+order by created_at desc
+limit 5;
+
+select
+  appointment_id,
+  provider,
+  admin_phone,
+  status,
+  attempt_number,
+  response_status,
+  error_message,
+  created_at
+from whatsapp_notification_logs
+order by created_at desc
+limit 10;
+```
+
+Se o provedor de WhatsApp nao estiver configurado, o teste ainda deve registrar uma tentativa com `status = failed` e uma mensagem clara em `error_message`.
+
+## 6. Criterios de aceite
+
+- Agendamento `pendente` recebe notificacao.
+- Nova tentativa so acontece apos 5 minutos.
+- `notification_count` nao passa de 6.
 - Ao mudar status para `aprovado`, `recusado`, `cancelado`, `reagendado`, `concluido` ou `faltou`, o agendamento deixa de ser selecionado.
 - Cada tentativa gera registro em `whatsapp_notification_logs`.
 
-## 6. Observação MVP
+## 7. Observacao MVP
 
-O site estático atual ainda usa `localStorage`. Esta implementação prepara o backend Supabase para a próxima fase, quando o formulário público e o Admin Macro MVP passarem a gravar diretamente na tabela `appointments`.
+O site estatico atual ainda usa `localStorage`. Esta implementacao prepara o backend Supabase para a proxima fase, quando o formulario publico e o Admin Macro MVP passarem a gravar diretamente na tabela `appointments`.
