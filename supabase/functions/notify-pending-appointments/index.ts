@@ -28,6 +28,8 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const provider = (Deno.env.get("WHATSAPP_PROVIDER") ?? "evolution").toLowerCase();
 const adminPhone = Deno.env.get("ADMIN_WHATSAPP_PHONE") ?? "";
+const metaTemplateName = Deno.env.get("META_TEMPLATE_NAME") ?? "";
+const metaTemplateLanguage = Deno.env.get("META_TEMPLATE_LANGUAGE") ?? "pt_BR";
 
 const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { persistSession: false },
@@ -84,7 +86,7 @@ async function sendViaEvolution(message: string): Promise<SendResult> {
   return { ok: response.ok, status: response.status, body };
 }
 
-async function sendViaMeta(message: string): Promise<SendResult> {
+async function sendViaMeta(message: string, appointment: Appointment): Promise<SendResult> {
   const token = Deno.env.get("META_WHATSAPP_TOKEN") ?? "";
   const phoneNumberId = Deno.env.get("META_PHONE_NUMBER_ID") ?? "";
 
@@ -92,18 +94,45 @@ async function sendViaMeta(message: string): Promise<SendResult> {
     return { ok: false, error: "Meta Cloud API não configurada." };
   }
 
+  const messagePayload = metaTemplateName
+    ? {
+        messaging_product: "whatsapp",
+        to: adminPhone,
+        type: "template",
+        template: {
+          name: metaTemplateName,
+          language: { code: metaTemplateLanguage },
+          components: [
+            {
+              type: "body",
+              parameters: [
+                { type: "text", text: appointment.client_name },
+                { type: "text", text: appointment.client_phone },
+                { type: "text", text: appointment.service },
+                { type: "text", text: appointment.professional },
+                { type: "text", text: appointment.appointment_date },
+                { type: "text", text: appointment.appointment_time },
+                { type: "text", text: money(Number(appointment.value)) },
+                { type: "text", text: String(appointment.notification_count + 1) },
+              ],
+            },
+          ],
+        },
+      }
+    : {
+        messaging_product: "whatsapp",
+        to: adminPhone,
+        type: "text",
+        text: { body: message },
+      };
+
   const response = await fetch(`https://graph.facebook.com/v20.0/${phoneNumberId}/messages`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      messaging_product: "whatsapp",
-      to: adminPhone,
-      type: "text",
-      text: { body: message },
-    }),
+    body: JSON.stringify(messagePayload),
   });
 
   const body = await response.text();
@@ -133,12 +162,12 @@ async function sendViaUltraMsg(message: string): Promise<SendResult> {
   return { ok: response.ok, status: response.status, body };
 }
 
-async function sendWhatsApp(message: string): Promise<SendResult> {
+async function sendWhatsApp(message: string, appointment: Appointment): Promise<SendResult> {
   if (!adminPhone) {
     return { ok: false, error: "ADMIN_WHATSAPP_PHONE não configurado." };
   }
 
-  if (provider === "meta") return sendViaMeta(message);
+  if (provider === "meta") return sendViaMeta(message, appointment);
   if (provider === "ultramsg") return sendViaUltraMsg(message);
   return sendViaEvolution(message);
 }
@@ -171,7 +200,7 @@ Deno.serve(async (req) => {
 
   for (const appointment of (appointments ?? []) as Appointment[]) {
     const message = buildMessage(appointment);
-    const result = await sendWhatsApp(message);
+    const result = await sendWhatsApp(message, appointment);
 
     const { error: registerError } = await supabase.rpc("register_admin_notification_attempt", {
       appointment_uuid: appointment.id,

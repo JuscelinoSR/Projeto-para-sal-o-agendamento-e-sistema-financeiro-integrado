@@ -61,7 +61,28 @@ supabase secrets set WHATSAPP_PROVIDER=meta
 supabase secrets set ADMIN_WHATSAPP_PHONE=5564999625616
 supabase secrets set META_WHATSAPP_TOKEN=seu-token
 supabase secrets set META_PHONE_NUMBER_ID=seu-phone-number-id
+supabase secrets set META_TEMPLATE_NAME=beautyjsr_novo_agendamento
+supabase secrets set META_TEMPLATE_LANGUAGE=pt_BR
 ```
+
+Crie e aprove na Meta um template de utilidade chamado `beautyjsr_novo_agendamento`
+com este corpo:
+
+```text
+Novo agendamento pendente no BeautyJSR.
+Cliente: {{1}}
+Telefone: {{2}}
+Serviço: {{3}}
+Profissional: {{4}}
+Data: {{5}}
+Hora: {{6}}
+Valor: {{7}}
+Tentativa de aviso: {{8}} de 6.
+```
+
+O template e necessario para notificacoes iniciadas pelo sistema fora da janela de
+atendimento de 24 horas. Enquanto `META_TEMPLATE_NAME` nao estiver configurado, a
+funcao usa texto livre apenas como fallback de teste.
 
 ### UltraMSG
 
