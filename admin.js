@@ -851,7 +851,17 @@ exportButton?.addEventListener('click', () => {
 });
 
 syncSiteButton?.addEventListener('click', async () => {
+  syncSiteButton.disabled = true;
+  setSyncMessage('Atualizando dados no Supabase...');
   try {
+    const access = await window.BeautyData?.getAdminAccess();
+    if (!access?.authenticated) {
+      throw new Error('Sua sessão do Supabase expirou. Saia do painel e entre novamente.');
+    }
+    if (!access.allowed) {
+      throw new Error('Este usuário não está liberado como administrador no Supabase.');
+    }
+
     saveCatalogDrafts();
     const settings = getSiteSettingsFromEditor();
 
@@ -874,8 +884,12 @@ syncSiteButton?.addEventListener('click', async () => {
     setSyncMessage('Site atualizado com sucesso.');
     setSiteMessage('Site atualizado com sucesso.');
   } catch (error) {
-    setSyncMessage('Não foi possível atualizar o site. Tente novamente.', 'error');
-    setSiteMessage('Não foi possível atualizar o site. Tente novamente.', 'error');
+    const detail = error?.message || 'Erro desconhecido do Supabase.';
+    console.error('Falha ao atualizar o site:', error);
+    setSyncMessage(`Não foi possível atualizar: ${detail}`, 'error');
+    setSiteMessage(`Não foi possível atualizar: ${detail}`, 'error');
+  } finally {
+    syncSiteButton.disabled = false;
   }
 });
 

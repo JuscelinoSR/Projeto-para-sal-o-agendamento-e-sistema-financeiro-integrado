@@ -145,6 +145,23 @@
     };
   }
 
+  async function getAdminAccess() {
+    const db = assertClient();
+    const { data: sessionData, error: sessionError } = await db.auth.getSession();
+    if (sessionError) throw sessionError;
+    if (!sessionData.session) {
+      return { authenticated: false, allowed: false };
+    }
+
+    const { data: allowed, error } = await db.rpc('is_current_admin');
+    if (error) throw error;
+    return {
+      authenticated: true,
+      allowed: Boolean(allowed),
+      email: sessionData.session.user.email || '',
+    };
+  }
+
   async function saveService(service) {
     const priceAmount = Number(String(service.price).replace(/[^\d,.-]/g, '').replace(/\./g, '').replace(',', '.')) || null;
     const { error } = await assertClient().from('service_catalog').upsert({
@@ -252,6 +269,7 @@
     client,
     loadPublicData,
     loadAdminData,
+    getAdminAccess,
     saveService,
     saveProfessional,
     archiveService: (id) => archive('service_catalog', id),
