@@ -157,7 +157,10 @@
             </div>
 
             <label class="field-label" for="client-name">Seu nome</label>
-            <input id="client-name" name="clientName" type="text" autocomplete="name" placeholder="Ex.: Maria Silva" data-client-name>
+            <input id="client-name" name="clientName" type="text" autocomplete="name" required placeholder="Ex.: Maria Silva" data-client-name>
+
+            <label class="field-label" for="client-phone">Seu WhatsApp</label>
+            <input id="client-phone" name="clientPhone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="Ex.: (64) 99999-9999" data-client-phone>
 
             <label class="field-label" for="client-notes">Observação</label>
             <textarea id="client-notes" name="notes" rows="4" placeholder="Ex.: prefiro sábado ou horário após 14h" data-client-notes></textarea>
@@ -214,6 +217,9 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-data.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

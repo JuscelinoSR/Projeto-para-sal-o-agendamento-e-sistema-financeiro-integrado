@@ -608,38 +608,52 @@ async function compressImage(file) {
   return canvas.toDataURL('image/jpeg', 0.82);
 }
 
-serviceForm?.addEventListener('submit', (event) => {
+serviceForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const data = new FormData(serviceForm);
   const name = data.get('name').trim();
   const id = data.get('id') || slugify(name);
-  upsertItem(storageKeys.services, {
+  const service = {
     id,
     name,
     duration: data.get('duration').trim(),
     price: data.get('price').trim(),
-  });
+  };
+  upsertItem(storageKeys.services, service);
+  try {
+    await window.BeautyData?.saveService(service);
+    setSyncMessage('Serviço salvo no Supabase.');
+  } catch (error) {
+    setSyncMessage(`Serviço salvo somente neste navegador: ${error.message}`, 'error');
+  }
   resetForm(serviceForm);
   renderAll();
 });
 
-professionalForm?.addEventListener('submit', (event) => {
+professionalForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const data = new FormData(professionalForm);
   const name = data.get('name').trim();
   const professionals = getProfessionals();
   const id = data.get('id') || createUniqueId(name, professionals);
-  upsertItem(storageKeys.professionals, {
+  const professional = {
     id,
     name,
     specialty: data.get('specialty').trim(),
     linkUrl: normalizeProfessionalLink(data.get('linkUrl')),
-  });
+  };
+  upsertItem(storageKeys.professionals, professional);
+  try {
+    await window.BeautyData?.saveProfessional(professional);
+    setSyncMessage('Profissional salvo no Supabase.');
+  } catch (error) {
+    setSyncMessage(`Profissional salvo somente neste navegador: ${error.message}`, 'error');
+  }
   resetForm(professionalForm);
   renderAll();
 });
 
-manualBookingForm?.addEventListener('submit', (event) => {
+manualBookingForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const data = new FormData(manualBookingForm);
   const service = getServices().find((item) => item.id === data.get('serviceId'));
@@ -647,7 +661,7 @@ manualBookingForm?.addEventListener('submit', (event) => {
   const now = new Date().toISOString();
   const demands = getDemands();
 
-  demands.push({
+  const demand = {
     id: `demand-${Date.now()}`,
     clientName: data.get('clientName').trim(),
     serviceId: service?.id ?? '',
@@ -665,25 +679,41 @@ manualBookingForm?.addEventListener('submit', (event) => {
     adminNote: '',
     createdAt: now,
     updatedAt: now,
-  });
+  };
 
+  try {
+    const savedDemand = await window.BeautyData?.createAppointment(demand);
+    demands.push(savedDemand ? { ...demand, ...savedDemand } : demand);
+    setSyncMessage('Agendamento salvo no Supabase.');
+  } catch (error) {
+    demands.push(demand);
+    setSyncMessage(`Agendamento salvo somente neste navegador: ${error.message}`, 'error');
+  }
   writeCollection(storageKeys.demands, demands);
   manualBookingForm.reset();
   renderAll();
 });
 
-transactionForm?.addEventListener('submit', (event) => {
+transactionForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const data = new FormData(transactionForm);
   const transactions = getTransactions();
-  transactions.push({
+  const transaction = {
     id: `transaction-${Date.now()}`,
     type: data.get('type'),
     description: data.get('description').trim(),
     amount: Number(data.get('amount')) || 0,
     date: data.get('date'),
     createdAt: new Date().toISOString(),
-  });
+  };
+  try {
+    const savedTransaction = await window.BeautyData?.saveTransaction(transaction);
+    transactions.push(savedTransaction || transaction);
+    setSyncMessage('Lançamento salvo no Supabase.');
+  } catch (error) {
+    transactions.push(transaction);
+    setSyncMessage(`Lançamento salvo somente neste navegador: ${error.message}`, 'error');
+  }
   writeCollection(storageKeys.transactions, transactions);
   transactionForm.reset();
   renderTransactions();
@@ -699,7 +729,7 @@ addProfessionalLinkButton?.addEventListener('click', () => {
   professionalForm?.elements.linkUrl?.focus();
 });
 
-document.addEventListener('click', (event) => {
+document.addEventListener('click', async (event) => {
   const tabButton = event.target.closest('[data-admin-tab]');
   if (tabButton) {
     activateTab(tabButton.dataset.adminTab);
@@ -711,10 +741,33 @@ document.addEventListener('click', (event) => {
   }
 
   const demandCard = event.target.closest('[data-demand-id]');
-  if (event.target.matches('[data-demand-save]') && demandCard) saveDemandChanges(demandCard);
-  if (event.target.matches('[data-demand-confirm]') && demandCard) saveDemandChanges(demandCard, 'confirmado');
+  if (event.target.matches('[data-demand-save]') && demandCard) {
+    saveDemandChanges(demandCard);
+    const demand = getDemands().find((item) => item.id === demandCard.dataset.demandId);
+    try {
+      await window.BeautyData?.updateAppointment(demand.id, demand.status);
+      setSyncMessage('Agendamento atualizado no Supabase.');
+    } catch (error) {
+      setSyncMessage(`Atualização mantida somente neste navegador: ${error.message}`, 'error');
+    }
+  }
+  if (event.target.matches('[data-demand-confirm]') && demandCard) {
+    saveDemandChanges(demandCard, 'confirmado');
+    try {
+      await window.BeautyData?.updateAppointment(demandCard.dataset.demandId, 'confirmado');
+      setSyncMessage('Agendamento confirmado no Supabase.');
+    } catch (error) {
+      setSyncMessage(`Confirmação mantida somente neste navegador: ${error.message}`, 'error');
+    }
+  }
   if (event.target.matches('[data-demand-delete]') && demandCard) {
     writeCollection(storageKeys.demands, getDemands().filter((item) => item.id !== demandCard.dataset.demandId));
+    try {
+      await window.BeautyData?.deleteAppointment(demandCard.dataset.demandId);
+      setSyncMessage('Agendamento excluído do Supabase.');
+    } catch (error) {
+      setSyncMessage(`Exclusão aplicada somente neste navegador: ${error.message}`, 'error');
+    }
     renderAll();
   }
 
@@ -731,6 +784,12 @@ document.addEventListener('click', (event) => {
   }
   if (event.target.matches('[data-delete-service]') && serviceItem) {
     deleteItem(storageKeys.services, serviceItem.dataset.itemId);
+    try {
+      await window.BeautyData?.archiveService(serviceItem.dataset.itemId);
+      setSyncMessage('Serviço removido do site e do Supabase.');
+    } catch (error) {
+      setSyncMessage(`Serviço removido somente neste navegador: ${error.message}`, 'error');
+    }
     renderAll();
   }
 
@@ -751,12 +810,24 @@ document.addEventListener('click', (event) => {
   }
   if (event.target.matches('[data-delete-professional]') && professionalItem) {
     deleteItem(storageKeys.professionals, professionalItem.dataset.itemId);
+    try {
+      await window.BeautyData?.archiveProfessional(professionalItem.dataset.itemId);
+      setSyncMessage('Profissional removido do site e do Supabase.');
+    } catch (error) {
+      setSyncMessage(`Profissional removido somente neste navegador: ${error.message}`, 'error');
+    }
     renderAll();
   }
 
   const transactionItem = event.target.closest('[data-transaction-id]');
   if (event.target.matches('[data-delete-transaction]') && transactionItem) {
     deleteItem(storageKeys.transactions, transactionItem.dataset.transactionId);
+    try {
+      await window.BeautyData?.deleteTransaction(transactionItem.dataset.transactionId);
+      setSyncMessage('Lançamento excluído do Supabase.');
+    } catch (error) {
+      setSyncMessage(`Exclusão aplicada somente neste navegador: ${error.message}`, 'error');
+    }
     renderTransactions();
   }
 });
@@ -779,7 +850,7 @@ exportButton?.addEventListener('click', () => {
   URL.revokeObjectURL(url);
 });
 
-syncSiteButton?.addEventListener('click', () => {
+syncSiteButton?.addEventListener('click', async () => {
   try {
     saveCatalogDrafts();
     const settings = getSiteSettingsFromEditor();
@@ -791,6 +862,12 @@ syncSiteButton?.addEventListener('click', () => {
       syncedAt: new Date().toISOString(),
       source: 'admin',
     });
+
+    await Promise.all([
+      ...getServices().map((service) => window.BeautyData?.saveService(service)),
+      ...getProfessionals().map((professional) => window.BeautyData?.saveProfessional(professional)),
+      window.BeautyData?.saveSettings(settings),
+    ]);
 
     applyPreview(settings);
     renderAll();
@@ -858,7 +935,7 @@ siteSettingsForm?.addEventListener('input', () => {
   });
 });
 
-siteSettingsForm?.addEventListener('submit', (event) => {
+siteSettingsForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const settings = {
     ...defaultSiteSettings,
@@ -868,6 +945,12 @@ siteSettingsForm?.addEventListener('submit', (event) => {
     updatedAt: new Date().toISOString(),
   };
   writeObject(storageKeys.siteSettings, settings);
+  try {
+    await window.BeautyData?.saveSettings(settings);
+    setSyncMessage('Personalização salva no Supabase.');
+  } catch (error) {
+    setSyncMessage(`Personalização salva somente neste navegador: ${error.message}`, 'error');
+  }
   applyPreview(settings);
   setSiteMessage('Personalização salva. Abra o site para ver a atualização.');
 });
@@ -883,6 +966,33 @@ siteResetButton?.addEventListener('click', () => {
 
 window.addEventListener('storage', renderAll);
 
-ensureSeedData();
-renderAll();
-activateTab('dashboard');
+async function initializeAdmin() {
+  ensureSeedData();
+  renderAll();
+  activateTab('dashboard');
+
+  if (!window.BeautyData?.configured) {
+    setSyncMessage('Supabase não configurado. Usando armazenamento local.', 'error');
+    return;
+  }
+
+  try {
+    const data = await window.BeautyData.loadAdminData();
+    if (data.services.length) writeCollection(storageKeys.services, data.services);
+    if (data.professionals.length) writeCollection(storageKeys.professionals, data.professionals);
+    writeCollection(storageKeys.demands, data.demands);
+    writeCollection(storageKeys.transactions, data.transactions);
+    if (data.siteSettings) {
+      writeObject(storageKeys.siteSettings, {
+        ...defaultSiteSettings,
+        ...data.siteSettings,
+      });
+    }
+    renderAll();
+    setSyncMessage('Dados carregados do Supabase.');
+  } catch (error) {
+    setSyncMessage(`Não foi possível carregar o Supabase: ${error.message}`, 'error');
+  }
+}
+
+initializeAdmin();

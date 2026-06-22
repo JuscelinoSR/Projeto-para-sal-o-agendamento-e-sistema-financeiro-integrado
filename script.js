@@ -312,6 +312,7 @@ const professionalOptions = document.querySelector('[data-professional-options]'
 const bookingCalendar = document.querySelector('[data-booking-calendar]');
 const appointmentDateInput = document.querySelector('[data-appointment-date]');
 const clientNameInput = document.querySelector('[data-client-name]');
+const clientPhoneInput = document.querySelector('[data-client-phone]');
 const clientNotesInput = document.querySelector('[data-client-notes]');
 
 const today = new Date();
@@ -674,6 +675,7 @@ function getBookingState() {
   const appointmentDate = appointmentDateInput?.value || selectedAppointmentDate;
   const period = getSelectedValue('period') ?? '09:00';
   const clientName = clientNameInput?.value.trim() || 'Cliente';
+  const clientPhone = clientPhoneInput?.value.trim() || '';
   const notes = clientNotesInput?.value.trim();
 
   return {
@@ -682,6 +684,7 @@ function getBookingState() {
     appointmentDate,
     period,
     clientName,
+    clientPhone,
     notes,
   };
 }
@@ -696,7 +699,7 @@ function getBookingTypeLabel(type) {
 }
 
 function buildMessage() {
-  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, notes } = getBookingState();
+  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, clientPhone, notes } = getBookingState();
   const settings = readObject(storageKeys.siteSettings, defaultSiteSettings);
   const lines = [
     `Olá, sou ${clientName}. Quero agendar pelo site do ${settings.brandName}.`,
@@ -705,6 +708,7 @@ function buildMessage() {
     `Profissional: ${selectedProfessional.name}.`,
     `Data preferida: ${formatShortDate(appointmentDate)}.`,
     `Horário preferido: ${period}.`,
+    `Meu WhatsApp: ${clientPhone}.`,
   ];
 
   if (notes) {
@@ -727,14 +731,15 @@ function updateSummary() {
   messagePreview.textContent = buildMessage();
 }
 
-function saveDemand() {
-  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, notes } = getBookingState();
+async function saveDemand() {
+  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, clientPhone, notes } = getBookingState();
   const demands = readCollection(storageKeys.demands, []);
   const now = new Date().toISOString();
 
-  demands.push({
+  const demand = {
     id: `demand-${Date.now()}`,
     clientName,
+    clientPhone,
     serviceId: selectedPackage.id,
     serviceName: selectedPackage.name,
     serviceDuration: selectedPackage.duration,
@@ -750,8 +755,20 @@ function saveDemand() {
     adminNote: '',
     createdAt: now,
     updatedAt: now,
-  });
+  };
 
+  if (window.BeautyData?.configured) {
+    try {
+      const savedDemand = await window.BeautyData.createAppointment(demand);
+      demands.push({ ...demand, ...savedDemand });
+      writeCollection(storageKeys.demands, demands);
+      return;
+    } catch (error) {
+      console.error('Não foi possível salvar o agendamento no Supabase:', error);
+    }
+  }
+
+  demands.push(demand);
   writeCollection(storageKeys.demands, demands);
 }
 
@@ -762,13 +779,34 @@ function openWhatsApp() {
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
-ensureSeedData();
-applySiteSettings();
-renderOptions();
-renderCalendar();
-showBookingScreen('details');
-showMainPage(getPageFromHash(window.location.hash), false);
-updateSummary();
+async function initializePublicSite() {
+  ensureSeedData();
+
+  if (window.BeautyData?.configured) {
+    try {
+      const data = await window.BeautyData.loadPublicData();
+      if (data.services.length) writeCollection(storageKeys.services, data.services);
+      if (data.professionals.length) writeCollection(storageKeys.professionals, data.professionals);
+      if (data.siteSettings) {
+        localStorage.setItem(storageKeys.siteSettings, JSON.stringify({
+          ...defaultSiteSettings,
+          ...data.siteSettings,
+        }));
+      }
+    } catch (error) {
+      console.error('Supabase indisponível; usando dados locais:', error);
+    }
+  }
+
+  applySiteSettings();
+  renderOptions();
+  renderCalendar();
+  showBookingScreen('details');
+  showMainPage(getPageFromHash(window.location.hash), false);
+  updateSummary();
+}
+
+initializePublicSite();
 
 bookingForm?.addEventListener('input', updateSummary);
 bookingForm?.addEventListener('change', (event) => {
@@ -806,10 +844,10 @@ scheduler?.addEventListener('click', (event) => {
     showBookingScreen(prevButton.dataset.prevScreen);
   }
 });
-bookingForm?.addEventListener('submit', (event) => {
+bookingForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   updateSummary();
-  saveDemand();
+  await saveDemand();
   openWhatsApp();
 });
 

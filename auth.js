@@ -108,6 +108,7 @@ function getVerifiedAdminSessionFromUrl() {
   const expiresAt = Number(params.get('verifiedUntil'));
   if (!email || !Number.isFinite(expiresAt) || Date.now() > expiresAt) return null;
   startVerifiedAdminSession(email);
+  window.history.replaceState({}, document.title, window.location.pathname);
   return { email, expiresAt };
 }
 
@@ -115,9 +116,8 @@ function getAdminRedirectUrl(email) {
   const redirectUrl = authConfig.adminRedirect || 'admin.html';
   if (!isLocalPreview) return redirectUrl;
 
-  const verifiedSession = startVerifiedAdminSession(email);
-  const separator = redirectUrl.includes('?') ? '&' : '?';
-  return `${redirectUrl}${separator}verifiedAdminEmail=${encodeURIComponent(verifiedSession.email)}&verifiedUntil=${verifiedSession.expiresAt}`;
+  startVerifiedAdminSession(email);
+  return redirectUrl;
 }
 
 async function requireAdminSession() {
