@@ -873,16 +873,23 @@ syncSiteButton?.addEventListener('click', async () => {
       source: 'admin',
     });
 
-    await Promise.all([
-      ...getServices().map((service) => window.BeautyData?.saveService(service)),
-      ...getProfessionals().map((professional) => window.BeautyData?.saveProfessional(professional)),
-      window.BeautyData?.saveSettings(settings),
+    await window.BeautyData.saveSettings(settings);
+
+    const catalogResults = await Promise.allSettled([
+      ...getServices().map((service) => window.BeautyData.saveService(service)),
+      ...getProfessionals().map((professional) => window.BeautyData.saveProfessional(professional)),
     ]);
+    const catalogErrors = catalogResults.filter((result) => result.status === 'rejected');
 
     applyPreview(settings);
     renderAll();
-    setSyncMessage('Site atualizado com sucesso.');
-    setSiteMessage('Site atualizado com sucesso.');
+    if (catalogErrors.length) {
+      setSyncMessage(`WhatsApp e personalização atualizados. ${catalogErrors.length} item(ns) do catálogo não foram sincronizados.`, 'error');
+      setSiteMessage('WhatsApp e personalização atualizados com sucesso.');
+    } else {
+      setSyncMessage('Site atualizado com sucesso.');
+      setSiteMessage('Site atualizado com sucesso.');
+    }
   } catch (error) {
     const detail = error?.message || 'Erro desconhecido do Supabase.';
     console.error('Falha ao atualizar o site:', error);
