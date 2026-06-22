@@ -1,6 +1,6 @@
-# Proximo passo: ativar Supabase do MVP
+# Estado atual e proximos passos do Supabase
 
-Este roteiro transforma a base local do MVP em uma base pronta para teste no Supabase.
+O Supabase do MVP esta conectado, com migrations aplicadas e seguranca RLS ativa.
 
 ## O que ja existe no repositorio
 
@@ -12,33 +12,25 @@ Este roteiro transforma a base local do MVP em uma base pronta para teste no Sup
 - SQL para cron a cada 5 minutos.
 - SQL de teste para criar agendamento pendente.
 
-## O que ainda falta fora do codigo
+## O que ja foi concluido no projeto remoto
 
-Voce precisa criar ou abrir um projeto no Supabase e pegar:
+- Project URL e chave publica configurados no front-end.
+- Todas as migrations locais registradas no banco remoto.
+- Login e perfil administrativo ativos.
+- Dados privados bloqueados para visitantes.
+- Edge Function `notify-pending-appointments` publicada e ativa.
+- Provedor selecionado como Meta Cloud API.
+- Numero administrativo configurado como `5564999625616`.
 
-- Project URL.
-- Anon public key.
-- Service role key.
-- Provedor de WhatsApp, como Evolution API, Meta Cloud API ou UltraMSG.
+## Proximo passo recomendado
 
-## Ordem recomendada
-
-1. Criar projeto no Supabase.
-2. Rodar as migrations no SQL Editor:
-   - `supabase/migrations/20260608130000_create_admin_auth_model.sql`
-   - `supabase/migrations/20260608140000_create_site_settings.sql`
-   - `supabase/migrations/20260614100000_create_mvp_core_tables.sql`
-   - `supabase/migrations/20260608120000_create_appointments_notifications.sql`
-   - `supabase/migrations/20260622020000_harden_supabase_security.sql`
-3. Criar usuario em Authentication > Users.
-4. Liberar esse usuario em `admin_profiles`.
-5. Atualizar `supabase-config.js` com Project URL e anon key.
-6. Configurar secrets da Edge Function.
-7. Publicar a Edge Function `notify-pending-appointments`.
-8. Rodar `supabase/sql/test_pending_appointment_seed.sql`.
-9. Invocar a Edge Function manualmente.
-10. Conferir `appointments` e `whatsapp_notification_logs`.
-11. Se tudo estiver correto, rodar `supabase/sql/schedule_notify_pending_appointments.sql`.
+1. Criar na Meta o template de utilidade `beautyjsr_novo_agendamento`.
+2. Obter o Phone Number ID da conta WhatsApp Business.
+3. Gerar um token permanente de sistema.
+4. Configurar os secrets `META_PHONE_NUMBER_ID` e `META_WHATSAPP_TOKEN`.
+5. Fazer um teste manual controlado da Edge Function.
+6. Conferir `appointments` e `whatsapp_notification_logs`.
+7. Ativar e validar o cron com `supabase/sql/schedule_notify_pending_appointments.sql`.
 
 ## Pendencias conhecidas do MVP
 

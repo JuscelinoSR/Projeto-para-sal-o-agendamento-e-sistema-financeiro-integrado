@@ -6,7 +6,7 @@ O projeto está dividido em 3 etapas: MVP de agendamento, operação do salão e
 
 Objetivo: permitir que um salão valide a experiência de agendamento com clientes reais, usando um site simples, bonito e funcional.
 
-Status atual: em andamento, com primeira versão publicada no GitHub Pages.
+Status atual: em andamento, com site publicado no GitHub Pages e integracao principal com Supabase ativa.
 
 Funcionalidades já implementadas:
 
@@ -24,12 +24,19 @@ Funcionalidades já implementadas:
 - Envio de mensagem pronta para WhatsApp.
 - Admin Macro MVP para demandas, serviços e profissionais.
 - Modelo de autenticação com Supabase Auth.
-- Base de notificação WhatsApp Admin via Supabase Edge Functions e cron.
+- Serviços, profissionais, configurações, financeiro e agendamentos conectados ao Supabase.
+- RLS aplicada para proteger agendamentos, telefones, logs e RPCs internas.
+- Edge Function de notificacao publicada e preparada para Meta Cloud API.
+- GitHub Pages com publicacao automatica pela branch `main`.
 
 Pendências da Etapa 1:
 
-- Configurar as credenciais reais do Supabase.
-- Persistir demandas, serviços e profissionais no Supabase.
+- Criar e aprovar o template `beautyjsr_novo_agendamento` na Meta.
+- Configurar `META_PHONE_NUMBER_ID` e `META_WHATSAPP_TOKEN` nos secrets do Supabase.
+- Fazer um envio manual controlado e conferir os logs de notificacao.
+- Ativar e validar o cron de notificacoes a cada 5 minutos.
+- Migrar imagem principal e galeria para o Supabase Storage.
+- Persistir observacoes do cliente e notas internas do admin.
 - Definir horários disponíveis por profissional.
 - Validar o fluxo completo em celular.
 - Refinar textos finais do salão.
