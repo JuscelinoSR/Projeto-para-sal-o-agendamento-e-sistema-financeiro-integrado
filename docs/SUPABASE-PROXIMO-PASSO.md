@@ -29,6 +29,7 @@ Voce precisa criar ou abrir um projeto no Supabase e pegar:
    - `supabase/migrations/20260608140000_create_site_settings.sql`
    - `supabase/migrations/20260614100000_create_mvp_core_tables.sql`
    - `supabase/migrations/20260608120000_create_appointments_notifications.sql`
+   - `supabase/migrations/20260622020000_harden_supabase_security.sql`
 3. Criar usuario em Authentication > Users.
 4. Liberar esse usuario em `admin_profiles`.
 5. Atualizar `supabase-config.js` com Project URL e anon key.
@@ -38,6 +39,14 @@ Voce precisa criar ou abrir um projeto no Supabase e pegar:
 9. Invocar a Edge Function manualmente.
 10. Conferir `appointments` e `whatsapp_notification_logs`.
 11. Se tudo estiver correto, rodar `supabase/sql/schedule_notify_pending_appointments.sql`.
+
+## Pendencias conhecidas do MVP
+
+- O numero em `site_settings.whatsapp_number` controla o WhatsApp aberto pelo site.
+- A notificacao automatica da Edge Function usa o secret `ADMIN_WHATSAPP_PHONE`, que precisa ser alterado separadamente.
+- Fotos da galeria e imagem principal ainda precisam ser migradas para o bucket `site-assets`; o editor mantem uma copia local enquanto esse upload nao for implementado.
+- Observacoes do cliente e notas internas do admin ainda nao possuem colunas proprias em `appointments`.
+- Depois de aplicar a migration de seguranca, confirme que uma consulta anonima a `appointments` retorna `401` ou uma lista vazia, nunca dados de clientes.
 
 ## Credenciais que nao devem ir para o GitHub
 

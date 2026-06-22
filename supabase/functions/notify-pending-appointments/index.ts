@@ -155,9 +155,12 @@ Deno.serve(async (req) => {
     );
   }
 
-  const batchLimit = Number(new URL(req.url).searchParams.get("limit") ?? "20");
+  const requestedLimit = Number(new URL(req.url).searchParams.get("limit") ?? "20");
+  const batchLimit = Number.isFinite(requestedLimit)
+    ? Math.min(50, Math.max(1, Math.trunc(requestedLimit)))
+    : 20;
   const { data: appointments, error } = await supabase.rpc("get_pending_admin_notifications", {
-    batch_limit: Number.isFinite(batchLimit) ? batchLimit : 20,
+    batch_limit: batchLimit,
   });
 
   if (error) {
@@ -170,7 +173,7 @@ Deno.serve(async (req) => {
     const message = buildMessage(appointment);
     const result = await sendWhatsApp(message);
 
-    await supabase.rpc("register_admin_notification_attempt", {
+    const { error: registerError } = await supabase.rpc("register_admin_notification_attempt", {
       appointment_uuid: appointment.id,
       provider_name: provider,
       admin_phone_number: adminPhone || "not-configured",
@@ -184,7 +187,9 @@ Deno.serve(async (req) => {
       appointmentId: appointment.id,
       sent: result.ok,
       status: result.status,
-      error: result.error,
+      error: registerError
+        ? `Falha ao registrar tentativa: ${registerError.message}`
+        : result.error,
     });
   }
 

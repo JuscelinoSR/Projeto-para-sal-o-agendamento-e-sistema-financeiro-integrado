@@ -9,6 +9,7 @@ Esta parte esta pronta no codigo, mas so roda depois que o projeto Supabase real
 Para ficar ativa, ainda e necessario:
 
 - aplicar a migration no banco Supabase;
+- aplicar `20260622020000_harden_supabase_security.sql` para bloquear leitura publica e RPCs internas;
 - configurar os secrets da Edge Function;
 - publicar a Edge Function;
 - configurar o cron de 5 minutos;
@@ -150,4 +151,4 @@ Se o provedor de WhatsApp nao estiver configurado, o teste ainda deve registrar 
 
 ## 7. Observacao MVP
 
-O site estatico atual ainda usa `localStorage`. Esta implementacao prepara o backend Supabase para a proxima fase, quando o formulario publico e o Admin Macro MVP passarem a gravar diretamente na tabela `appointments`.
+O formulario publico e o painel ja usam o Supabase com fallback local. O numero usado pela notificacao automatica vem do secret `ADMIN_WHATSAPP_PHONE`; ele nao e alterado pelo campo WhatsApp da personalizacao do site.

@@ -192,7 +192,14 @@
   }
 
   function appointmentPayload(demand) {
-    const time = /^\d{2}:\d{2}/.test(demand.period || '') ? demand.period.slice(0, 5) : '09:00';
+    const period = String(demand.period || '');
+    const time = /^\d{2}:\d{2}/.test(period)
+      ? period.slice(0, 5)
+      : {
+          Manhã: '09:00',
+          Tarde: '14:00',
+          Noite: '18:00',
+        }[period] || '09:00';
     const value = Number(String(demand.servicePrice || '').replace(/[^\d,.-]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
     return {
       client_name: demand.clientName,
@@ -207,13 +214,11 @@
   }
 
   async function createAppointment(demand) {
-    const { data, error } = await assertClient()
+    const { error } = await assertClient()
       .from('appointments')
-      .insert(appointmentPayload(demand))
-      .select()
-      .single();
+      .insert(appointmentPayload(demand));
     if (error) throw error;
-    return mapAppointment(data);
+    return demand;
   }
 
   async function updateAppointment(id, status) {
