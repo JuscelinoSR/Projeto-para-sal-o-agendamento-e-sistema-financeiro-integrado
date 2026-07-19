@@ -108,29 +108,39 @@ Um resumo mais completo da evolucao do MVP esta em:
 
 [docs/HISTORICO-MVP.md](docs/HISTORICO-MVP.md)
 
+Ficha tecnica detalhada do projeto, com estrutura de retomada passo a passo:
+
+[docs/FICHA-TECNICA-PROJETO.md](docs/FICHA-TECNICA-PROJETO.md)
+
 ## Supabase
 
-O Supabase ainda nao esta configurado com credenciais reais. O arquivo `supabase-config.js` precisa receber:
+O Supabase esta configurado e ativo no projeto:
 
-```js
-url: "https://SEU-PROJETO.supabase.co",
-anonKey: "SUA_SUPABASE_ANON_KEY"
+```text
+Projeto: JuscelinoSR's Projeto para salão de beleza
+Ref: gnzgqefwsgjsjrktgpej
+Status conferido em 18/07/2026: ACTIVE_HEALTHY
+Admin principal: juscelinosilvatit@gmail.com
 ```
 
-Quando isso for configurado, o projeto podera evoluir para:
+O projeto usa Supabase para:
 
-- login real com email e senha;
+- login real com e-mail e senha;
 - banco de dados online;
 - agenda compartilhada entre dispositivos;
 - dados persistidos fora do navegador;
 - regras de seguranca;
 - notificacoes e automacoes.
 
+Se o projeto ficar pausado por inatividade, retome pelo painel:
+
+https://supabase.com/dashboard/project/gnzgqefwsgjsjrktgpej
+
 ## Proximos passos recomendados
 
-1. Configurar Supabase real.
-2. Rodar as migrations Supabase ja criadas no repositorio.
-3. Migrar `localStorage` para Supabase.
-4. Publicar uma versao final em GitHub Pages ou Vercel.
-5. Testar o fluxo completo em celular.
+1. Testar login real do admin.
+2. Testar fluxo completo em celular.
+3. Conferir agendamentos aparecendo no painel.
+4. Finalizar Meta Cloud API para notificacoes.
+5. Migrar imagens para Supabase Storage.
 6. Refinar horarios reais por profissional.
