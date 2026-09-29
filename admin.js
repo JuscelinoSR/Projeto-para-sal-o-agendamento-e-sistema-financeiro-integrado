@@ -568,13 +568,14 @@ function resetForm(form) {
 function saveDemandChanges(card, nextStatus) {
   const demands = getDemands();
   const demand = demands.find((item) => item.id === card.dataset.demandId);
-  if (!demand) return;
+  if (!demand) return null;
 
   demand.status = nextStatus || card.querySelector('[data-demand-status]').value;
   demand.adminNote = card.querySelector('[data-demand-admin-note]').value.trim();
   demand.updatedAt = new Date().toISOString();
   writeCollection(storageKeys.demands, demands);
   renderAll();
+  return demand;
 }
 
 function readImageFile(file) {
@@ -682,7 +683,7 @@ manualBookingForm?.addEventListener('submit', async (event) => {
   };
 
   try {
-    const savedDemand = await window.BeautyData?.createAppointment(demand);
+    const savedDemand = await window.BeautyData?.createAppointment(demand, { returning: true });
     demands.push(savedDemand ? { ...demand, ...savedDemand } : demand);
     setSyncMessage('Agendamento salvo no Supabase.');
   } catch (error) {
@@ -742,19 +743,18 @@ document.addEventListener('click', async (event) => {
 
   const demandCard = event.target.closest('[data-demand-id]');
   if (event.target.matches('[data-demand-save]') && demandCard) {
-    saveDemandChanges(demandCard);
-    const demand = getDemands().find((item) => item.id === demandCard.dataset.demandId);
+    const demand = saveDemandChanges(demandCard);
     try {
-      await window.BeautyData?.updateAppointment(demand.id, demand.status);
+      await window.BeautyData?.updateAppointment(demand.id, demand);
       setSyncMessage('Agendamento atualizado no Supabase.');
     } catch (error) {
       setSyncMessage(`Atualização mantida somente neste navegador: ${error.message}`, 'error');
     }
   }
   if (event.target.matches('[data-demand-confirm]') && demandCard) {
-    saveDemandChanges(demandCard, 'confirmado');
+    const demand = saveDemandChanges(demandCard, 'confirmado');
     try {
-      await window.BeautyData?.updateAppointment(demandCard.dataset.demandId, 'confirmado');
+      await window.BeautyData?.updateAppointment(demand.id, demand);
       setSyncMessage('Agendamento confirmado no Supabase.');
     } catch (error) {
       setSyncMessage(`Confirmação mantida somente neste navegador: ${error.message}`, 'error');
