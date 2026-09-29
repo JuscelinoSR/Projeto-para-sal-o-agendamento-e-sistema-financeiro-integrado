@@ -681,13 +681,18 @@ manualBookingForm?.addEventListener('submit', async (event) => {
     updatedAt: now,
   };
 
-  try {
-    const savedDemand = await window.BeautyData?.createAppointment(demand);
-    demands.push(savedDemand ? { ...demand, ...savedDemand } : demand);
-    setSyncMessage('Agendamento salvo no Supabase.');
-  } catch (error) {
+  if (window.BeautyData?.configured) {
+    try {
+      const savedDemand = await window.BeautyData.createAppointment(demand);
+      demands.push({ ...demand, ...savedDemand });
+      setSyncMessage('Agendamento salvo no Supabase.');
+    } catch (error) {
+      setSyncMessage(`Agendamento não registrado: ${error.code === '23505' ? 'horário já ocupado' : error.message}`, 'error');
+      return;
+    }
+  } else {
     demands.push(demand);
-    setSyncMessage(`Agendamento salvo somente neste navegador: ${error.message}`, 'error');
+    setSyncMessage('Agendamento salvo somente neste navegador; agenda compartilhada indisponível.', 'error');
   }
   writeCollection(storageKeys.demands, demands);
   manualBookingForm.reset();

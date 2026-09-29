@@ -221,6 +221,15 @@
     return demand;
   }
 
+  async function bookedTimes(date, professional) {
+    const { data, error } = await assertClient().rpc('booked_appointment_times', {
+      requested_date: date,
+      requested_professional: professional,
+    });
+    if (error) throw error;
+    return (data || []).map((row) => String(row.slot_time).slice(0, 5));
+  }
+
   async function updateAppointment(id, status) {
     const { error } = await assertClient()
       .from('appointments')
@@ -280,6 +289,7 @@
     archiveService: (id) => archive('service_catalog', id),
     archiveProfessional: (id) => archive('salon_professionals', id),
     createAppointment,
+    bookedTimes,
     updateAppointment,
     deleteAppointment,
     saveTransaction,

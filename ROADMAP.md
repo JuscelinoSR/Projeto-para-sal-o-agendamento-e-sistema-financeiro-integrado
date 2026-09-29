@@ -37,7 +37,8 @@ Pendências da Etapa 1:
 - Ativar e validar o cron de notificacoes a cada 5 minutos.
 - Migrar imagem principal e galeria para o Supabase Storage.
 - Persistir observacoes do cliente e notas internas do admin.
-- Definir horários disponíveis por profissional.
+- Aplicar a migration `20260929143000_shared_appointment_slots.sql` e validar horários compartilhados por profissional em dois dispositivos.
+- Configurar horários de trabalho e duração real de cada serviço; o MVP bloqueia apenas os cinco horários fixos de início.
 - Validar o fluxo completo em celular.
 - Refinar textos finais do salão.
 

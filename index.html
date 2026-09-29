@@ -134,14 +134,8 @@
 
             <fieldset>
               <legend>Horários vagos</legend>
-              <div class="period-grid schedule-slots" data-period-options>
-                <label><input type="radio" name="period" value="09:00" checked> 09:00</label>
-                <label><input type="radio" name="period" value="10:30"> 10:30</label>
-                <label><input type="radio" name="period" value="13:00"> 13:00</label>
-                <label><input type="radio" name="period" value="14:30"> 14:30</label>
-                <label><input type="radio" name="period" value="16:00"> 16:00</label>
-                <label><input type="radio" name="period" value="Encaixe"> Encaixe</label>
-              </div>
+              <div class="period-grid schedule-slots" data-period-options aria-live="polite"></div>
+              <p class="calendar-selected" data-availability-message role="status"></p>
             </fieldset>
 
             <button class="button primary booking-next" type="button" data-next-screen="contact">Continuar para contato</button>
@@ -165,6 +159,7 @@
             <label class="field-label" for="client-notes">Observação</label>
             <textarea id="client-notes" name="notes" rows="4" placeholder="Ex.: prefiro sábado ou horário após 14h" data-client-notes></textarea>
 
+            <p class="calendar-selected" data-booking-message role="status"></p>
             <button class="button primary booking-submit" type="submit">Enviar para WhatsApp</button>
           </div>
         </form>
