@@ -309,6 +309,11 @@ const summaryCopy = document.querySelector('[data-summary-copy]');
 const messagePreview = document.querySelector('[data-message-preview]');
 const summaryNextButton = document.querySelector('[data-summary-next]');
 const professionalOptions = document.querySelector('[data-professional-options]');
+const periodOptions = document.querySelector('[data-period-options]');
+const availabilityMessage = document.querySelector('[data-availability-message]');
+const bookingMessage = document.querySelector('[data-booking-message]');
+const contactNextButton = document.querySelector('[data-next-screen="contact"]');
+const bookingSubmitButton = bookingForm?.querySelector('[type="submit"]');
 const bookingCalendar = document.querySelector('[data-booking-calendar]');
 const appointmentDateInput = document.querySelector('[data-appointment-date]');
 const clientNameInput = document.querySelector('[data-client-name]');
@@ -319,6 +324,45 @@ const today = new Date();
 today.setHours(0, 0, 0, 0);
 let selectedAppointmentDate = toDateKey(today);
 let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+const appointmentSlots = ['09:00', '10:30', '13:00', '14:30', '16:00'];
+let availabilityRequest = 0;
+let availableSlots = [];
+
+async function refreshAvailability() {
+  const request = ++availabilityRequest;
+  const professional = professionals.find((item) => item.id === getSelectedValue('professional'));
+  const previous = getSelectedValue('period');
+  availableSlots = [];
+  if (periodOptions) periodOptions.innerHTML = '';
+  if (contactNextButton) contactNextButton.disabled = true;
+  if (bookingSubmitButton) bookingSubmitButton.disabled = true;
+  if (availabilityMessage) availabilityMessage.textContent = 'Consultando horários...';
+
+  if (!professional || !window.BeautyData?.configured) {
+    if (availabilityMessage) availabilityMessage.textContent = 'Agenda online indisponível no momento.';
+    return;
+  }
+
+  try {
+    const booked = new Set(await window.BeautyData.bookedTimes(selectedAppointmentDate, professional.name));
+    if (request !== availabilityRequest) return;
+    availableSlots = appointmentSlots.filter((slot) => !booked.has(slot));
+    const selected = availableSlots.includes(previous) ? previous : availableSlots[0];
+    periodOptions.innerHTML = appointmentSlots.map((slot) => `
+      <label><input type="radio" name="period" value="${slot}" ${slot === selected ? 'checked' : ''} ${booked.has(slot) ? 'disabled' : ''}> ${slot}${booked.has(slot) ? ' — ocupado' : ''}</label>
+    `).join('');
+    if (contactNextButton) contactNextButton.disabled = !availableSlots.length;
+    if (bookingSubmitButton) bookingSubmitButton.disabled = !availableSlots.length;
+    if (availabilityMessage) availabilityMessage.textContent = availableSlots.length
+      ? 'Horários atualizados para a data e profissional selecionados.'
+      : 'Sem horários livres nesta data. Escolha outra data ou profissional.';
+    updateSummary();
+  } catch (error) {
+    if (request !== availabilityRequest) return;
+    if (availabilityMessage) availabilityMessage.textContent = 'Não foi possível consultar a agenda. Tente novamente.';
+    console.error('Falha ao consultar horários:', error);
+  }
+}
 
 function readCollection(key, fallback) {
   try {
@@ -673,7 +717,7 @@ function getBookingState() {
   const selectedPackage = getSelectedPackage();
   const selectedProfessional = professionals.find((professional) => professional.id === getSelectedValue('professional')) ?? professionals[0] ?? defaultProfessionals[0];
   const appointmentDate = appointmentDateInput?.value || selectedAppointmentDate;
-  const period = getSelectedValue('period') ?? '09:00';
+  const period = getSelectedValue('period') ?? '';
   const clientName = clientNameInput?.value.trim() || 'Cliente';
   const clientPhone = clientPhoneInput?.value.trim() || '';
   const notes = clientNotesInput?.value.trim();
@@ -698,8 +742,8 @@ function getBookingTypeLabel(type) {
   return labels[type] ?? labels.combo;
 }
 
-function buildMessage() {
-  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, clientPhone, notes } = getBookingState();
+function buildMessage(state = getBookingState()) {
+  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, clientPhone, notes } = state;
   const settings = readObject(storageKeys.siteSettings, defaultSiteSettings);
   const lines = [
     `Olá, sou ${clientName}. Quero agendar pelo site do ${settings.brandName}.`,
@@ -731,8 +775,8 @@ function updateSummary() {
   messagePreview.textContent = buildMessage();
 }
 
-async function saveDemand() {
-  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, clientPhone, notes } = getBookingState();
+async function saveDemand(state) {
+  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, clientPhone, notes } = state;
   const demands = readCollection(storageKeys.demands, []);
   const now = new Date().toISOString();
 
@@ -757,26 +801,20 @@ async function saveDemand() {
     updatedAt: now,
   };
 
-  if (window.BeautyData?.configured) {
-    try {
-      const savedDemand = await window.BeautyData.createAppointment(demand);
-      demands.push({ ...demand, ...savedDemand });
-      writeCollection(storageKeys.demands, demands);
-      return;
-    } catch (error) {
-      console.error('Não foi possível salvar o agendamento no Supabase:', error);
-    }
+  if (!window.BeautyData?.configured) throw new Error('Agenda online indisponível.');
+  const savedDemand = await window.BeautyData.createAppointment(demand);
+  try {
+    demands.push({ ...demand, ...savedDemand });
+    writeCollection(storageKeys.demands, demands);
+  } catch (error) {
+    console.warn('Pedido registrado no Supabase, mas cache local indisponível:', error);
   }
-
-  demands.push(demand);
-  writeCollection(storageKeys.demands, demands);
 }
 
-function openWhatsApp() {
+function getWhatsAppUrl(state) {
   whatsappPhone = normalizeWhatsapp(readObject(storageKeys.siteSettings, defaultSiteSettings).whatsappNumber);
-  const message = encodeURIComponent(buildMessage());
-  const url = `https://wa.me/${whatsappPhone}?text=${message}`;
-  window.open(url, '_blank', 'noopener,noreferrer');
+  const message = encodeURIComponent(buildMessage(state));
+  return `https://wa.me/${whatsappPhone}?text=${message}`;
 }
 
 async function initializePublicSite() {
@@ -801,6 +839,7 @@ async function initializePublicSite() {
   applySiteSettings();
   renderOptions();
   renderCalendar();
+  await refreshAvailability();
   showBookingScreen('details');
   showMainPage(getPageFromHash(window.location.hash), false);
   updateSummary();
@@ -811,6 +850,11 @@ initializePublicSite();
 bookingForm?.addEventListener('input', updateSummary);
 bookingForm?.addEventListener('change', (event) => {
   updateSummary();
+  if (event.target.name === 'professional') refreshAvailability();
+  if (event.target.name === 'period' && availableSlots.includes(event.target.value)) {
+    bookingSubmitButton.disabled = false;
+    if (bookingMessage) bookingMessage.textContent = '';
+  }
 });
 
 scheduler?.addEventListener('click', (event) => {
@@ -824,6 +868,7 @@ scheduler?.addEventListener('click', (event) => {
     selectedAppointmentDate = calendarDateButton.dataset.calendarDate;
     renderCalendar();
     updateSummary();
+    refreshAvailability();
   }
 
   if (calendarPrevButton && !calendarPrevButton.disabled) {
@@ -846,9 +891,39 @@ scheduler?.addEventListener('click', (event) => {
 });
 bookingForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
-  updateSummary();
-  await saveDemand();
-  openWhatsApp();
+  if (!availableSlots.includes(getSelectedValue('period'))) return;
+  bookingSubmitButton.disabled = true;
+  const whatsappTab = window.open('', '_blank');
+  if (whatsappTab) whatsappTab.opener = null;
+  let registered = false;
+  if (bookingMessage) bookingMessage.textContent = 'Confirmando disponibilidade...';
+  try {
+    const state = getBookingState();
+    const booked = await window.BeautyData.bookedTimes(state.appointmentDate, state.selectedProfessional.name);
+    if (booked.includes(state.period)) throw new Error('Esse horário acabou de ser ocupado. Escolha outro.');
+    await saveDemand(state);
+    registered = true;
+    const url = getWhatsAppUrl(state);
+    if (bookingMessage) {
+      bookingMessage.textContent = 'Pedido registrado. Confirme com o salão pelo WhatsApp. ';
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'Abrir WhatsApp';
+      bookingMessage.append(link);
+    }
+    if (whatsappTab) whatsappTab.location.href = url;
+    await refreshAvailability();
+  } catch (error) {
+    whatsappTab?.close();
+    if (bookingMessage) bookingMessage.textContent = error.code === '23505'
+      ? 'Esse horário acabou de ser ocupado. Escolha outro.'
+      : error.message || 'Não foi possível registrar o pedido. Tente novamente.';
+    await refreshAvailability();
+  } finally {
+    bookingSubmitButton.disabled = registered || !availableSlots.length;
+  }
 });
 
 window.addEventListener('storage', () => {

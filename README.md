@@ -20,6 +20,7 @@ Ja existe uma base funcional com:
 - sincronizacao local entre admin e site pelo botao **Atualizar Site**;
 - fluxo de agendamento direto em servicos;
 - agenda com selecao de data, profissional, horarios vagos e opcao de encaixe;
+- agenda compartilhada por profissional e data após aplicar `20260929143000_shared_appointment_slots.sql` no Supabase;
 - resumo automatico do pedido;
 - envio da mensagem pronta para WhatsApp;
 - agenda administrativa com status, nota interna e cadastro manual de atendimento;
@@ -87,7 +88,7 @@ O administrador consegue:
 3. Clica em continuar para agendamento.
 4. Escolhe data no calendario.
 5. Escolhe profissional.
-6. Escolhe horario vago ou **Encaixe**.
+6. Escolhe um dos horarios livres consultados no Supabase.
 7. Informa nome e observacao.
 8. Revisa o resumo.
 9. Envia a mensagem pronta para WhatsApp.
@@ -131,6 +132,13 @@ O projeto usa Supabase para:
 - dados persistidos fora do navegador;
 - regras de seguranca;
 - notificacoes e automacoes.
+
+Antes de publicar a agenda compartilhada, aplique a migration
+`supabase/migrations/20260929143000_shared_appointment_slots.sql` no projeto
+Supabase. Ela disponibiliza somente os horários ocupados ao público e impede
+que duas solicitações reservem o mesmo horário para a mesma profissional.
+Quando o Supabase estiver indisponível, o site bloqueia novos pedidos online
+em vez de exibir horários que não consegue confirmar.
 
 Se o projeto ficar pausado por inatividade, retome pelo painel:
 
