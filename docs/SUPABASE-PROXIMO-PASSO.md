@@ -37,7 +37,7 @@ O Supabase do MVP esta conectado, com migrations aplicadas e seguranca RLS ativa
 - O numero em `site_settings.whatsapp_number` controla o WhatsApp aberto pelo site.
 - A notificacao automatica da Edge Function usa o secret `ADMIN_WHATSAPP_PHONE`, que precisa ser alterado separadamente.
 - Fotos da galeria e imagem principal ainda precisam ser migradas para o bucket `site-assets`; o editor mantem uma copia local enquanto esse upload nao for implementado.
-- Observacoes do cliente e notas internas do admin ainda nao possuem colunas proprias em `appointments`.
+- A migration `20260929140000_persist_appointment_notes.sql` adiciona colunas para observacoes do cliente e notas internas do admin. Aplique-a no Supabase antes de publicar o frontend desta alteracao; entao valide criacao e leitura em dispositivos diferentes.
 - Depois de aplicar a migration de seguranca, confirme que uma consulta anonima a `appointments` retorna `401` ou uma lista vazia, nunca dados de clientes.
 
 ## Credenciais que nao devem ir para o GitHub

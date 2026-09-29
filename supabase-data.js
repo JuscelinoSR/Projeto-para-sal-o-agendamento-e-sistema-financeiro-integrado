@@ -86,8 +86,8 @@
       professionalName: row.professional,
       appointmentDate: row.appointment_date,
       period: String(row.appointment_time || '').slice(0, 5),
-      notes: '',
-      adminNote: '',
+      notes: row.client_notes || '',
+      adminNote: row.admin_note || '',
       status: statusFromDatabase(row.status),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
@@ -208,23 +208,29 @@
       appointment_date: demand.appointmentDate,
       appointment_time: time,
       client_phone: demand.clientPhone || 'não informado',
+      client_notes: demand.notes || null,
       value,
       status: statusToDatabase(demand.status),
     };
   }
 
-  async function createAppointment(demand) {
-    const { error } = await assertClient()
+  async function createAppointment(demand, { returning = false } = {}) {
+    const query = assertClient()
       .from('appointments')
       .insert(appointmentPayload(demand));
+    // The public booking flow has no SELECT permission on appointments.
+    const { data, error } = await (returning ? query.select('*').single() : query);
     if (error) throw error;
-    return demand;
+    return returning ? mapAppointment(data) : demand;
   }
 
-  async function updateAppointment(id, status) {
+  async function updateAppointment(id, demand) {
     const { error } = await assertClient()
       .from('appointments')
-      .update({ status: statusToDatabase(status) })
+      .update({
+        status: statusToDatabase(demand.status),
+        admin_note: demand.adminNote || null,
+      })
       .eq('id', id);
     if (error) throw error;
   }

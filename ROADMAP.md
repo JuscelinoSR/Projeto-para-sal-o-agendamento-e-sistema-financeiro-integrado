@@ -36,7 +36,7 @@ Pendências da Etapa 1:
 - Fazer um envio manual controlado e conferir os logs de notificacao.
 - Ativar e validar o cron de notificacoes a cada 5 minutos.
 - Migrar imagem principal e galeria para o Supabase Storage.
-- Persistir observacoes do cliente e notas internas do admin.
+- Aplicar a migration `20260929140000_persist_appointment_notes.sql` para persistir observacoes do cliente e notas internas do admin.
 - Definir horários disponíveis por profissional.
 - Validar o fluxo completo em celular.
 - Refinar textos finais do salão.
