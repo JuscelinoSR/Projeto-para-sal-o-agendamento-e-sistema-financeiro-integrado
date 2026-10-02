@@ -1,10 +1,12 @@
-# BeautyJSR / Salao Larissa MVP
+# BeautyJSR — Agendamento e gestão de salão
 
 MVP de site, agendamento e painel administrativo para salao de beleza. O objetivo e validar uma experiencia simples para clientes reais: ver o salao, escolher servicos, selecionar data, profissional e horario, e enviar o pedido pronto pelo WhatsApp.
 
 ## Estado atual
 
-O projeto esta em modo MVP estatico, com dados salvos no navegador via `localStorage`. Isso permite testar rapido no computador antes da conexao final com Supabase.
+A interface usa HTML, CSS e JavaScript, com arquivos estáticos na raiz. Existe persistência local via `localStorage` e código de integração com Supabase. O modo de autenticação depende da configuração em `supabase-config.js`: sem configuração válida, o login de demonstração é permitido apenas em ambiente local; com configuração válida, o código utiliza Supabase Auth.
+
+O registro histórico de saúde do serviço não garante sua disponibilidade atual. Valide login, permissões e sincronização no ambiente em que estiver executando o projeto.
 
 Ja existe uma base funcional com:
 
@@ -28,16 +30,43 @@ Ja existe uma base funcional com:
 - base preparada para evoluir para Supabase Auth, banco de dados online e notificacoes.
 - migrations Supabase para servicos, profissionais, galeria, financeiro, configuracoes do site e notificacoes.
 
-## Login local do admin
+## Tecnologias e estrutura
 
-Enquanto o Supabase nao estiver configurado, o painel usa login local de teste:
+- HTML, CSS e JavaScript para site e painel.
+- Supabase Auth e banco de dados na integração online.
+- SQL para migrations e TypeScript na função de notificações.
+- GitHub Pages e GitHub Actions para publicação estática.
 
 ```text
-Usuario: admin
-Senha: admin123
+index.html / script.js / styles.css — site público
+admin.html / admin.js / admin.css — painel
+login.html / auth.js — autenticação
+supabase-data.js — acesso aos dados online
+supabase/ — migrations, SQL e função de notificações
+docs/ — documentação de evolução e configuração
 ```
 
-Esse login serve apenas para desenvolvimento local. Em producao, o correto e configurar Supabase Auth.
+## Como executar localmente
+
+Pré-requisitos: Git e Python 3 para o servidor HTTP de desenvolvimento.
+
+```bash
+git clone https://github.com/JuscelinoSR/Projeto-para-sal-o-agendamento-e-sistema-financeiro-integrado.git
+cd Projeto-para-sal-o-agendamento-e-sistema-financeiro-integrado
+python -m http.server 8000 --bind 127.0.0.1
+```
+
+Abra `http://localhost:8000/` para o site e `http://localhost:8000/login.html` para o login. Encerre o servidor com `Ctrl+C`.
+
+A interface estática não exige `npm install`. A integração online depende da configuração de Supabase e das migrations; consulte [o modelo de autenticação](docs/admin-auth-model.md) e [os próximos passos de integração](docs/SUPABASE-PROXIMO-PASSO.md).
+
+## Como contribuir
+
+Consulte [CONTRIBUTING.md](CONTRIBUTING.md). Ao alterar agendamentos, autenticação ou financeiro, descreva o fluxo validado e as limitações encontradas.
+
+## Acesso administrativo
+
+O acesso administrativo deve ser configurado conforme o ambiente. Consulte `auth.js` e [o modelo de autenticação](docs/admin-auth-model.md). Use o modo de demonstração somente em desenvolvimento local e configure Supabase Auth para a implantação online.
 
 ## O que o MVP entrega para o cliente final
 
@@ -92,7 +121,7 @@ O administrador consegue:
 8. Revisa o resumo.
 9. Envia a mensagem pronta para WhatsApp.
 
-WhatsApp configurado para o MVP: `5564999625616`.
+Configure o número de atendimento adequado ao ambiente antes de compartilhar a demonstração.
 
 ## Publicacao
 
@@ -114,27 +143,9 @@ Ficha tecnica detalhada do projeto, com estrutura de retomada passo a passo:
 
 ## Supabase
 
-O Supabase esta configurado e ativo no projeto:
+A integração inclui autenticação, persistência online e funções de notificações. Os arquivos de configuração e as migrations estão no repositório; consulte a documentação em `docs/` para entender o fluxo.
 
-```text
-Projeto: JuscelinoSR's Projeto para salão de beleza
-Ref: gnzgqefwsgjsjrktgpej
-Status conferido em 18/07/2026: ACTIVE_HEALTHY
-Admin principal: juscelinosilvatit@gmail.com
-```
-
-O projeto usa Supabase para:
-
-- login real com e-mail e senha;
-- banco de dados online;
-- agenda compartilhada entre dispositivos;
-- dados persistidos fora do navegador;
-- regras de seguranca;
-- notificacoes e automacoes.
-
-Se o projeto ficar pausado por inatividade, retome pelo painel:
-
-https://supabase.com/dashboard/project/gnzgqefwsgjsjrktgpej
+Configure seu próprio ambiente e confira login, permissões e sincronização. Registros históricos de disponibilidade não substituem essa validação.
 
 ## Proximos passos recomendados
 
