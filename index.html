@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Salão Larissa: cabelos, beleza e autoestima em um ambiente acolhedor, com agendamento rápido pelo WhatsApp.">
-  <title>Salão Larissa | Seu momento de cuidado</title>
+  <meta name="description" content="Agendamento rápido pelo WhatsApp para o salão.">
+  <title>Seu momento de cuidado</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -102,10 +102,21 @@
               </div>
             </div>
 
+            <fieldset>
+              <legend>Tipo de atendimento</legend>
+              <div class="option-grid" data-booking-type-options></div>
+            </fieldset>
+
             <fieldset class="booking-panel is-active" data-booking-panel="custom" role="tabpanel">
               <legend>Serviços disponíveis</legend>
               <p class="field-help">Selecione um ou mais serviços para o atendimento.</p>
               <div class="option-grid" data-custom-service-options></div>
+            </fieldset>
+
+            <fieldset class="booking-panel" data-booking-panel="combo" role="tabpanel">
+              <legend>Combos recomendados</legend>
+              <p class="field-help">Escolha uma opção pronta e personalize sua visita.</p>
+              <div class="option-grid" data-combo-options></div>
             </fieldset>
 
             <button class="button primary booking-next inline-schedule-next" type="button" data-next-screen="schedule" data-inline-schedule-next>Continuar para agendamento</button>

@@ -5,7 +5,7 @@ const pageScreens = document.querySelectorAll('[data-page]');
 const pageLinks = document.querySelectorAll('a[href^="#"]');
 const visualTabButtons = document.querySelectorAll('[data-site-tab]');
 
-const storageKeys = {
+const chavesArmazenadas = {
   services: 'beautyjsr.services',
   professionals: 'beautyjsr.professionals',
   demands: 'beautyjsr.demands',
@@ -13,8 +13,10 @@ const storageKeys = {
   serviceCatalogVersion: 'beautyjsr.serviceCatalogVersion',
 };
 
-const defaultSiteSettings = {
-  brandName: 'Salão Larissa',
+const nomeDoSalaoPadrao = 'Salão Larissa';
+
+const configuracoesPadraoDoSite = {
+  brandName: nomeDoSalaoPadrao,
   heroBadge: 'Salão feminino',
   heroTitle: 'Seu momento de cuidado.',
   heroSubtitle: 'Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.',
@@ -27,7 +29,7 @@ const defaultSiteSettings = {
   backgroundImage: 'assets/salao-cores.jpeg',
 };
 
-function readObject(key, fallback) {
+function lerObjeto(key, fallback) {
   try {
     const value = JSON.parse(localStorage.getItem(key) ?? 'null');
     return value && typeof value === 'object' && !Array.isArray(value) ? { ...fallback, ...value } : fallback;
@@ -42,8 +44,12 @@ function setText(selector, value) {
   });
 }
 
-function normalizeWhatsapp(value) {
+function normalizarWhatsapp(value) {
   return String(value || '').replace(/\D/g, '') || '5564999625616';
+}
+
+function normalizeWhatsapp(value) {
+  return normalizarWhatsapp(value);
 }
 
 function renderSocialLinks(settings) {
@@ -98,7 +104,7 @@ function renderWorkGallery(settings) {
   `).join('');
 }
 
-function getInitials(name) {
+function obterInicials(name) {
   return String(name || 'Profissional')
     .split(/\s+/)
     .filter(Boolean)
@@ -112,11 +118,11 @@ function renderProfessionalShowcase() {
   const showcase = document.querySelector('[data-professional-showcase]');
   if (!showcase) return;
 
-  refreshEditableData();
+  atualizarDadosEditaveis();
 
-  showcase.innerHTML = professionals.map((professional) => `
+  showcase.innerHTML = profissionais.map((professional) => `
     <article class="professional-card">
-      <span class="professional-avatar">${escapeHtml(getInitials(professional.name))}</span>
+      <span class="professional-avatar">${escapeHtml(obterInicials(professional.name))}</span>
       <div>
         <h3>${escapeHtml(professional.name)}</h3>
         <p>${escapeHtml(professional.specialty || 'Atendimento especializado')}</p>
@@ -126,8 +132,20 @@ function renderProfessionalShowcase() {
   `).join('');
 }
 
-function applySiteSettings() {
-  const settings = readObject(storageKeys.siteSettings, defaultSiteSettings);
+function atualizarMetadadosDoSite(settings) {
+  const brandName = settings.brandName || nomeDoSalaoPadrao;
+  const pageTitle = `${brandName} | ${settings.heroTitle || 'Seu momento de cuidado.'}`;
+  const pageDescription = `${brandName}: ${settings.heroSubtitle || 'Cabelos, beleza e autoestima em um ambiente acolhedor.'}`;
+
+  document.title = pageTitle;
+  const descriptionMeta = document.querySelector('meta[name="description"]');
+  if (descriptionMeta) {
+    descriptionMeta.setAttribute('content', pageDescription);
+  }
+}
+
+function aplicarConfiguracoesDoSite() {
+  const settings = lerObjeto(chavesArmazenadas.siteSettings, configuracoesPadraoDoSite);
   setText('[data-site-brand]', settings.brandName);
   setText('[data-site-brand-footer]', settings.brandName);
   setText('[data-hero-badge]', settings.heroBadge);
@@ -135,13 +153,14 @@ function applySiteSettings() {
   setText('[data-hero-subtitle]', settings.heroSubtitle);
   setText('[data-site-cta]', settings.ctaText);
 
+  atualizarMetadadosDoSite(settings);
   document.querySelector('[data-site-brand]')?.setAttribute('aria-label', `${settings.brandName} início`);
   document.documentElement.style.setProperty('--site-background-image', `url("${settings.backgroundImage}")`);
   renderSocialLinks(settings);
   renderWorkGallery(settings);
   renderProfessionalShowcase();
 }
-const defaultServices = [
+const servicosPadrao = [
   {
     id: 'corte-feminino',
     name: 'Corte feminino',
@@ -246,7 +265,7 @@ const defaultServices = [
   },
 ];
 
-const defaultProfessionals = [
+const profissionaisPadrao = [
   {
     id: 'ana-souza',
     name: 'Ana Souza',
@@ -267,7 +286,7 @@ const defaultProfessionals = [
   },
 ];
 
-const defaultCombos = [
+const combosPadrao = [
   {
     id: 'combo-brilho',
     name: 'Combo Brilho Essencial',
@@ -291,11 +310,12 @@ const defaultCombos = [
   },
 ];
 
-let services = readCollection(storageKeys.services, defaultServices);
-let professionals = readCollection(storageKeys.professionals, defaultProfessionals);
+let servicos = lerColecao(chavesArmazenadas.services, servicosPadrao);
+let profissionais = lerColecao(chavesArmazenadas.professionals, profissionaisPadrao);
 
-let whatsappPhone = normalizeWhatsapp(readObject(storageKeys.siteSettings, defaultSiteSettings).whatsappNumber);
+let telefoneWhatsApp = normalizarWhatsapp(lerObjeto(chavesArmazenadas.siteSettings, configuracoesPadraoDoSite).whatsappNumber);
 const serviceOptions = document.querySelector('[data-service-options]');
+const bookingTypeOptions = document.querySelector('[data-booking-type-options]');
 const comboOptions = document.querySelector('[data-combo-options]');
 const customServiceOptions = document.querySelector('[data-custom-service-options]');
 const bookingPanels = document.querySelectorAll('[data-booking-panel]');
@@ -315,12 +335,12 @@ const clientNameInput = document.querySelector('[data-client-name]');
 const clientPhoneInput = document.querySelector('[data-client-phone]');
 const clientNotesInput = document.querySelector('[data-client-notes]');
 
-const today = new Date();
-today.setHours(0, 0, 0, 0);
-let selectedAppointmentDate = toDateKey(today);
-let calendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+const hoje = new Date();
+hoje.setHours(0, 0, 0, 0);
+let dataSelecionada = converterDataParaChave(hoje);
+let mesDoCalendario = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
 
-function readCollection(key, fallback) {
+function lerColecao(key, fallback) {
   try {
     const value = JSON.parse(localStorage.getItem(key) ?? 'null');
     return Array.isArray(value) ? value : fallback;
@@ -329,51 +349,51 @@ function readCollection(key, fallback) {
   }
 }
 
-function writeCollection(key, value) {
+function salvarColecao(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-function mergeMissingItems(currentItems, defaults) {
-  const existingIds = new Set(currentItems.map((item) => item.id));
-  const missing = defaults.filter((item) => !existingIds.has(item.id));
-  return [...currentItems, ...missing];
+function mesclarItensFaltantes(itensAtuais, itensPadrao) {
+  const idsExistentes = new Set(itensAtuais.map((item) => item.id));
+  const faltantes = itensPadrao.filter((item) => !idsExistentes.has(item.id));
+  return [...itensAtuais, ...faltantes];
 }
-function ensureSeedData() {
+function garantirDadosIniciais() {
   const catalogVersion = '2026-06-salao-completo';
 
-  if (!localStorage.getItem(storageKeys.services)) {
-    writeCollection(storageKeys.services, defaultServices);
-    localStorage.setItem(storageKeys.serviceCatalogVersion, catalogVersion);
-  } else if (localStorage.getItem(storageKeys.serviceCatalogVersion) !== catalogVersion) {
-    const mergedServices = mergeMissingItems(readCollection(storageKeys.services, []), defaultServices);
-    writeCollection(storageKeys.services, mergedServices);
-    localStorage.setItem(storageKeys.serviceCatalogVersion, catalogVersion);
+  if (!localStorage.getItem(chavesArmazenadas.services)) {
+    salvarColecao(chavesArmazenadas.services, servicosPadrao);
+    localStorage.setItem(chavesArmazenadas.serviceCatalogVersion, catalogVersion);
+  } else if (localStorage.getItem(chavesArmazenadas.serviceCatalogVersion) !== catalogVersion) {
+    const servicosMesclados = mesclarItensFaltantes(lerColecao(chavesArmazenadas.services, []), servicosPadrao);
+    salvarColecao(chavesArmazenadas.services, servicosMesclados);
+    localStorage.setItem(chavesArmazenadas.serviceCatalogVersion, catalogVersion);
   }
 
-  if (!localStorage.getItem(storageKeys.professionals)) {
-    writeCollection(storageKeys.professionals, defaultProfessionals);
+  if (!localStorage.getItem(chavesArmazenadas.professionals)) {
+    salvarColecao(chavesArmazenadas.professionals, profissionaisPadrao);
   }
 }
 
-function refreshEditableData() {
-  services = readCollection(storageKeys.services, defaultServices);
-  professionals = readCollection(storageKeys.professionals, defaultProfessionals);
+function atualizarDadosEditaveis() {
+  servicos = lerColecao(chavesArmazenadas.services, servicosPadrao);
+  profissionais = lerColecao(chavesArmazenadas.professionals, profissionaisPadrao);
 }
 
-function getPageFromHash(hash) {
+function obterPaginaPorHash(hash) {
   const page = String(hash || '#produto').replace('#', '');
   return document.querySelector(`[data-page="${page}"]`) ? page : 'produto';
 }
 
-function showMainPage(pageName, updateHash = true) {
-  const nextPage = getPageFromHash(`#${pageName}`);
+function mostrarPaginaPrincipal(pageName, updateHash = true) {
+  const nextPage = obterPaginaPorHash(`#${pageName}`);
 
   pageScreens.forEach((screen) => {
     screen.classList.toggle('is-page-active', screen.dataset.page === nextPage);
   });
 
   pageLinks.forEach((link) => {
-    const linkPage = getPageFromHash(link.getAttribute('href'));
+    const linkPage = obterPaginaPorHash(link.getAttribute('href'));
     link.classList.toggle('is-active', linkPage === nextPage);
   });
 
@@ -387,9 +407,9 @@ function showMainPage(pageName, updateHash = true) {
   }
 
   window.scrollTo({ top: 0, behavior: 'instant' });
-  closeMenu();
+  fecharMenu();
 }
-function closeMenu() {
+function fecharMenu() {
   document.body.classList.remove('menu-open');
   mobileNav?.classList.remove('is-open');
   menuButton?.setAttribute('aria-expanded', 'false');
@@ -409,18 +429,18 @@ pageLinks.forEach((link) => {
     }
 
     event.preventDefault();
-    showMainPage(getPageFromHash(href));
+    mostrarPaginaPrincipal(obterPaginaPorHash(href));
   });
 });
 
 visualTabButtons.forEach((button) => {
   button.addEventListener('click', () => {
-    showMainPage(button.dataset.siteTab);
+    mostrarPaginaPrincipal(button.dataset.siteTab);
   });
 });
 
 window.addEventListener('hashchange', () => {
-  showMainPage(getPageFromHash(window.location.hash), false);
+  mostrarPaginaPrincipal(obterPaginaPorHash(window.location.hash), false);
 });
 
 function updateHeader() {
@@ -436,7 +456,7 @@ function escapeHtml(value) {
     .replace(/'/g, '&#039;');
 }
 
-function renderChoice({ type, name, value, checked, title, details, compact = false }) {
+function renderizarOpcao({ type, name, value, checked, title, details, compact = false }) {
   return `
     <label class="choice-card${compact ? ' compact' : ''}">
       <input type="${type}" name="${name}" value="${escapeHtml(value)}" ${checked ? 'checked' : ''}>
@@ -448,12 +468,12 @@ function renderChoice({ type, name, value, checked, title, details, compact = fa
   `;
 }
 
-function renderOptions() {
-  refreshEditableData();
+function renderizarOpcoes() {
+  atualizarDadosEditaveis();
 
   if (serviceOptions) {
-    serviceOptions.innerHTML = services
-      .map((service, index) => renderChoice({
+    serviceOptions.innerHTML = servicos
+      .map((service, index) => renderizarOpcao({
         type: 'checkbox',
         name: 'service',
         value: service.id,
@@ -464,9 +484,33 @@ function renderOptions() {
       .join('');
   }
 
+  if (bookingTypeOptions) {
+    bookingTypeOptions.innerHTML = [
+      {
+        value: 'custom',
+        title: 'Montar meu combo',
+        details: 'Escolha um ou mais serviços',
+      },
+      {
+        value: 'combo',
+        title: 'Escolher combo pronto',
+        details: 'Opções sugeridas pelo salão',
+      },
+    ]
+      .map(({ value, title, details }, index) => renderizarOpcao({
+        type: 'radio',
+        name: 'bookingType',
+        value,
+        checked: index === 0,
+        title,
+        details,
+      }))
+      .join('');
+  }
+
   if (comboOptions) {
-    comboOptions.innerHTML = defaultCombos
-      .map((combo, index) => renderChoice({
+    comboOptions.innerHTML = combosPadrao
+      .map((combo, index) => renderizarOpcao({
         type: 'radio',
         name: 'combo',
         value: combo.id,
@@ -478,8 +522,8 @@ function renderOptions() {
   }
 
   if (customServiceOptions) {
-    customServiceOptions.innerHTML = services
-      .map((service, index) => renderChoice({
+    customServiceOptions.innerHTML = servicos
+      .map((service, index) => renderizarOpcao({
         type: 'checkbox',
         name: 'customServices',
         value: service.id,
@@ -491,8 +535,8 @@ function renderOptions() {
   }
 
   if (professionalOptions) {
-    professionalOptions.innerHTML = professionals
-      .map((professional, index) => renderChoice({
+    professionalOptions.innerHTML = profissionais
+      .map((professional, index) => renderizarOpcao({
         type: 'radio',
         name: 'professional',
         value: professional.id,
@@ -504,68 +548,68 @@ function renderOptions() {
   }
 }
 
-function getSelectedValue(name) {
+function obterValorSelecionado(name) {
   return bookingForm?.querySelector(`input[name="${name}"]:checked`)?.value;
 }
 
-function getSelectedValues(name) {
+function obterValoresSelecionados(name) {
   return Array.from(bookingForm?.querySelectorAll(`input[name="${name}"]:checked`) ?? []).map((input) => input.value);
 }
 
-function parsePrice(price) {
-  const numeric = String(price).replace(/[^\d,]/g, '').replace(',', '.');
+function converterPrecoParaNumero(preco) {
+  const numeric = String(preco).replace(/[^\d,]/g, '').replace(',', '.');
   return Number.parseFloat(numeric) || 0;
 }
 
-function formatPrice(value) {
-  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+function formatarPreco(valor) {
+  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-function toDateKey(date) {
-  return date.toISOString().slice(0, 10);
+function converterDataParaChave(data) {
+  return data.toISOString().slice(0, 10);
 }
 
-function parseDateKey(dateKey) {
-  const [year, month, day] = dateKey.split('-').map(Number);
+function converterChaveParaData(chaveData) {
+  const [year, month, day] = chaveData.split('-').map(Number);
   return new Date(year, month - 1, day);
 }
 
-function formatDisplayDate(dateKey) {
+function formatarDataCompleta(chaveData) {
   return new Intl.DateTimeFormat('pt-BR', {
     weekday: 'long',
     day: '2-digit',
     month: 'long',
-  }).format(parseDateKey(dateKey));
+  }).format(converterChaveParaData(chaveData));
 }
 
-function formatShortDate(dateKey) {
+function formatarDataCurta(chaveData) {
   return new Intl.DateTimeFormat('pt-BR', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
-  }).format(parseDateKey(dateKey));
+  }).format(converterChaveParaData(chaveData));
 }
 
-function renderCalendar() {
+function renderizarCalendario() {
   if (!bookingCalendar) {
     return;
   }
 
-  const monthStart = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 1);
+  const monthStart = new Date(mesDoCalendario.getFullYear(), mesDoCalendario.getMonth(), 1);
   const firstWeekday = monthStart.getDay();
-  const daysInMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 0).getDate();
+  const daysInMonth = new Date(mesDoCalendario.getFullYear(), mesDoCalendario.getMonth() + 1, 0).getDate();
   const monthLabel = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(monthStart);
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-  const canGoBack = monthStart > new Date(today.getFullYear(), today.getMonth(), 1);
+  const canGoBack = monthStart > new Date(hoje.getFullYear(), hoje.getMonth(), 1);
 
   const blanks = Array.from({ length: firstWeekday }, () => '<span class="calendar-empty" aria-hidden="true"></span>');
   const days = Array.from({ length: daysInMonth }, (_, index) => {
     const day = index + 1;
-    const date = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), day);
-    const dateKey = toDateKey(date);
-    const isPast = date < today;
-    const isSelected = dateKey === selectedAppointmentDate;
-    const isToday = dateKey === toDateKey(today);
+    const date = new Date(mesDoCalendario.getFullYear(), mesDoCalendario.getMonth(), day);
+    const dateKey = converterDataParaChave(date);
+    const isPast = date < hoje;
+    const isSelected = dateKey === dataSelecionada;
+    const isToday = dateKey === converterDataParaChave(hoje);
 
     return `
       <button class="calendar-day${isSelected ? ' is-selected' : ''}${isToday ? ' is-today' : ''}" type="button" data-calendar-date="${dateKey}" ${isPast ? 'disabled' : ''}>
@@ -586,171 +630,234 @@ function renderCalendar() {
     <div class="calendar-grid">
       ${[...blanks, ...days].join('')}
     </div>
-    <p class="calendar-selected">Selecionado: <strong>${escapeHtml(formatDisplayDate(selectedAppointmentDate))}</strong></p>
+    <p class="calendar-selected">Selecionado: <strong>${escapeHtml(formatarDataCompleta(dataSelecionada))}</strong></p>
   `;
 
   if (appointmentDateInput) {
-    appointmentDateInput.value = selectedAppointmentDate;
+    appointmentDateInput.value = dataSelecionada;
   }
 }
-function getBookingType() {
-  return 'custom';
+function obterTipoDeAgendamento() {
+  const explicitType = bookingForm?.querySelector('input[name="bookingType"]:checked')?.value;
+  if (explicitType === 'combo' || explicitType === 'custom') {
+    return explicitType;
+  }
+
+  const possuiComboSelecionado = Boolean(bookingForm?.querySelector('input[name="combo"]:checked'));
+  return possuiComboSelecionado ? 'combo' : 'custom';
 }
 
-function getSelectedPackage() {
-  refreshEditableData();
-  const bookingType = getBookingType();
+function obterPacoteSelecionado() {
+  atualizarDadosEditaveis();
+  const tipoAgendamento = obterTipoDeAgendamento();
 
-  if (bookingType === 'combo') {
-    const selectedCombo = defaultCombos.find((combo) => combo.id === getSelectedValue('combo')) ?? defaultCombos[0];
+  if (tipoAgendamento === 'combo') {
+    const comboSelecionado = combosPadrao.find((combo) => combo.id === obterValorSelecionado('combo')) ?? combosPadrao[0];
     return {
-      bookingType,
-      id: selectedCombo.id,
-      name: selectedCombo.name,
-      duration: selectedCombo.duration,
-      price: selectedCombo.price,
-      items: selectedCombo.items,
+      bookingType: tipoAgendamento,
+      id: comboSelecionado.id,
+      name: comboSelecionado.name,
+      duration: comboSelecionado.duration,
+      price: comboSelecionado.price,
+      items: comboSelecionado.items,
     };
   }
 
-  if (bookingType === 'custom') {
-    const selectedIds = getSelectedValues('customServices');
-    const selectedServices = services.filter((service) => selectedIds.includes(service.id));
-    const safeServices = selectedServices.length ? selectedServices : services.slice(0, 1);
-    const total = safeServices.reduce((sum, service) => sum + parsePrice(service.price), 0);
-
-    return {
-      bookingType,
-      id: 'combo-personalizado',
-      name: 'Combo personalizado',
-      duration: `${safeServices.length} serviços`,
-      price: formatPrice(total),
-      items: safeServices.map((service) => service.name),
-    };
-  }
-
-  const fallbackCombo = combos[0] ?? defaultCombos[0];
+  const idsSelecionados = obterValoresSelecionados('customServices');
+  const servicosSelecionados = servicos.filter((service) => idsSelecionados.includes(service.id));
+  const servicosSeguros = servicosSelecionados.length ? servicosSelecionados : servicos.slice(0, 1);
+  const total = servicosSeguros.reduce((sum, service) => sum + converterPrecoParaNumero(service.price), 0);
 
   return {
-    bookingType: 'combo',
-    id: fallbackCombo.id,
-    name: fallbackCombo.name,
-    duration: fallbackCombo.duration,
-    price: fallbackCombo.price,
-    items: fallbackCombo.items,
+    bookingType: 'custom',
+    id: 'combo-personalizado',
+    name: 'Combo personalizado',
+    duration: `${servicosSeguros.length} serviços`,
+    price: formatarPreco(total),
+    items: servicosSeguros.map((service) => service.name),
   };
 }
 
-function updateBookingPanels() {
-  const bookingType = getBookingType();
+function atualizarPaineisDeAgendamento() {
+  const tipoAgendamento = obterTipoDeAgendamento();
   bookingPanels.forEach((panel) => {
-    panel.classList.toggle('is-active', panel.dataset.bookingPanel === bookingType);
+    const isActive = panel.dataset.bookingPanel === tipoAgendamento;
+    panel.classList.toggle('is-active', isActive);
+    panel.hidden = !isActive;
   });
 
   if (screenTitle) {
-    screenTitle.textContent = 'Escolha seu atendimento';
+    screenTitle.textContent = tipoAgendamento === 'combo' ? 'Escolha um combo pronto' : 'Escolha seu atendimento';
   }
 }
 
-function showBookingScreen(screenName) {
+function mostrarTelaDeAgendamento(nomeTela) {
   bookingScreens.forEach((screen) => {
-    screen.classList.toggle('is-active', screen.dataset.bookingScreen === screenName);
+    screen.classList.toggle('is-active', screen.dataset.bookingScreen === nomeTela);
   });
 
-  const order = ['details', 'schedule', 'contact'];
-  const activeIndex = order.indexOf(screenName);
+  const ordem = ['details', 'schedule', 'contact'];
+  const indiceAtivo = ordem.indexOf(nomeTela);
   progressSteps.forEach((step) => {
-    const stepIndex = order.indexOf(step.dataset.progressStep);
-    step.classList.toggle('is-active', stepIndex === activeIndex);
-    step.classList.toggle('is-complete', stepIndex >= 0 && stepIndex < activeIndex);
+    const passoAtual = ordem.indexOf(step.dataset.progressStep);
+    step.classList.toggle('is-active', passoAtual === indiceAtivo);
+    step.classList.toggle('is-complete', passoAtual >= 0 && passoAtual < indiceAtivo);
   });
 
-  summaryNextButton?.classList.toggle('is-visible', screenName === 'details');
+  summaryNextButton?.classList.toggle('is-visible', nomeTela === 'details');
 }
 
-function getBookingState() {
-  refreshEditableData();
-  const selectedPackage = getSelectedPackage();
-  const selectedProfessional = professionals.find((professional) => professional.id === getSelectedValue('professional')) ?? professionals[0] ?? defaultProfessionals[0];
-  const appointmentDate = appointmentDateInput?.value || selectedAppointmentDate;
-  const period = getSelectedValue('period') ?? '09:00';
-  const clientName = clientNameInput?.value.trim() || 'Cliente';
-  const clientPhone = clientPhoneInput?.value.trim() || '';
-  const notes = clientNotesInput?.value.trim();
+function obterEstadoDoAgendamento() {
+  atualizarDadosEditaveis();
+  const pacoteSelecionado = obterPacoteSelecionado();
+  const profissionalSelecionado = profissionais.find((professional) => professional.id === obterValorSelecionado('professional')) ?? profissionais[0] ?? profissionaisPadrao[0];
+  const dataAgendamento = appointmentDateInput?.value || dataSelecionada;
+  const periodo = obterValorSelecionado('period') ?? '09:00';
+  const nomeCliente = clientNameInput?.value.trim() || '';
+  const telefoneCliente = clientPhoneInput?.value.trim() || '';
+  const observacoes = clientNotesInput?.value.trim();
 
   return {
-    selectedPackage,
-    selectedProfessional,
-    appointmentDate,
-    period,
-    clientName,
-    clientPhone,
-    notes,
+    pacoteSelecionado,
+    profissionalSelecionado,
+    dataAgendamento,
+    periodo,
+    nomeCliente,
+    telefoneCliente,
+    observacoes,
   };
 }
 
-function getBookingTypeLabel(type) {
+function obterTituloTipoDeAgendamento(tipo) {
   const labels = {
     combo: 'Combo pronto',
     custom: 'Combo personalizado',
   };
 
-  return labels[type] ?? labels.combo;
+  return labels[tipo] ?? labels.combo;
 }
 
-function buildMessage() {
-  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, clientPhone, notes } = getBookingState();
-  const settings = readObject(storageKeys.siteSettings, defaultSiteSettings);
-  const lines = [
-    `Olá, sou ${clientName}. Quero agendar pelo site do ${settings.brandName}.`,
-    `Escolha: ${selectedPackage.name} (${selectedPackage.duration}, ${selectedPackage.price}).`,
-    `Itens: ${selectedPackage.items.join(' + ')}.`,
-    `Profissional: ${selectedProfessional.name}.`,
-    `Data preferida: ${formatShortDate(appointmentDate)}.`,
-    `Horário preferido: ${period}.`,
-    `Meu WhatsApp: ${clientPhone}.`,
+function montarMensagemWhatsApp() {
+  const { pacoteSelecionado, profissionalSelecionado, dataAgendamento, periodo, nomeCliente, telefoneCliente, observacoes } = obterEstadoDoAgendamento();
+  const settings = lerObjeto(chavesArmazenadas.siteSettings, configuracoesPadraoDoSite);
+  const nomeParaMensagem = nomeCliente || 'Cliente';
+  const tipoAtendimento = pacoteSelecionado.bookingType === 'combo' ? 'Combo pronto' : 'Combo personalizado';
+  const linhas = [
+    `Olá, ${nomeParaMensagem}! Quero agendar um atendimento no ${settings.brandName}.`,
+    '',
+    `Tipo: ${tipoAtendimento}`,
+    `Serviço: ${pacoteSelecionado.name}`,
+    `Detalhes: ${pacoteSelecionado.items.join(', ')}`,
+    `Profissional: ${profissionalSelecionado.name}`,
+    `Data: ${formatarDataCurta(dataAgendamento)}`,
+    `Horário: ${periodo}`,
+    `WhatsApp: ${telefoneCliente || 'não informado'}`,
   ];
 
-  if (notes) {
-    lines.push(`Observação: ${notes}.`);
+  if (observacoes) {
+    linhas.push(`Observações: ${observacoes}`);
   }
 
-  return lines.join('\n');
+  linhas.push('', 'Obrigado!');
+  return linhas.join('\n');
 }
 
-function updateSummary() {
-  updateBookingPanels();
+function validarSelecaoDoAgendamento() {
+  const { pacoteSelecionado, profissionalSelecionado, dataAgendamento, nomeCliente, telefoneCliente } = obterEstadoDoAgendamento();
+  const tipoAgendamento = obterTipoDeAgendamento();
+  const erros = [];
+
+  if (tipoAgendamento === 'custom') {
+    const idsSelecionados = obterValoresSelecionados('customServices');
+    if (!idsSelecionados.length) {
+      erros.push('Selecione pelo menos um serviço.');
+    }
+  }
+
+  if (tipoAgendamento === 'combo') {
+    const comboSelecionado = bookingForm?.querySelector('input[name="combo"]:checked');
+    if (!comboSelecionado) {
+      erros.push('Escolha um combo disponível.');
+    }
+  }
+
+  if (!pacoteSelecionado?.items?.length) {
+    erros.push('Selecione pelo menos um serviço.');
+  }
+
+  if (!profissionalSelecionado?.id) {
+    erros.push('Selecione um profissional.');
+  }
+
+  if (!dataAgendamento || new Date(`${dataAgendamento}T00:00:00`) < hoje) {
+    erros.push('Selecione uma data válida.');
+  }
+
+  if (!nomeCliente.trim()) {
+    erros.push('Informe seu nome.');
+  }
+
+  if (!telefoneCliente.trim()) {
+    erros.push('Informe seu WhatsApp.');
+  }
+
+  return { valid: erros.length === 0, errors: erros };
+}
+
+function atualizarResumo() {
+  atualizarPaineisDeAgendamento();
 
   if (!summaryTitle || !summaryCopy || !messagePreview) {
     return;
   }
 
-  const { selectedPackage, selectedProfessional, appointmentDate, period } = getBookingState();
-  summaryTitle.textContent = `${selectedPackage.name} com ${selectedProfessional.name}`;
-  summaryCopy.textContent = `${selectedPackage.price} • ${formatShortDate(appointmentDate)} • ${period}`;
-  messagePreview.textContent = buildMessage();
+  const { pacoteSelecionado, profissionalSelecionado, dataAgendamento, periodo, nomeCliente } = obterEstadoDoAgendamento();
+  const validacao = validarSelecaoDoAgendamento();
+
+  const isValid = validacao.valid;
+  const nomeExibicao = nomeCliente || 'Cliente';
+  summaryTitle.textContent = isValid ? `${pacoteSelecionado.name} com ${profissionalSelecionado.name}` : 'Faltam dados para continuar';
+  summaryCopy.textContent = isValid
+    ? `${pacoteSelecionado.price} • ${formatarDataCurta(dataAgendamento)} • ${periodo}`
+    : `Olá, ${nomeExibicao}! ${validacao.errors[0]}`;
+  messagePreview.classList.toggle('is-error', !isValid);
+
+  if (!isValid) {
+    messagePreview.textContent = validacao.errors.join('\n');
+    return;
+  }
+
+  messagePreview.textContent = montarMensagemWhatsApp();
 }
 
-async function saveDemand() {
-  const { selectedPackage, selectedProfessional, appointmentDate, period, clientName, clientPhone, notes } = getBookingState();
-  const demands = readCollection(storageKeys.demands, []);
+async function salvarPedido() {
+  const validacao = validarSelecaoDoAgendamento();
+  if (!validacao.valid) {
+    summaryTitle.textContent = 'Faltam dados do agendamento';
+    summaryCopy.textContent = validacao.errors[0];
+    messagePreview.textContent = validacao.errors.join('\n');
+    return false;
+  }
+
+  const { pacoteSelecionado, profissionalSelecionado, dataAgendamento, periodo, nomeCliente, telefoneCliente, observacoes } = obterEstadoDoAgendamento();
+  const demandas = lerColecao(chavesArmazenadas.demands, []);
   const now = new Date().toISOString();
 
-  const demand = {
+  const pedido = {
     id: `demand-${Date.now()}`,
-    clientName,
-    clientPhone,
-    serviceId: selectedPackage.id,
-    serviceName: selectedPackage.name,
-    serviceDuration: selectedPackage.duration,
-    servicePrice: selectedPackage.price,
-    serviceItems: selectedPackage.items,
-    bookingType: selectedPackage.bookingType,
-    professionalId: selectedProfessional.id,
-    professionalName: selectedProfessional.name,
-    appointmentDate,
-    period,
-    notes,
+    clientName: nomeCliente,
+    clientPhone: telefoneCliente,
+    serviceId: pacoteSelecionado.id,
+    serviceName: pacoteSelecionado.name,
+    serviceDuration: pacoteSelecionado.duration,
+    servicePrice: pacoteSelecionado.price,
+    serviceItems: pacoteSelecionado.items,
+    bookingType: pacoteSelecionado.bookingType,
+    professionalId: profissionalSelecionado.id,
+    professionalName: profissionalSelecionado.name,
+    appointmentDate: dataAgendamento,
+    period: periodo,
+    notes: observacoes,
     status: 'novo',
     adminNote: '',
     createdAt: now,
@@ -759,37 +866,46 @@ async function saveDemand() {
 
   if (window.BeautyData?.configured) {
     try {
-      const savedDemand = await window.BeautyData.createAppointment(demand);
-      demands.push({ ...demand, ...savedDemand });
-      writeCollection(storageKeys.demands, demands);
-      return;
+      const pedidoSalvo = await window.BeautyData.createAppointment(pedido);
+      demandas.push({ ...pedido, ...pedidoSalvo });
+      salvarColecao(chavesArmazenadas.demands, demandas);
+      return true;
     } catch (error) {
       console.error('Não foi possível salvar o agendamento no Supabase:', error);
     }
   }
 
-  demands.push(demand);
-  writeCollection(storageKeys.demands, demands);
+  demandas.push(pedido);
+  salvarColecao(chavesArmazenadas.demands, demandas);
+  return true;
 }
 
-function openWhatsApp() {
-  whatsappPhone = normalizeWhatsapp(readObject(storageKeys.siteSettings, defaultSiteSettings).whatsappNumber);
-  const message = encodeURIComponent(buildMessage());
-  const url = `https://wa.me/${whatsappPhone}?text=${message}`;
+function abrirWhatsApp() {
+  const validacao = validarSelecaoDoAgendamento();
+  if (!validacao.valid) {
+    summaryTitle.textContent = 'Faltam dados do agendamento';
+    summaryCopy.textContent = validacao.errors[0];
+    messagePreview.textContent = validacao.errors.join('\n');
+    return;
+  }
+
+  telefoneWhatsApp = normalizarWhatsapp(lerObjeto(chavesArmazenadas.siteSettings, configuracoesPadraoDoSite).whatsappNumber);
+  const message = encodeURIComponent(montarMensagemWhatsApp());
+  const url = `https://wa.me/${telefoneWhatsApp}?text=${message}`;
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
-async function initializePublicSite() {
-  ensureSeedData();
+async function inicializarSitePublico() {
+  garantirDadosIniciais();
 
   if (window.BeautyData?.configured) {
     try {
       const data = await window.BeautyData.loadPublicData();
-      if (data.services.length) writeCollection(storageKeys.services, data.services);
-      if (data.professionals.length) writeCollection(storageKeys.professionals, data.professionals);
+      if (data.services.length) salvarColecao(chavesArmazenadas.services, data.services);
+      if (data.professionals.length) salvarColecao(chavesArmazenadas.professionals, data.professionals);
       if (data.siteSettings) {
-        localStorage.setItem(storageKeys.siteSettings, JSON.stringify({
-          ...defaultSiteSettings,
+        localStorage.setItem(chavesArmazenadas.siteSettings, JSON.stringify({
+          ...configuracoesPadraoDoSite,
           ...data.siteSettings,
         }));
       }
@@ -798,19 +914,19 @@ async function initializePublicSite() {
     }
   }
 
-  applySiteSettings();
-  renderOptions();
-  renderCalendar();
-  showBookingScreen('details');
-  showMainPage(getPageFromHash(window.location.hash), false);
-  updateSummary();
+  aplicarConfiguracoesDoSite();
+  renderizarOpcoes();
+  renderizarCalendario();
+  mostrarTelaDeAgendamento('details');
+  mostrarPaginaPrincipal(obterPaginaPorHash(window.location.hash), false);
+  atualizarResumo();
 }
 
-initializePublicSite();
+inicializarSitePublico();
 
-bookingForm?.addEventListener('input', updateSummary);
-bookingForm?.addEventListener('change', (event) => {
-  updateSummary();
+bookingForm?.addEventListener('input', atualizarResumo);
+bookingForm?.addEventListener('change', () => {
+  atualizarResumo();
 });
 
 scheduler?.addEventListener('click', (event) => {
@@ -821,47 +937,52 @@ scheduler?.addEventListener('click', (event) => {
   const calendarNextButton = event.target.closest('[data-calendar-next]');
 
   if (calendarDateButton) {
-    selectedAppointmentDate = calendarDateButton.dataset.calendarDate;
-    renderCalendar();
-    updateSummary();
+    dataSelecionada = calendarDateButton.dataset.calendarDate;
+    renderizarCalendario();
+    atualizarResumo();
   }
 
   if (calendarPrevButton && !calendarPrevButton.disabled) {
-    calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
-    renderCalendar();
+    mesDoCalendario = new Date(mesDoCalendario.getFullYear(), mesDoCalendario.getMonth() - 1, 1);
+    renderizarCalendario();
   }
 
   if (calendarNextButton) {
-    calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
-    renderCalendar();
+    mesDoCalendario = new Date(mesDoCalendario.getFullYear(), mesDoCalendario.getMonth() + 1, 1);
+    renderizarCalendario();
   }
 
   if (nextButton) {
-    showBookingScreen(nextButton.dataset.nextScreen);
+    mostrarTelaDeAgendamento(nextButton.dataset.nextScreen);
   }
 
   if (prevButton) {
-    showBookingScreen(prevButton.dataset.prevScreen);
+    mostrarTelaDeAgendamento(prevButton.dataset.prevScreen);
   }
 });
 bookingForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
-  updateSummary();
-  await saveDemand();
-  openWhatsApp();
+  atualizarResumo();
+
+  const isSaved = await salvarPedido();
+  if (!isSaved) {
+    return;
+  }
+
+  abrirWhatsApp();
 });
 
 window.addEventListener('storage', () => {
-  applySiteSettings();
-  renderOptions();
+  aplicarConfiguracoesDoSite();
+  renderizarOpcoes();
   renderProfessionalShowcase();
-  updateSummary();
+  atualizarResumo();
 });
 
 updateHeader();
 window.addEventListener('scroll', updateHeader, { passive: true });
 window.addEventListener('resize', () => {
   if (window.innerWidth > 980) {
-    closeMenu();
+    fecharMenu();
   }
 });

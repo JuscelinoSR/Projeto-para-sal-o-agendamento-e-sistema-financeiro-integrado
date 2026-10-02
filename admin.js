@@ -34,8 +34,10 @@ const defaultProfessionals = [
   { id: 'clara-mendes', name: 'Clara Mendes', specialty: 'Tratamentos capilares', linkUrl: '' },
 ];
 
+const nomeDoSalaoPadrao = 'Salão Larissa';
+
 const defaultSiteSettings = {
-  brandName: 'Salão Larissa',
+  brandName: nomeDoSalaoPadrao,
   heroBadge: 'Salão feminino',
   heroTitle: 'Seu momento de cuidado.',
   heroSubtitle: 'Cabelos, beleza e autoestima em um ambiente acolhedor, elegante e preparado para transformar sua rotina.',
